@@ -1,0 +1,19 @@
+.classpath
+.project
+.settings
+target
+out
+logs
+*.log
+*.swp
+node_modules
+.idea
+
+*.sublime-project
+*.sublime-workspace
+/.externalToolBuilders/
+
+# *.bat
+*.iml
+
+.DS_Store

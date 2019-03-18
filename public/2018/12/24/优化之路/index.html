@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="https://sherrywu0917.github.io">
+  <title>前端优化-蹒跚学步 | lying fox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="项目背景项目是基于React开发，webpack打包的多页面h5应用，其中部分页面又是基于React-router的SPA。开发的过程中，也一直在尝试对项目进行优化，这儿主要记录了对代码分片、持久化缓存和图片优化的处理。
+优化之路漫漫，蹒跚而来。
+
+动态加载组件Code splitting(代码分片)当前端代码越来越复杂，代码体积越来越大时，需要考虑对加载的资源进行细粒度的分割，按需加载。webp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端优化-蹒跚学步">
+<meta property="og:url" content="https://sherrywu0917.github.io/2018/12/24/优化之路/index.html">
+<meta property="og:site_name" content="lying fox">
+<meta property="og:description" content="项目背景项目是基于React开发，webpack打包的多页面h5应用，其中部分页面又是基于React-router的SPA。开发的过程中，也一直在尝试对项目进行优化，这儿主要记录了对代码分片、持久化缓存和图片优化的处理。
+优化之路漫漫，蹒跚而来。
+
+动态加载组件Code splitting(代码分片)当前端代码越来越复杂，代码体积越来越大时，需要考虑对加载的资源进行细粒度的分割，按需加载。webp">
+<meta property="og:image" content="http://kms.fp.ps.netease.com/file/5c1b66436f04944f5b0bac27fkqqY7XJ">
+<meta property="og:image" content="http://kms.fp.ps.netease.com/file/5c1b66b196dee43c91c66dc7p9XqNpke">
+<meta property="og:image" content="http://kms.fp.ps.netease.com/file/5c1b665f7f9d2a9a4e46ed29AADJKiNf">
+<meta property="og:image" content="http://kms.fp.ps.netease.com/file/5c1b66d0a7f2523ddac2a954og4WjVDi">
+<meta property="og:image" content="https://easyread.nosdn.127.net/web/trunk/1545811193495/xxxx_20181226155854.png">
+<meta property="og:image" content="https://easyread.nosdn.127.net/web/trunk/1545811180510/xxxx_20181226155821.png">
+<meta property="og:image" content="https://easyread.nosdn.127.net/web/trunk/1545812851431/xxxx_20181226162712.png">
+<meta property="og:image" content="https://easyread.nosdn.127.net/web/trunk/1545812873655/xxxx_20181226162719.png">
+<meta property="og:image" content="http://kms.fp.ps.netease.com/file/5c221d45a7f2522c896cb338a052AIYJ">
+<meta property="og:image" content="http://kms.fp.ps.netease.com/file/5c1b671d5e60271dd96424efFDXtIaaQ">
+<meta property="og:updated_time" content="2018-12-27T12:20:59.441Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="前端优化-蹒跚学步">
+<meta name="twitter:description" content="项目背景项目是基于React开发，webpack打包的多页面h5应用，其中部分页面又是基于React-router的SPA。开发的过程中，也一直在尝试对项目进行优化，这儿主要记录了对代码分片、持久化缓存和图片优化的处理。
+优化之路漫漫，蹒跚而来。
+
+动态加载组件Code splitting(代码分片)当前端代码越来越复杂，代码体积越来越大时，需要考虑对加载的资源进行细粒度的分割，按需加载。webp">
+<meta name="twitter:image" content="http://kms.fp.ps.netease.com/file/5c1b66436f04944f5b0bac27fkqqY7XJ">
+  
+    <link rel="alternative" href="/atom.xml" title="lying fox" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.2d7529.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style>
+  
+
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="http://pic3.zhimg.com/9d689a7510b5b77ab327d2a2a98ee08a_xll.jpg" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">Sherry</a></h1>
+		</hgroup>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/总结">总结</a></li>
+	        
+				<li><a href="/tags/js/">JavaScript</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="https://github.com/sherrywu0917" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="http://pic3.zhimg.com/9d689a7510b5b77ab327d2a2a98ee08a_xll.jpg" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">Sherry</h1>
+			</hgroup>
+			
+			
+			
+				
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/sherrywu0917" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 70%">
+				
+				
+					<li style="width: 33.333333333333336%"><a href="/">主页</a></li>
+		        
+					<li style="width: 33.333333333333336%"><a href="/tags/总结">总结</a></li>
+		        
+					<li style="width: 33.333333333333336%"><a href="/tags/js/">JavaScript</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-优化之路" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      前端优化-蹒跚学步
+    </h1>
+  
+
+        
+        <a href="/2018/12/24/优化之路/" class="archive-article-date">
+  	<time datetime="2018-12-24T01:38:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h1><p>项目是基于React开发，webpack打包的多页面h5应用，其中部分页面又是基于React-router的SPA。开发的过程中，也一直在尝试对项目进行优化，这儿主要记录了对<code>代码分片</code>、<code>持久化缓存</code>和<code>图片优化</code>的处理。</p>
+<p>优化之路漫漫，蹒跚而来。</p>
+<hr>
+<h1 id="动态加载组件"><a href="#动态加载组件" class="headerlink" title="动态加载组件"></a>动态加载组件</h1><h2 id="Code-splitting-代码分片"><a href="#Code-splitting-代码分片" class="headerlink" title="Code splitting(代码分片)"></a>Code splitting(代码分片)</h2><p>当前端代码越来越复杂，代码体积越来越大时，需要考虑对加载的资源进行细粒度的分割，按需加载。<br>webpack支持两种语法实现动态地加载模块：</p>
+<ul>
+<li><p><a href="https://webpack.js.org/api/module-methods/#require-ensure" target="_blank" rel="external">require.ensure</a><br>给定 dependencies 参数，将其对应的文件拆分到一个单独的 bundle 中，此 bundle 会被异步加载。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">require</span>.ensure(dependencies: <span class="built_in">String</span>[], <span class="attr">callback</span>: <span class="function"><span class="keyword">function</span>(<span class="params">require</span>), <span class="title">chunkName</span>: <span class="title">String</span>)</span></div></pre></td></tr></table></figure>
+</li>
+<li><p><a href="https://webpack.js.org/api/module-methods/#import-" target="_blank" rel="external">import</a><br>调用 import() 之处，被作为分离的模块起点，意思是，被请求的模块和它引用的所有子模块，会分离到一个单独的 chunk 中。会返回一个Promise对象。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span>(</div><div class="line">  <span class="comment">/* webpackChunkName: "my-chunk-name" */</span></div><div class="line">  <span class="comment">/* webpackMode: "lazy" (default)*/</span></div><div class="line">  <span class="string">'path/to/module'</span>) -&gt; <span class="built_in">Promise</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><code>webpackChunkName</code>用来设置chunk的名字；<code>webpackMode</code>默认值是<code>lazy</code>，还有<code>lazy-once</code>、<code>eager</code>、<code>weak</code>。按需加载的默认加载形式是async。<br><a id="more"></a></p>
+<h2 id="react动态加载组件"><a href="#react动态加载组件" class="headerlink" title="react动态加载组件"></a>react动态加载组件</h2><p>在React项目中，期望将某个组件分离出去(如BannerSwiper轮播组件，不是每次都会被调用，并且使用了react-id-swiper包，体积较大)，可以封装一个异步组件来实现组件的动态加载。<br>直接看代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> React, &#123;Component&#125; <span class="keyword">from</span> <span class="string">'react'</span></div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 异步加载模块</div><div class="line"> * @param  &#123;[type]&#125; loadComponent [description]</div><div class="line"> * @return &#123;[type]&#125;               [description]</div><div class="line"> */</div><div class="line"><span class="keyword">export</span> <span class="keyword">const</span> asyncComponent = <span class="function"><span class="params">loadComponent</span> =&gt;</span> (</div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">AsyncComponent</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</div><div class="line">        state = &#123;</div><div class="line">            <span class="attr">Component</span>: <span class="literal">null</span>,</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        componentDidMount() &#123;</div><div class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.hasLoadedComponent()) &#123;</div><div class="line">                <span class="keyword">return</span>;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            loadComponent()</div><div class="line">                .then(<span class="function"><span class="params">module</span> =&gt;</span> <span class="built_in">module</span>.default)</div><div class="line">                .then(<span class="function">(<span class="params">Component</span>) =&gt;</span> &#123;</div><div class="line">                    <span class="keyword">this</span>.setState(&#123; Component &#125;);</div><div class="line">                &#125;)</div><div class="line">                .catch(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;</div><div class="line">                    <span class="built_in">console</span>.error(<span class="string">`Cannot load component in &lt;AsyncComponent /&gt;`</span>);</div><div class="line">                    <span class="keyword">throw</span> err;</div><div class="line">                &#125;);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        hasLoadedComponent() &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.state.Component !== <span class="literal">null</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        render() &#123;</div><div class="line">            <span class="keyword">const</span> &#123; Component &#125; = <span class="keyword">this</span>.state;</div><div class="line">            <span class="keyword">return</span> (Component) ? <span class="xml"><span class="tag">&lt;<span class="name">Component</span> &#123;<span class="attr">...this.props</span>&#125; /&gt;</span> : null;</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">);</div></pre></td></tr></table></figure></p>
+<p><code>loadComponent</code>参数代表import(‘module’)异步加载模块，加载成功后会调用then方法去设置组件。函数最后会返回一个React组件。<br>如何调用：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">export</span> <span class="keyword">const</span> AsyncBannerSwiper = asyncComponent(<span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="comment">/* webpackChunkName: "bannerSwiper" */</span> <span class="string">'./BannerSwiper.jsx'</span>))</div></pre></td></tr></table></figure></p>
+<p>将<code>BannerSwiper</code>组件用<code>asyncComponent</code>封装下，就返回了一个异步加载的<code>AsyncBannerSwiper</code>组件，使用方法和其他组件完全一致。其中支持<code>webpackChunkName</code>去配置chunk的名字，不配置的情况下会默认生成<code>[id].bundle.js</code>。</p>
+<h3 id="publicPath动态设置"><a href="#publicPath动态设置" class="headerlink" title="publicPath动态设置"></a>publicPath动态设置</h3><p>项目的资源路径可能是启用了CDN，也可能是直接从站点获取，所以需要根据Server端的参数来设置异步加载chunk的publicPath。<br>动态设置异步chunk的publicPath，在入口entry中设置<strong>webpack_public_path</strong>，打包配置文件中配置的publicPath不变。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">__webpack_public_path__ = <span class="built_in">window</span>.cdn || <span class="string">'/dist/'</span>;</div></pre></td></tr></table></figure></p>
+<h2 id="webpack设置"><a href="#webpack设置" class="headerlink" title="webpack设置"></a>webpack设置</h2><p>在webpack配置文件中，需要配置<code>chunkFilename</code>指定chunk的名字。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chunkFilename: <span class="string">'[name].js'</span></div></pre></td></tr></table></figure></p>
+<p>另外，注意webpack插件的配置：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> webpack.NamedChunksPlugin(), <span class="comment">//固化 runtime 内以及在使用动态加载时分离出的 chunk 的 chunk id</span></div><div class="line"><span class="keyword">new</span> webpack.optimize.CommonsChunkPlugin(&#123;</div><div class="line">    ...</div><div class="line">    children: <span class="literal">false</span>,  <span class="comment">// 如果设置为 `true`，所有公共 chunk 的子模块都会被选择</span></div><div class="line">    ...</div><div class="line">&#125;),</div><div class="line"><span class="keyword">new</span> ExtractTextPlugin(&#123;<span class="attr">filename</span>: <span class="string">'css/[name].css?[contenthash:8]'</span>, <span class="attr">allChunks</span>: <span class="literal">true</span>&#125;),  <span class="comment">//从所有chunk中提取(默认情况下，它仅从initial chunk中提取)</span></div></pre></td></tr></table></figure></p>
+<h2 id="分离前后对比"><a href="#分离前后对比" class="headerlink" title="分离前后对比"></a>分离前后对比</h2><p>使用<a href="https://www.npmjs.com/package/webpack-bundle-analyzer" target="_blank" rel="external">webpack-bundle-analyzer</a>分析打包后各个JS的组成部分，没有进行代码分离之前的可视化视图如下图：<br><img src="http://kms.fp.ps.netease.com/file/5c1b66436f04944f5b0bac27fkqqY7XJ" width="600px"><br>可以看到上图中的common.bundle.js，swiper.js模块大小占比一大半，swiper.js是react-id-swiper包引用到的资源，此时common.bundle.js的文件大小是172K：<br><img src="http://kms.fp.ps.netease.com/file/5c1b66b196dee43c91c66dc7p9XqNpke" width="500px"><br>使用前文提到的方式将BannerSwiper组件及其引用的react-id-swiper包分离出去后，各文件组成如下图所示：<br><img src="http://kms.fp.ps.netease.com/file/5c1b665f7f9d2a9a4e46ed29AADJKiNf" width="600px"><br>可以看到，分离出一个bannerSwiper.js之后，common.bundle.js的体积就精简了很多，由之前的172K缩减成了46K。线上的资源又是开启了gzip压缩，体积就更小了。<br><img src="http://kms.fp.ps.netease.com/file/5c1b66d0a7f2523ddac2a954og4WjVDi" width="500px"></p>
+<hr>
+<h1 id="持久化缓存"><a href="#持久化缓存" class="headerlink" title="持久化缓存"></a>持久化缓存</h1><p>为了获取持久化缓存，在配置webpack的output时，比起hash，chunkhash是更好的选择，它根据每个文件的内容来生成，文件内容不变，chunkhash就不会发生变化；而只要有一个文件发生变化，hash就会发生变化，所有文件公用同一个hash。</p>
+<h2 id="moduleId-VS-chunkId"><a href="#moduleId-VS-chunkId" class="headerlink" title="moduleId VS chunkId"></a>moduleId VS chunkId</h2><p>webpack打包后会生成<code>webpackJsonp</code>等方法，用于加载chunk和module，精简的源码如下所示：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params">modules</span>) </span>&#123;</div><div class="line">  <span class="built_in">window</span>[<span class="string">"webpackJsonp"</span>] = <span class="function"><span class="keyword">function</span> <span class="title">webpackJsonpCallback</span>(<span class="params">chunkIds, moreModules, executeModules</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> moduleId, result;</div><div class="line">    <span class="keyword">for</span> (moduleId <span class="keyword">in</span> moreModules) &#123; <span class="comment">//该chunk引用的所有模块</span></div><div class="line">      <span class="keyword">if</span> (<span class="built_in">Object</span>.prototype.hasOwnProperty.call(moreModules, moduleId)) &#123;</div><div class="line">        <span class="comment">// 将chunk中所包含的模块放入modules数组中</span></div><div class="line">        modules[moduleId] = moreModules[moduleId];</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (executeModules) &#123; <span class="comment">//入口module</span></div><div class="line">      <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; executeModules.length; i++) &#123;</div><div class="line">        result = __webpack_require__(executeModules[i]);</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> result;</div><div class="line">  &#125;;</div><div class="line">  <span class="keyword">var</span> installedModules = &#123;&#125;;</div><div class="line"></div><div class="line">  <span class="comment">// 调用__webpack_require__(moduleId)时，</span></div><div class="line">  <span class="comment">// 再将模块放入installedModules，用于保存已经加载过的模块</span></div><div class="line">  <span class="function"><span class="keyword">function</span> <span class="title">__webpack_require__</span>(<span class="params">moduleId</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (installedModules[moduleId]) &#123;</div><div class="line">      <span class="keyword">return</span> installedModules[moduleId].exports;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// Create a new module (and put it into the cache)</span></div><div class="line">    <span class="keyword">var</span> <span class="built_in">module</span> = installedModules[moduleId] = &#123;</div><div class="line">      <span class="attr">i</span>: moduleId,</div><div class="line">      <span class="attr">l</span>: <span class="literal">false</span>,</div><div class="line">      <span class="attr">exports</span>: &#123;&#125;</div><div class="line">    &#125;;</div><div class="line">    <span class="comment">// Execute the module function:</span></div><div class="line">    <span class="comment">// 在执行的过程中，会递归调用`__webpack_require__`加载该模块引用的其他模块</span></div><div class="line">    modules[moduleId].call(<span class="built_in">module</span>.exports, <span class="built_in">module</span>, <span class="built_in">module</span>.exports, __webpack_require__);</div><div class="line"></div><div class="line">    <span class="comment">// Flag the module as loaded</span></div><div class="line">    <span class="built_in">module</span>.l = <span class="literal">true</span>;</div><div class="line">    <span class="keyword">return</span> <span class="built_in">module</span>.exports;</div><div class="line">  &#125;</div><div class="line">&#125;)([]);</div></pre></td></tr></table></figure></p>
+<p><code>webpackJsonp</code>方法接收三个参数<code>chunkIds, moreModules, executeModules</code>，其中<code>chunkIds</code>属于chunkId，<code>moreModules, executeModules</code>都属于moduleId。</p>
+<ul>
+<li>chunk代表打包生成的js文件，一个chunkId对应一个打包好的js文件，默认情况下使用数组下标作为chunkId。</li>
+<li>module对应着模块，可以简单理解为打包前每个js文件对应一个模块，也就是之前<code>__webpack_require__</code>加载的模块，同样使用数组下标作为moduleId。<br>每次有其他JS文件内容发生变化，moduleId和chunkId都有可能发生变化，会影响common.bundle.js以及其他打包后的JS，想要缓存持久化，需要固化moduleId和chunkId。</li>
+</ul>
+<h2 id="固化过程"><a href="#固化过程" class="headerlink" title="固化过程"></a>固化过程</h2><h3 id="初始状态"><a href="#初始状态" class="headerlink" title="初始状态"></a>初始状态</h3><p>以首页为例，打包后生成的index.js中会调用<code>webpackJsonp</code>方法，传入三个参数<code>chunkIds, moreModules, executeModules</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">webpackJsonp([<span class="number">4</span>],&#123;</div><div class="line"><span class="comment">/***/</span> <span class="number">10</span>:</div><div class="line"><span class="comment">/***/</span> (<span class="function"><span class="keyword">function</span>(<span class="params">module, exports, __webpack_require__</span>) </span>&#123;<span class="string">"use strict"</span>;<span class="built_in">eval</span>(<span class="string">""</span>);</div><div class="line"><span class="comment">/***/</span> &#125;),</div><div class="line"><span class="comment">/***/</span> <span class="number">11</span>:</div><div class="line"><span class="comment">/***/</span> (<span class="function"><span class="keyword">function</span>(<span class="params">module, __webpack_exports__, __webpack_require__</span>) </span>&#123;<span class="string">"use strict"</span>;<span class="built_in">eval</span>(<span class="string">"/*actual code*/"</span>);</div><div class="line"><span class="comment">/***/</span> &#125;)</div><div class="line"><span class="comment">//more code</span></div><div class="line">&#125;, [<span class="number">348</span>]);</div></pre></td></tr></table></figure></p>
+<p>若此时新增一个页面，入口为”./src/entry/test.jsx”，打包后，会发现所有的js内容都发生了改变，以其中一个文件为例，发现是引用的moduleId发生了变化：<br><img src="https://easyread.nosdn.127.net/web/trunk/1545811193495/xxxx_20181226155854.png"><br><img src="https://easyread.nosdn.127.net/web/trunk/1545811180510/xxxx_20181226155821.png"></p>
+<h3 id="固化moduleId"><a href="#固化moduleId" class="headerlink" title="固化moduleId"></a>固化<code>moduleId</code></h3><p>为了不影响其他文件，需要想办法将moduleId固定化，可以在webpack中配置<code>NamedModulesPlugin</code>，最新打包生成的index.js内部代码如下。和上面的代码比较，可以发现数字moduleId被替换成了文件的路径，这保证了moduleId的不变性。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">webpackJsonp([<span class="number">4</span>],&#123;</div><div class="line"><span class="comment">/***/</span> <span class="string">"./node_modules/babel-runtime/helpers/defineProperty.js"</span>:</div><div class="line"><span class="comment">/***/</span> (<span class="function"><span class="keyword">function</span>(<span class="params">module, exports, __webpack_require__</span>) </span>&#123;<span class="string">"use strict"</span>;<span class="built_in">eval</span>(<span class="string">""</span>);</div><div class="line"><span class="comment">/***/</span> &#125;),</div><div class="line"><span class="comment">/***/</span> <span class="string">"./node_modules/nw-detect/es/index.js"</span>:</div><div class="line"><span class="comment">/***/</span> (<span class="function"><span class="keyword">function</span>(<span class="params">module, __webpack_exports__, __webpack_require__</span>) </span>&#123;<span class="string">"use strict"</span>;<span class="built_in">eval</span>(<span class="string">"/*actual code*/"</span>);</div><div class="line"><span class="comment">/***/</span> &#125;)</div><div class="line"><span class="comment">//more code</span></div><div class="line">&#125;, [<span class="string">"./src/entry/index.jsx"</span>]);</div></pre></td></tr></table></figure></p>
+<p><code>moduleId</code>既然不会再变，那我们重新添加test页面，打包后是不是会只新增js呢？开心的是大部分js都没有改动，但发现还有两个js有变化，包括我们提取出的公共js<code>common.bundle.js</code>。对比下，发现文件的内容只有<code>chunkId</code>发生了变化：<br><img src="https://easyread.nosdn.127.net/web/trunk/1545812851431/xxxx_20181226162712.png"><br><img src="https://easyread.nosdn.127.net/web/trunk/1545812873655/xxxx_20181226162719.png"></p>
+<h3 id="固化chunkId"><a href="#固化chunkId" class="headerlink" title="固化chunkId"></a>固化<code>chunkId</code></h3><p>再进一步，显然就是希望可以固化<code>chunkId</code>，webpack插件<code>NamedChunksPlugin</code>可以满足我们的需求，它使用webpack中唯一的entry名作为chunkId。配置好<code>NamedChunksPlugin</code>后，对比添加test页面前后js的变化，发现只有新增的js，已有的js都没有发生变化，注意到之前的<code>common.bundle.js</code>和<code>forbidden.js</code>发生改变的地方，代码分别如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/******/</span>  <span class="comment">// objects to store loaded and loading chunks</span></div><div class="line"><span class="comment">/******/</span>  <span class="keyword">var</span> installedChunks = &#123;</div><div class="line"><span class="comment">/******/</span>    <span class="string">"common"</span>: <span class="number">0</span></div><div class="line"><span class="comment">/******/</span>  &#125;;</div></pre></td></tr></table></figure></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">webpackJsonp([<span class="string">"forbidden"</span>],&#123;</div><div class="line">  <span class="comment">//other code</span></div></pre></td></tr></table></figure>
+<p>chunkId都由数字变成了唯一的entry值，<code>common</code>对应<code>CommonsChunkPlugin</code>配置的name值。<br>对于代码分离出的js，使用<code>webpackChunkName</code>设置<code>chunkName</code>，可以保证该js<code>chunkId</code>的稳定性。</p>
+<h3 id="生产环境下固化moduleId"><a href="#生产环境下固化moduleId" class="headerlink" title="生产环境下固化moduleId"></a>生产环境下固化<code>moduleId</code></h3><p>前文提到的<code>NamedModulesPlugin</code>，使用的是模块的相对路径，但因为相对路径偏长，生产环境更建议使用<code>HashedModuleIdsPlugin</code>，它会根据文件的路径去生成hash，打包后的文件更小。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">webpackJsonp([<span class="string">"index"</span>],</div><div class="line">  &#123;<span class="string">"+qWx"</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e,t</span>)</span>&#123;e.exports=vendor&#125;,<span class="string">"5AEV"</span> ...&#125;,</div><div class="line">  [<span class="string">"qwtH"</span>]);</div></pre></td></tr></table></figure></p>
+<p>最终在生产环境下需要配置下面的代码，就可以实现moduleId和chunkId的固定，使用户端的缓存更加持久。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> webpack.HashedModuleIdsPlugin(), <span class="comment">//固化 module id</span></div><div class="line"><span class="keyword">new</span> webpack.NamedChunksPlugin(), <span class="comment">//固化 runtime 内以及在使用动态加载时分离出的 chunk 的 chunk id</span></div></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="图片优化"><a href="#图片优化" class="headerlink" title="图片优化"></a>图片优化</h2><p>图片的大小直接影响页面加载的速度，基础的优化操作有：对图片进行压缩、转base64减少http请求、使用srcset/sizes获取自适应图片等。这儿主要介绍如何结合webpack进行图片压缩，以及应用webp图片格式。</p>
+<h3 id="webpack-loader图片压缩"><a href="#webpack-loader图片压缩" class="headerlink" title="webpack loader图片压缩"></a>webpack loader图片压缩</h3><p>对图片进行压缩处理，可以选择的压缩工具有很多种，如压缩png、jpg的<a href="https://tinypng.com/" target="_blank" rel="external">tinypng</a>、<a href="https://zhitu.isux.us/" target="_blank" rel="external">智图</a>，裁剪压缩gif的<a href="https://www.iloveimg.com/zh-cn/compress-image/compress-gif" target="_blank" rel="external">iLoveIMG</a>；也可以安装psd的tinypng插件，以及pngquant、ImageAlpha、ImageOptim、Image Optimizer等其他压缩工具。<br><strong>打包压缩</strong><br>相比之下，配置loader或plugin打包压缩更加便捷，例如，配置好<a href="https://www.npmjs.com/package/image-webpack-loader" target="_blank" rel="external">image-webpack-loader</a>，在production模式下开启压缩，就可以在打包的时候自动压缩图片。</p>
+<blockquote>
+<p>image-webpack-loader是基于<a href="https://github.com/kevva/imagemin" target="_blank" rel="external">imagemin</a>去压缩PNG、JPEG、GIF、SVG和WEBP图片。针对不同的优化项，可以自定义参数以适配项目的需求。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    <span class="attr">test</span>: <span class="regexp">/\.(png|jpg|gif)$/</span>,</div><div class="line">    <span class="attr">use</span>: [&#123;</div><div class="line">        <span class="attr">loader</span>: <span class="string">'url-loader'</span>,</div><div class="line">        <span class="attr">options</span>: &#123;</div><div class="line">            <span class="attr">limit</span>: <span class="number">8192</span>,</div><div class="line">            <span class="attr">name</span>: <span class="string">'image/[hash:8].[name].[ext]'</span></div><div class="line">        &#125;</div><div class="line">    &#125;, &#123;</div><div class="line">        <span class="attr">loader</span>: <span class="string">'image-webpack-loader'</span>,</div><div class="line">        <span class="attr">options</span>: &#123;</div><div class="line">            <span class="attr">mozjpeg</span>: &#123;</div><div class="line">                <span class="attr">progressive</span>: <span class="literal">true</span>,</div><div class="line">                <span class="attr">quality</span>: <span class="number">65</span></div><div class="line">            &#125;,</div><div class="line">            <span class="attr">pngquant</span>: &#123;</div><div class="line">                <span class="attr">quality</span>: <span class="string">'65-90'</span>,</div><div class="line">                <span class="attr">speed</span>: <span class="number">3</span></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;]</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+</blockquote>
+<p>webpack也可以支持<code>tinypng</code>的打包压缩，如<a href="https://www.npmjs.com/package/tinypng-webpack-plugin" target="_blank" rel="external">tinypng-webpack-plugin</a>，使用了<code>tinypng</code>提供的<a href="https://tinypng.com/developers/reference/nodejs" target="_blank" rel="external">API</a>。但需要注意的是，使用tinypng需要申请key值，每个key值每个月可以免费压缩500张，超出部分就要付费了。</p>
+<h3 id="响应式图片"><a href="#响应式图片" class="headerlink" title="响应式图片"></a>响应式图片</h3><p>可以通过@media、image-set或者js实现根据屏幕大小获取对应的图片，更方便的方式是使用<img srcset="">和<picture>。</picture></p>
+<h4 id="srcset相同尺寸不同分辨率"><a href="#srcset相同尺寸不同分辨率" class="headerlink" title="srcset相同尺寸不同分辨率"></a>srcset相同尺寸不同分辨率</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"pic.png?imageView&amp;thumbnail=202y284"</span></span></div><div class="line">     <span class="attr">srcset</span>=<span class="string">"pic.png?imageView&amp;thumbnail=202y284 2x, pic.png?imageView&amp;thumbnail=303y426 3x"</span>&gt;</div></pre></td></tr></table></figure>
+<p>当分辨率为3x时，会使用3x对应的pic.png?imageView&amp;thumbnail=303y426图片。没有匹配到的、或者是不支持srcset属性的浏览器会正常加载src引用的图片。结合NOS提供的图片缩略功能，只需要上传一张图片，就可以实现不同分辨率下返回不同尺寸的图片。</p>
+<h4 id="sizes不同尺寸"><a href="#sizes不同尺寸" class="headerlink" title="sizes不同尺寸"></a>sizes不同尺寸</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">srcset</span>=<span class="string">"pic-320w.jpg 320w,</span></span></div><div class="line">             pic-480w.jpg 480w,</div><div class="line">             pic-800w.jpg 800w"</div><div class="line">     <span class="attr">sizes</span>=<span class="string">"(max-width: 320px) 280px,</span></div><div class="line">            (max-width: 480px) 440px,</div><div class="line">            800px"</div><div class="line">     <span class="attr">src</span>=<span class="string">"pic-800w.jpg"</span>&gt;</div></pre></td></tr></table></figure>
+<p>当屏幕宽度为450px时，满足<code>sizes</code>定义的媒体查询<code>(max-width: 480px) 440px</code>，这时候图片宽度是440px，将从<code>srcset</code>中匹配最接近的宽度。注意不能直接把440px和480w去比较，因为srcset中的w值不是对应的像素值，而是图片真正的宽度。如在iphone8上，分辨率是2x，440px对应的图片宽度是880w，与880w最接近的是800w，所以会去加载图片’pic-800w.jpg’，而如果是在分别率为1x的设备上，则对应440w，与480w最接近，会去加载图片<code>pic-480w.jpg</code>。</p>
+<h4 id="picture"><a href="#picture" class="headerlink" title="picture"></a>picture</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">picture</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">source</span> <span class="attr">media</span>=<span class="string">"(max-width: 799px)"</span> <span class="attr">srcset</span>=<span class="string">"elva-480w-close-portrait.jpg"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">source</span> <span class="attr">media</span>=<span class="string">"(min-width: 800px)"</span> <span class="attr">srcset</span>=<span class="string">"elva-800w.jpg"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"elva-800w.jpg"</span> <span class="attr">alt</span>=<span class="string">"Chris standing up holding his daughter Elva"</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">picture</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>会按顺序加载满足条件的第一个图片，保底需要定义一个img作为默认值，已经兼容不支持<picture>标签的浏览器。source同样支持srcset和sizes属性配置多个，此外还支持type去标识不同的图片类型。<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">picture</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">source</span> <span class="attr">type</span>=<span class="string">"image/webp"</span> <span class="attr">srcset</span>=<span class="string">"snow.webp"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"snow.png"</span> <span class="attr">alt</span>=<span class="string">"Hut in the snow"</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">picture</span>&gt;</span></div></pre></td></tr></table></figure></picture></p>
+<p>如果支持webp格式的，会去加载snow.webp，否则会去加载默认的snow.png。</p>
+<h4 id="HTTP-Client-Hints"><a href="#HTTP-Client-Hints" class="headerlink" title="HTTP Client Hints"></a>HTTP Client Hints</h4><p>通过<code>http client hints</code>，浏览器发起请求的时候，可以将DPR、Width、Viewport-Width等属性发送到Server端。Chrome46开始支持<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation#The_Accept-CH_header" target="_blank" rel="external">Accept-CH</a>的配置：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Accept-CH"</span> <span class="attr">content</span>=<span class="string">"DPR, Width, Viewport-Width"</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>配置完成后，页面发送的请求头部都被包含下面信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Accept: image/webp,image/apng,image/*,*/*;q=0.8</div><div class="line">DPR: 3</div><div class="line">Viewport-Width: 460</div><div class="line">Width: 230</div></pre></td></tr></table></figure></p>
+<p>其中Width属性不是每次都被带上，它是根据Image的sizes属性计算出来的，默认还会带上Accept属性，如果支持webp格式的图片，会包含’image/webp’。Server端可以根据<br>这些属性的值返回期望的图片：宽度为690px的webp图片。响应头会包含Content-Type、Content-DPR、Vary属性，浏览器会基于Content-DPR的值去计算图片最终展示的宽度，保证宽度仍为230px。demo如下所示。<br><img src="http://kms.fp.ps.netease.com/file/5c221d45a7f2522c896cb338a052AIYJ" width="600px"></p>
+<p>更详细的介绍，参见<a href="https://developers.google.com/web/updates/2015/09/automating-resource-selection-with-client-hints" target="_blank" rel="external">automating-resource-selection-with-client-hints</a></p>
+<h3 id="webp图片"><a href="#webp图片" class="headerlink" title="webp图片"></a>webp图片</h3><p>WebP是由google开发的一种图片格式，优势体现在它具有更优的图像数据压缩算法，能带来更小的图片体积，而且拥有肉眼识别无差异的图像质量。<br><a href="https://caniuse.com/#search=webp" target="_blank" rel="external">webp兼容性</a>见下图<br><img src="http://kms.fp.ps.netease.com/file/5c1b671d5e60271dd96424efFDXtIaaQ" width="800px"><br>其中chrome和opera支持得比较好，safari和firefox目前不支持，但已经在实验阶段。</p>
+<h4 id="检测浏览器是否支持webp格式"><a href="#检测浏览器是否支持webp格式" class="headerlink" title="检测浏览器是否支持webp格式"></a>检测浏览器是否支持webp格式</h4><h5 id="方法1-canvas的toDataURL"><a href="#方法1-canvas的toDataURL" class="headerlink" title="方法1: canvas的toDataURL"></a>方法1: canvas的toDataURL</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkWebp</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">try</span>&#123;</div><div class="line">        <span class="keyword">return</span> (<span class="built_in">document</span>.createElement(<span class="string">'canvas'</span>).toDataURL(<span class="string">'image/webp'</span>).indexOf(<span class="string">'data:image/webp'</span>) == <span class="number">0</span>);</div><div class="line">    &#125;<span class="keyword">catch</span>(err) &#123;</div><div class="line">        <span class="keyword">return</span>  <span class="literal">false</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">//or</span></div><div class="line">    !![].map &amp;&amp; <span class="built_in">document</span>.createElement(<span class="string">'canvas'</span>).toDataURL(<span class="string">'image/webp'</span>).indexOf(<span class="string">'data:image/webp'</span>) == <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对比一下chrome和ie下<code>document.createElement(&#39;canvas&#39;).toDataURL(&#39;image/webp&#39;)</code>下的输出：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//ie</span></div><div class="line"><span class="string">"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAADGSURBVHhe7cExAQAAAMKg9U9tCF8gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAONUAv9QAAcDhjokAAAAASUVORK5CYII="</span></div><div class="line"><span class="comment">//chrome</span></div><div class="line"><span class="string">"data:image/webp;base64,UklGRrgAAABXRUJQVlA4WAoAAAAQAAAAKwEAlQAAQUxQSBIAAAABBxARERCQJP7/H0X0P+1/QwBWUDgggAAAAHANAJ0BKiwBlgA+bTaZSaQjIqEgKACADYlpbuF2sRtACewD32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99qwAAP7/1gAAAAAAAAAA"</span></div></pre></td></tr></table></figure></p>
+<p>基于<code>toDataURL</code>的特性，如果请求的类型不被支持，默认返回<code>data:image/png</code>。（PS:canvas的默认宽高是300px,150px，如果canvas的宽或者高为0，则<code>toDataURL</code>会返回<code>&quot;data:,&quot;</code>。)<br>所以，只有支持webp格式的浏览器调用<code>toDataURL(&#39;image/webp&#39;)</code>后返回的字符串中才包含<code>&#39;data:image/webp&#39;</code>。上面提供了两种写法，其中<code>!![].map</code>主要是判断是否是IE9+，以免toDataURL方法会报错。</p>
+<h5 id="方法2-图片onload"><a href="#方法2-图片onload" class="headerlink" title="方法2: 图片onload"></a>方法2: 图片onload</h5><p>google官网提供的，通过加载小的webp图片来判断是否支持该格式：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// check_webp_feature:</span></div><div class="line"><span class="comment">//   'feature' can be one of 'lossy', 'lossless', 'alpha' or 'animation'.</span></div><div class="line"><span class="comment">//   'callback(feature, result)' will be passed back the detection result (in an asynchronous way!)</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">check_webp_feature</span>(<span class="params">feature, callback</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> kTestImages = &#123;</div><div class="line">        <span class="attr">lossy</span>: <span class="string">"UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA"</span>,</div><div class="line">        <span class="attr">lossless</span>: <span class="string">"UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAEAcQERGIiP4HAA=="</span>,</div><div class="line">        <span class="attr">alpha</span>: <span class="string">"UklGRkoAAABXRUJQVlA4WAoAAAAQAAAAAAAAAAAAQUxQSAwAAAARBxAR/Q9ERP8DAABWUDggGAAAABQBAJ0BKgEAAQAAAP4AAA3AAP7mtQAAAA=="</span>,</div><div class="line">        <span class="attr">animation</span>: <span class="string">"UklGRlIAAABXRUJQVlA4WAoAAAASAAAAAAAAAAAAQU5JTQYAAAD/////AABBTk1GJgAAAAAAAAAAAAAAAAAAAGQAAABWUDhMDQAAAC8AAAAQBxAREYiI/gcA"</span></div><div class="line">    &#125;;</div><div class="line">    <span class="keyword">var</span> img = <span class="keyword">new</span> Image();</div><div class="line">    img.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="keyword">var</span> result = (img.width &gt; <span class="number">0</span>) &amp;&amp; (img.height &gt; <span class="number">0</span>);</div><div class="line">        callback(feature, result);</div><div class="line">    &#125;;</div><div class="line">    img.onerror = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">        callback(feature, <span class="literal">false</span>);</div><div class="line">    &#125;;</div><div class="line">    img.src = <span class="string">"data:image/webp;base64,"</span> + kTestImages[feature];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上面提供了几种webp的图片模式，如果浏览器支持webp，那么图片的宽高会大于0，从而返回true,否则返回false。<br>调用方法如下，可以在<code>callback</code>方法中得到检测结果，进而去进一步处理：选择动态加载webp格式的图片，或者给全局添加<code>webp</code>相关的class都可以。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">check_webp_feature(<span class="string">'lossless'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">feature,result</span>)</span>&#123;</div><div class="line">    alert(result); <span class="comment">//true or false</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h4 id="使用webp"><a href="#使用webp" class="headerlink" title="使用webp"></a>使用webp</h4><p>处理webp通常有两种方式：</p>
+<ul>
+<li>服务端处理，支持webp图片的浏览器会在请求头Accept中加上<code>image/webp</code>，服务器根据头信息返回webp或者其他格式的图片；但图片放在CDN服务器上，处理起来就很麻烦了；</li>
+<li>前端先完成对是否支持webp格式的检测，再根据检测结果去选择请求的资源类型<br>开心的是，基于网易云提供的服务，通过修改参数就可以去获取不同格式的图片，具体可以参考<a href="https://www.163yun.com/help/documents/114078550521466880。" target="_blank" rel="external">https://www.163yun.com/help/documents/114078550521466880。</a><br>其中，通过在url后拼接<code>?imageView&amp;type=webp</code>就可以获得对应的webp图片。</li>
+</ul>
+<h3 id="REFS"><a href="#REFS" class="headerlink" title="REFS"></a>REFS</h3><p><a href="https://developer.mozilla.org/zh-CN/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images" target="_blank" rel="external">响应式图片</a><br><a href="https://blog.csdn.net/qq20004604/article/details/79318253" target="_blank" rel="external">React（17）异步组件</a><br><a href="https://github.com/pigcan/blog/issues/9" target="_blank" rel="external">基于 webpack 的持久化缓存方案 </a><br><a href="https://www.imooc.com/article/21538" target="_blank" rel="external">https://www.imooc.com/article/21538</a><br><a href="https://www.imooc.com/article/21538" target="_blank" rel="external">听说你用webpack处理文件名的hash？</a><br><a href="https://juejin.im/post/5a23b130f265da432003101a" target="_blank" rel="external">简单易懂的 webpack 打包后 JS 的运行过程</a></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我喝奶茶^_^<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://sherrywu0917.github.io/2018/12/24/优化之路/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2019/01/28/lottie实践/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          lottie实践
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/10/09/菜鸟优化之路-前端性能测试工具/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">菜鸟优化之路-前端性能测试工具sitespeed.io</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+
+  
+    <div class="duoshuo"></div>
+  
+
+
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2019 Sherry
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),m=e(75),g=r(m),w=e(70);l(),(0,w.addLoadEvent)(function(){g.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),m=x[f],g=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&g&&void 0!==g[a],s&&a in x||(l=s?g[a]:e[a],x[a]=d&&"function"!=typeof g[a]?e[a]:h&&s?i(l,r):b&&g[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&m&&!m[a]&&u(m,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,m,g,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=m==h,M=!1,A=t.prototype,T=A[p]||A[v]||m&&A[m],L=T||j(m),N=m?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,m)if(O={values:E?L:j(h),keys:g?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),m=e(10),g=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),m(t),n=w(n,!0),m(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){m(t);for(var e,r=b(n=g(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=g(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(g(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:g(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.2d7529.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.885efe.js")}()</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">es6</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">函数式编程</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">core-decorators</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">decorator</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">es7</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">下载</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">兼容</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">npm包</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">组件开发</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">sass</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">webpack</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">前端打包</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">require</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">继承</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">原型链</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            2、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: true
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="https://hubingbingxin.github.io/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>bingbing</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">很惭愧&lt;br&gt;&lt;br&gt;只做了一点微小的工作&lt;br&gt;谢谢大家</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>
