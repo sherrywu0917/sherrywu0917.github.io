@@ -158,6 +158,113 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-web浏览器兼容性问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/15/web浏览器兼容性问题/">web浏览器兼容性问题</a>
+    </h1>
+  
+
+        
+        <a href="/2017/06/15/web浏览器兼容性问题/" class="archive-article-date">
+  	<time datetime="2017-06-15T12:19:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-15</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="IE的问题"><a href="#IE的问题" class="headerlink" title="IE的问题"></a>IE的问题</h3><ul>
+<li><p>IE中animate作用在body上会失效，使用$(‘html, body’)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'html, body'</span>).animate(&#123;</span><br><span class="line">    scrollTop: offsetTop - $(<span class="string">'#J_nav'</span>).height()</span><br><span class="line">&#125;, <span class="number">500</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>$(‘body’).scrollTop()在IE中获得的值始终是0，使用$(document).scrollTop()可以获得正确的值</p>
+</li>
+<li>IE中通过offset获得的top值 = chrome浏览器offset的top值 + 该元素的paddingTop值。要获取元素offset值，需要兼容IE，如下：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">\\大于等于Ver版本的IE浏览器</span><br><span class="line">isGteIE(ver) &#123;</span><br><span class="line">    <span class="keyword">let</span> b = <span class="built_in">document</span>.createElement(<span class="string">'b'</span>);</span><br><span class="line">    b.innerHTML = <span class="string">'&lt;!--[if lte IE '</span> + ver + <span class="string">']&gt;&lt;i&gt;&lt;/i&gt;&lt;![endif]--&gt;'</span>;</span><br><span class="line">    <span class="keyword">return</span> b.getElementsByTagName(<span class="string">'i'</span>).length === <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> offsetTop = $(target).offset().top;</span><br><span class="line"><span class="comment">//IE8及以上, 修正offset</span></span><br><span class="line"><span class="keyword">if</span>(self.isGteIE(<span class="number">8</span>)) &#123;</span><br><span class="line">    offsetTop -= <span class="built_in">parseInt</span>($(target).css(<span class="string">'paddingTop'</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="浏览器内核"><a href="#浏览器内核" class="headerlink" title="浏览器内核"></a>浏览器内核</h3><table>
+<thead>
+<tr>
+<th>浏览器</th>
+<th style="text-align:center">内核</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IE</td>
+<td style="text-align:center">Trident</td>
+</tr>
+<tr>
+<td>Safari</td>
+<td style="text-align:center">webkit</td>
+</tr>
+<tr>
+<td>Chrome</td>
+<td style="text-align:center">WebKit的分支—Chromium引擎</td>
+</tr>
+<tr>
+<td>Chrome 28.0.1469.0版本之后</td>
+<td style="text-align:center">基于WebKit2—Blink引擎</td>
+</tr>
+<tr>
+<td>Firefox</td>
+<td style="text-align:center">Gecko内核</td>
+</tr>
+<tr>
+<td>Opera</td>
+<td style="text-align:center">Presto渲染引擎，2013年2月之后紧跟chrome引擎</td>
+</tr>
+</tbody>
+</table>
+<p>浏览器市场份额<br><a href="http://www.netmarketshare.com/" target="_blank" rel="noopener">http://www.netmarketshare.com/</a></p>
+<h3 id="兼容IE8"><a href="#兼容IE8" class="headerlink" title="兼容IE8"></a>兼容IE8</h3><p>IE8不支持本地视频播放，要使用在线的<br>为了让IE8兼容video标签，使用html5media<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> &lt;!–[<span class="keyword">if</span> lt IE <span class="number">9</span>]&gt;</span><br><span class="line">        &lt;script src=<span class="string">"http://api.html5media.info/1.1.8/html5media.min.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">&lt;![endif]–&gt;</span><br></pre></td></tr></table></figure></p>
+<p>兼容IE8的图表库：highcharts<br><a href="http://www.highcharts.com/demo" target="_blank" rel="noopener">http://www.highcharts.com/demo</a><br>需要使用1.x的jQuery版本</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">兼容</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/06/15/web浏览器兼容性问题/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-form表单实现文件的下载" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -273,11 +380,11 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">font-face</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">font-face</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
         		</li>
       		
 		</ul>
@@ -356,11 +463,11 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">es6</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">es6</a>
         		</li>
       		
 		</ul>
@@ -598,7 +705,11 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es6</a>
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">函数式编程</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -606,11 +717,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">函数式编程</a>
+                <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -622,11 +729,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -634,7 +741,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color4">es7</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -642,11 +749,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es7</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -655,6 +758,10 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">兼容</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -710,11 +817,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
+                <a href="javascript:void(0)" class="js-tag color5">sass</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">sass</a>
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">

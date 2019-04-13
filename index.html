@@ -663,6 +663,71 @@
 
 
   
+    <article id="post-reading-record" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/18/reading-record/">reading-record</a>
+    </h1>
+  
+
+        
+        <a href="/2018/11/18/reading-record/" class="archive-article-date">
+  	<time datetime="2018-11-18T02:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="你的Tree-Shaking并没什么卵用"><a href="#你的Tree-Shaking并没什么卵用" class="headerlink" title="你的Tree-Shaking并没什么卵用"></a><a href="https://juejin.im/post/5a5652d8f265da3e497ff3de#comment" target="_blank" rel="noopener">你的Tree-Shaking并没什么卵用</a></h2><blockquote>
+<p>Tree-Shaking的原理</p>
+<ul>
+<li>ES6的模块引入是静态分析的，故而可以在编译时正确判断到底加载了什么代码。</li>
+<li>分析程序流，判断哪些变量未被使用、引用，进而删除此代码</li>
+</ul>
+</blockquote>
+<p>但现实比较骨感，es6的代码经过babel和webpack编译打包后，产生的副作用(可能会改变外部变量)导致多余的代码并未被删掉。<br>babel6在编译的时候，会调用_createClass方法，使用Object.defineProperty去定义类里面的方法，原因是因为在es6的特性中，类里面声明的方法是不可枚举的。所以设置<code>{ &quot;loose&quot;: false }</code>宽松模式，让babel编译的时候不必去严格遵循es6的特性。<br>此外，UglifyJS不会进行程序流分析，所以在压缩的时候无法排除掉可能有副作用的代码，所以这部分代码还是会被打包进去。<br>使用babel6/webpack打包可以考虑结合使用<code>BabelMinifyWebpackPlugin</code>，思路是先进行uglifyJS代码压缩，再去编译。</p>
+<blockquote>
+<p>评论中指出：关于Person和Apple阐述Babel副作用的例子在Babel升级到Babel7之后确实已经不存在了，使用Babel7的正式版和Webpack4亲测。</p>
+</blockquote>
+<h2 id="http2-0-相比-1-0有哪些重大改进？"><a href="#http2-0-相比-1-0有哪些重大改进？" class="headerlink" title="http2.0 相比 1.0有哪些重大改进？"></a><a href="https://www.zhihu.com/question/34074946" target="_blank" rel="noopener">http2.0 相比 1.0有哪些重大改进？</a></h2><ol>
+<li><p>多路复用<br>多路复用允许同时通过单一的 HTTP/2 连接发起多重的请求-响应消息。<br>在http1.0和1.1协议下，浏览器在同一时间针对同一域名下的请求有一定数量的限制。不同浏览器限制的数量不一样。</p>
+</li>
+<li><p>二进制分帧<br>http2.0在应用层和传输层之间增加了一个二进制分帧层，在该层中，会将传输信息分割成更小的消息和帧。将http1.x的头部信息封装在到了HEADER frame，相应的Request Body封装到DATA frame中。<br>http2.0让所有数据流共用一个连接，有效地使用TCP连接，减少服务端的链接压力，内存占用更少，实现高带宽。<br>此外，减少了TCP慢启动的时间。</p>
+        
+      
+
+      
+    </li></ol></div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/11/18/reading-record/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-菜鸟优化之路-前端性能测试工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -805,57 +870,6 @@
 
 
   
-    <article id="post-函数式编程的应用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/24/函数式编程的应用/">函数式编程的应用</a>
-    </h1>
-  
-
-        
-        <a href="/2018/08/24/函数式编程的应用/" class="archive-article-date">
-  	<time datetime="2018-08-24T01:38:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="react的render方法"><a href="#react的render方法" class="headerlink" title="react的render方法"></a>react的render方法</h3><p>render()函数应该纯净，意味着其不应该改变组件的状态，其每次调用都应返回相同的结果，同时不直接和浏览器交互。若需要和浏览器交互，将任务放在componentDidMount()阶段或其他的生命周期方法。保持render() 方法纯净使得组件更容易思考。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/08/24/函数式编程的应用/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -949,7 +963,11 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es6</a>
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">函数式编程</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -957,11 +975,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">函数式编程</a>
+                <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -973,11 +987,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -985,7 +999,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color4">es7</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -993,11 +1007,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es7</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1006,6 +1016,10 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">兼容</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1061,11 +1075,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
+                <a href="javascript:void(0)" class="js-tag color5">sass</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">sass</a>
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">
