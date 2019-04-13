@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="lying fox">
 <meta property="og:description" content="你的Tree-Shaking并没什么卵用 Tree-Shaking的原理  ES6的模块引入是静态分析的，故而可以在编译时正确判断到底加载了什么代码。 分析程序流，判断哪些变量未被使用、引用，进而删除此代码   但现实比较骨感，es6的代码经过babel和webpack编译打包后，产生的副作用(可能会改变外部变量)导致多余的代码并未被删掉。babel6在编译的时候，会调用_createClass方">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-03-22T08:57:56.475Z">
+<meta property="og:updated_time" content="2019-04-13T15:31:38.070Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="reading-record">
 <meta name="twitter:description" content="你的Tree-Shaking并没什么卵用 Tree-Shaking的原理  ES6的模块引入是静态分析的，故而可以在编译时正确判断到底加载了什么代码。 分析程序流，判断哪些变量未被使用、引用，进而删除此代码   但现实比较骨感，es6的代码经过babel和webpack编译打包后，产生的副作用(可能会改变外部变量)导致多余的代码并未被删掉。babel6在编译的时候，会调用_createClass方">
@@ -195,8 +195,9 @@
 <li><p>多路复用<br>多路复用允许同时通过单一的 HTTP/2 连接发起多重的请求-响应消息。<br>在http1.0和1.1协议下，浏览器在同一时间针对同一域名下的请求有一定数量的限制。不同浏览器限制的数量不一样。</p>
 </li>
 <li><p>二进制分帧<br>http2.0在应用层和传输层之间增加了一个二进制分帧层，在该层中，会将传输信息分割成更小的消息和帧。将http1.x的头部信息封装在到了HEADER frame，相应的Request Body封装到DATA frame中。<br>http2.0让所有数据流共用一个连接，有效地使用TCP连接，减少服务端的链接压力，内存占用更少，实现高带宽。<br>此外，减少了TCP慢启动的时间。</p>
+<a id="more"></a>
 </li>
-<li><p>首部压缩<br>支持首部压缩，使用了HPACK算法。</p>
+<li><p>首部压缩<br>支持首部压缩，使用了HPACK算法。客户端和服务器维护同一张头信息表，头部字段都会存入该表，之后只需要传对应的索引即可。</p>
 </li>
 <li><p>服务端推送<br>服务器可以向客户端推送可能需要的资源，对一个请求发送多个响应。</p>
 <blockquote>
@@ -206,7 +207,24 @@
 <li><p>设置资源的优先级<br>浏览器可以一次请求多个资源，指定一些优先级信息来帮助确定应该如何处理这些资源，然后等待服务器发回所有数据，而不是一次请求一个。如果浏览器和服务器都支持优先级，则应使用浏览器指定的规则并使用所有可用带宽来传递资源，而不会有资源之间的相互竞争。</p>
 </li>
 </ol>
-<p>支持http2.0的前提是使用了SSL/TLS9(安全传输层协议)，如果网站没有使用SSL/TLS，接入http2.0协议带来的性能提升大致可以被TLS带来的性能损耗所抵消。<br><a href="https://www.mnot.net/talks/h2fe/" target="_blank" rel="noopener">https://www.mnot.net/talks/h2fe/</a><br><a href="https://www.w3ctech.com/topic/1563#tip7sharding" target="_blank" rel="noopener">https://www.w3ctech.com/topic/1563#tip7sharding</a><br><a href="https://juejin.im/post/5c1d9b8ae51d4559746922de" target="_blank" rel="noopener">https://juejin.im/post/5c1d9b8ae51d4559746922de</a></p>
+<p>支持http2.0的前提是使用了SSL/TLS9(安全传输层协议)，如果网站没有使用SSL/TLS，接入http2.0协议带来的性能提升大致可以被TLS带来的性能损耗所抵消。</p>
+<h3 id="http1-x"><a href="#http1-x" class="headerlink" title="http1.x"></a>http1.x</h3><p>线程阻塞，在同一时间，同一域名的请求有一定数量限制，超过限制数目的请求会被阻塞.</p>
+<h4 id="http1-0"><a href="#http1-0" class="headerlink" title="http1.0"></a>http1.0</h4><p>每次TCP连接，只能提供一次request和response的响应，结束自动断开</p>
+<h4 id="http1-1"><a href="#http1-1" class="headerlink" title="http1.1"></a>http1.1</h4><p>支持长连接(Response Headers头中出现Connection:keep-alive)，但服务器对请求的响应是串行进行的，只有处理完上一次请求之后，才会去处理下一个请求。</p>
+<h3 id="https"><a href="#https" class="headerlink" title="https"></a>https</h3><ul>
+<li>https在http的基础上增加了SSL层，对HTTP协议传输的数据进行加密。</li>
+<li>https需要申请ca证书</li>
+<li>http端口80，https端口443</li>
+<li>http基于应用层，https是基于传输层</li>
+</ul>
+<h3 id="websocket"><a href="#websocket" class="headerlink" title="websocket"></a>websocket</h3><ul>
+<li>全双工通信，可以在浏览器中使用</li>
+<li>借用了http的协议完成握手，然后再转为WebSocket（基于TCP协议，但本身属于应用层协议）</li>
+<li>建立长连接 </li>
+</ul>
+<h3 id="OSI七层网络模型"><a href="#OSI七层网络模型" class="headerlink" title="OSI七层网络模型"></a>OSI七层网络模型</h3><p>应用层 表示层 会话层 传输层 网络层 数据链路层 物理层</p>
+<h3 id="TCP四层模型"><a href="#TCP四层模型" class="headerlink" title="TCP四层模型"></a>TCP四层模型</h3><p>应用层 传输层（TCP/UDP） 网络层 数据链路层</p>
+<p><a href="https://www.mnot.net/talks/h2fe/" target="_blank" rel="noopener">https://www.mnot.net/talks/h2fe/</a><br><a href="https://www.w3ctech.com/topic/1563#tip7sharding" target="_blank" rel="noopener">https://www.w3ctech.com/topic/1563#tip7sharding</a><br><a href="https://juejin.im/post/5c1d9b8ae51d4559746922de" target="_blank" rel="noopener">https://juejin.im/post/5c1d9b8ae51d4559746922de</a></p>
 <h2 id="xss攻击"><a href="#xss攻击" class="headerlink" title="xss攻击"></a>xss攻击</h2><p>例如：<a href="http://xxx/search?keyword=&quot;&gt;" target="_blank" rel="noopener">http://xxx/search?keyword=&quot;&gt;</a><script>alert(‘XSS’);</script><br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">value</span>=<span class="string">"&lt;%= getParameter("</span><span class="attr">keyword</span>") %&gt;</span>"&gt;</span><br><span class="line"></span><br><span class="line">// 参数拼接后</span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">value</span>=<span class="string">""</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript">alert(<span class="string">'XSS'</span>);</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>"&gt;</span><br></pre></td></tr></table></figure></p>
 <p>跨站脚本攻击（Cross-site scripting），分为存储型(存储到数据库中)、反射型(网站服务端将恶意代码从URL中取出，拼接在HTML中返回给浏览器)和Dom型(前端浏览器拼接并执行)，需要前端处理的是Dom型。<br>预防：</p>
 <ul>
@@ -215,7 +233,7 @@
 <li>避免内联事件 尽量不要使用 onLoad=”onload(‘‘)”</li>
 <li>避免拼接 HTML</li>
 <li>时刻保持警惕 在插入位置为 DOM 属性、链接等位置时</li>
-<li>增加攻击难度，降低攻击后果 通过 CSP、输入长度配置、接口安全措施等方法，增加攻击的难度，降低攻击的后果</li>
+<li>增加攻击难度，降低攻击后果 通过 CSP（Content Security Policy，禁止外域等等）、输入长度配置、接口安全措施等方法，增加攻击的难度，降低攻击的后果</li>
 <li>主动检测和发现 可使用 XSS 攻击字符串和自动扫描工具寻找潜在的 XSS 漏洞</li>
 </ul>
 <p>可以手动拼接字符串<code>jaVasCript:/*-/*</code>/<em>`/</em>‘/<em>“/**/(/</em> */oNcliCk=alert() )//%0D%0A%0d%0a//&lt;/stYle/&lt;/titLe/&lt;/teXtarEa/&lt;/scRipt/–!&gt;\x3csVg/&lt;sVg/oNloAd=alert()//&gt;\x3e`去检查</p>
@@ -227,7 +245,258 @@
 </ul>
 <h2 id="vm-wh"><a href="#vm-wh" class="headerlink" title="vm wh"></a>vm wh</h2><p>显示器宽度: screen.width<br>浏览器宽度: window.outerWidth<br>网页宽度: window.innerWidth</p>
 <p>wm wh是相对与网页的宽高的，网页的宽为100vm，网页的高度为100vh</p>
-
+<h2 id="事件捕获-冒泡"><a href="#事件捕获-冒泡" class="headerlink" title="事件捕获 冒泡"></a>事件捕获 冒泡</h2><ul>
+<li>对于非target节点则先执行捕获在执行冒泡</li>
+<li>对于target节点则是先执行先注册的事件，无论冒泡还是捕获<br>A超链接上的onclick事件会先于href执行，可以联想到通常会在click事件中去阻止冒泡或者默认事件。</li>
+</ul>
+<h2 id="http协议"><a href="#http协议" class="headerlink" title="http协议"></a>http协议</h2><p>1xx 消息<br>2xx 成功<br>3xx 重定向</p>
+<ul>
+<li>301 永久重定向</li>
+<li>302 临时重定向</li>
+<li>304 Not modified<br>4xx 客户端错误</li>
+<li>405 Method not allowed<br>5xx 服务端错误</li>
+<li>500 Internal server error</li>
+<li>502 Bad gateway</li>
+<li>504 Gateway timeout</li>
+</ul>
+<h2 id="浏览器渲染页面的过程"><a href="#浏览器渲染页面的过程" class="headerlink" title="浏览器渲染页面的过程"></a>浏览器渲染页面的过程</h2><h3 id="请求加载页面的主要流程"><a href="#请求加载页面的主要流程" class="headerlink" title="请求加载页面的主要流程"></a>请求加载页面的主要流程</h3><ol>
+<li>输入URL</li>
+<li>确认是否使用本地缓存<ul>
+<li>Expires: 服务器时间，客户端时间可能和服务器时间不一致，所以不准；</li>
+<li>cache-control:max-age=484200 在这个时间内缓存有效；</li>
+</ul>
+</li>
+<li>DNS查询</li>
+<li>建立TCP连接，三次握手</li>
+<li>发出HTTP请求</li>
+<li>服务端响应<ul>
+<li>本地缓存过期后，向服务器询问缓存是否真的过期了，带上if-modified-since和Etag(Etag资源的实体标识，更准确)，如果缓存未过期，返回304</li>
+</ul>
+</li>
+<li>如果可以缓存，会被存储起来</li>
+<li>客户端渲染</li>
+<li>关闭或继续保持TCP连接，断开连接需要四次挥手(client:fin server: ack server: fin client: ack)<h3 id="内容渲染"><a href="#内容渲染" class="headerlink" title="内容渲染"></a>内容渲染</h3></li>
+<li>处理HTML标记并生成DOM树</li>
+<li>处理CSS标记并生成CSSOM树</li>
+<li>将DOM树和CSSOM树合成渲染树</li>
+<li>根据渲染树来布局，以计算每个节点的几何信息</li>
+<li>将各个节点绘制到屏幕上<br>结论：CSS解析和DOM解析是可以并行的，二者完成后再去执行DOM渲染，但是CSS解析会阻塞JS的执行，JS的执行会阻塞DOM的解析。所以，要将CSS放在头部，JS资源放在尾部。<h3 id="改变阻塞模式：defer-与-async"><a href="#改变阻塞模式：defer-与-async" class="headerlink" title="改变阻塞模式：defer 与 async"></a>改变阻塞模式：defer 与 async</h3>async 与 defer 属性对inline script是无效的。<br>defer文件相比普通 script，有两点区别：载入 JavaScript 文件时不阻塞 HTML 的解析，执行阶段被放到 HTML 标签解析完成之后。此外，不改变script中代码的执行顺序。<br>async文件一旦加载好，就会立即执行——无论此刻是 HTML 解析阶段还是 DOMContentLoaded 触发之后。注意：这种方式加载的 JavaScript 依然会阻塞 load 事件。script中代码的执行顺序不定。<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">document</span>.createElement(<span class="string">"script"</span>).async); <span class="comment">// true 动态创建的script默认是异步的。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> style = <span class="built_in">document</span>.createElement(<span class="string">"link"</span>);</span><br><span class="line">style.rel = <span class="string">"stylesheet"</span>; </span><br><span class="line">style.href = <span class="string">"index.css"</span>;</span><br><span class="line"><span class="built_in">document</span>.head.appendChild(style); <span class="comment">// 阻塞？ 已知的是，Chrome 中已经不会阻塞渲染，Firefox、IE 在以前是阻塞的。</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="call和apply的作用和区别"><a href="#call和apply的作用和区别" class="headerlink" title="call和apply的作用和区别"></a>call和apply的作用和区别</h3><ul>
+<li>改变方法执行的上下文</li>
+<li>call是传多个参数，apply是传入参数数组<h4 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h4></li>
+<li>Array.prototype.slice.call([类数组])，将类数组如arguments、NodeList转为数组</li>
+<li>应用Object.prototype.toString.call([obj])去判断具体的类型[object Type] Type可以为Boolean，String，Object，Array，Set等等</li>
+<li>获取数组最大值，Math.prototype.max.apply(Math, [3, 4, 5])</li>
+<li>合并数组，Array.prototype.push.apply(arr1, arr2)</li>
+</ul>
+<h3 id="websocket-全双工通信"><a href="#websocket-全双工通信" class="headerlink" title="websocket 全双工通信"></a>websocket 全双工通信</h3><h3 id="webworker-多线程"><a href="#webworker-多线程" class="headerlink" title="webworker 多线程"></a>webworker 多线程</h3><h3 id="回流Reflow和重绘Repaint"><a href="#回流Reflow和重绘Repaint" class="headerlink" title="回流Reflow和重绘Repaint"></a>回流Reflow和重绘Repaint</h3><ul>
+<li>页面初次渲染</li>
+<li>浏览器窗口大小改变</li>
+<li>元素尺寸、位置、内容发生改变</li>
+<li>元素字体大小变化</li>
+<li>添加或者删除可见的 dom 元素</li>
+<li>激活 CSS 伪类（例如：:hover）</li>
+<li>查询某些属性或调用某些方法<ul>
+<li>clientWidth、clientHeight、clientTop、clientLeft （元素可视区域的宽度）</li>
+<li>offsetWidth、offsetHeight、offsetTop、offsetLeft （元素包括滚动条的宽度）</li>
+<li>scrollWidth、scrollHeight、scrollTop、scrollLeft （元素的实际宽度）</li>
+<li>getComputedStyle()</li>
+<li>getBoundingClientRect()  ({x,y,width,height,left,right,top,bottom} 其中right和bottom分别指元素相对于页面左边、上面的距离;使用document.documentElement.scrollTop和window.pageYOffset获取页面滚动的距离，window.pageYOffset IE9以下不兼容；scrollTop是该元素到视口可见内容顶部的距离，如果该元素没有垂直方向的滚动条，则该值始终为0。)</li>
+<li>scrollTo()<h4 id="获取宽高的不同方式"><a href="#获取宽高的不同方式" class="headerlink" title="获取宽高的不同方式"></a>获取宽高的不同方式</h4></li>
+<li>screen.height 屏幕的高度</li>
+<li>screen.availHeight 浏览器窗口在屏幕上可占用的最大高度</li>
+<li>window.outerHeight window.innerHeight 浏览器的高度包括导航栏/不包括导航栏</li>
+<li>element.clientWidth offsetWidth scrollWidth  针对元素的，其中offsetTop和offsetLeft是相对于position为非static的父元素offsetParent，<h4 id="如何优化"><a href="#如何优化" class="headerlink" title="如何优化"></a>如何优化</h4><ul>
+<li>避免频繁操作样式，最好一次性重写style属性，或者将样式列表定义为class并一次性更改class属性。</li>
+<li>避免使用table布局</li>
+<li>避免频繁操作DOM，创建一个documentFragment，在它上面应用所有DOM操作，最后再把它添加到文档中（virtual dom思想）。</li>
+<li>也可以先为元素设置display: none，操作结束后再把它显示出来。因为在display属性为none的元素上进行的DOM操作不会引发回流和重绘。</li>
+<li>避免频繁读取会引发回流/重绘的属性，如果确实需要多次使用，就用一个变量缓存起来。</li>
+<li>对具有复杂动画的元素使用绝对定位，使它脱离文档流，否则会引起父元素及后续元素频繁回流。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="跨域"><a href="#跨域" class="headerlink" title="跨域"></a>跨域</h3><ul>
+<li>JSONP: 利用script标签不受跨域的限制，只支持get请求</li>
+<li>设置CORS: 服务端设置 Access-Control-Allow-Origin：* ，客户端设置是否发送cookie，例如XMLHttpRequest的withCredentials，fetch请求的credentials: ‘same-origin’, mode: ‘cors’</li>
+<li>postMessage：允许与其他窗口（或iframe）互相通信</li>
+</ul>
+<h3 id="跨标签页通信"><a href="#跨标签页通信" class="headerlink" title="跨标签页通信"></a>跨标签页通信</h3><ul>
+<li><p>window.open 和 postMessage</p>
+<ul>
+<li>当指定<code>window.open</code>的第二个name参数时，再次调用<code>window.open(&#39;****&#39;, &#39;child&#39;)</code>会使之前已经打开的同name子页面刷新</li>
+<li>由于安全策略，异步请求之后再调用<code>window.open</code>会被浏览器阻止，不过可以通过句柄设置子页面的url即可实现类似效果<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 首先先开一个空白页</span></span><br><span class="line"><span class="keyword">const</span> tab = <span class="built_in">window</span>.open(<span class="string">'about:blank'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 请求完成之后设置空白页的url</span></span><br><span class="line">fetch(<span class="comment">/* ajax */</span>).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    tab.location.href = <span class="string">'**url**'</span>;</span><br><span class="line">    tab.postMessage(<span class="string">'msg'</span>, <span class="string">'**origin**'</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>localStorage 与监听 window.onstorage，event对象包括key、oldValue、newValue等参数</p>
+</li>
+<li>cookie </li>
+<li>sessionStorage</li>
+<li>借助server</li>
+</ul>
+<h3 id="判断是否是数组"><a href="#判断是否是数组" class="headerlink" title="判断是否是数组"></a>判断是否是数组</h3><ul>
+<li>[] instanceof Array</li>
+<li>[].<strong>proto</strong> == Array.prototype</li>
+<li>[].constructor == Array</li>
+<li>Object.prototype.toString.call([]) == ‘[object Array]’</li>
+<li>Array.isArray([])<h4 id="类数组-vs-数组"><a href="#类数组-vs-数组" class="headerlink" title="类数组 vs 数组"></a>类数组 vs 数组</h4>类数组有arguments、Dom对象列表(NodeList)、带length属性的对象（如：{1: ‘mon’, 3: ‘wed’, length: 4}）<br><strong>类数组转成数组</strong></li>
+<li>Array.prototype.slice.call(arrayLike)</li>
+<li>[…arrayLike]</li>
+<li>Array.from(arrayLike)<br>转为数组后就可以使用数组众多的方法，例如map、filter、slice、join、reduce、sort等等。</li>
+</ul>
+<h2 id="let-const"><a href="#let-const" class="headerlink" title="let const"></a>let const</h2><ul>
+<li>不存在变量提升</li>
+<li><p>暂时性死区<br>如果使用了let、const，则该区域会形成一个封闭的作用域，在变量tmp使用let声明之前使用，都会报错，但如果一个变量根本没有被声明，反而不会报错。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">  <span class="keyword">typeof</span> tmp; <span class="comment">// Uncaught ReferenceError: tmp is not defined</span></span><br><span class="line">  <span class="keyword">typeof</span> undeclared_var;  <span class="comment">//'undefined'</span></span><br><span class="line">  <span class="keyword">let</span> tmp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>不允许重复声明</p>
+</li>
+<li>块级作用域<br>ES5中只有全局作用域和函数作用域，ES6新增了块级作用域，let和const只在声明的块级作用域中有效。</li>
+</ul>
+<h3 id="函数的执行上下文"><a href="#函数的执行上下文" class="headerlink" title="函数的执行上下文"></a>函数的执行上下文</h3><p>1、创建阶段【当函数被调用，但未执行任何其内部代码之前】</p>
+<ul>
+<li>创建作用域链（Scope Chain）</li>
+<li>创建顺序：函数的形参==&gt;&gt;函数声明==&gt;&gt;变量声明</li>
+<li>求”this“的值</li>
+</ul>
+<p><strong>函数的声明比变量优先级要高，并且定义过程不会被变量覆盖，除非是赋值</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo3</span>(<span class="params">a</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> a = <span class="number">10</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">    <span class="built_in">console</span>.log(a)</span><br><span class="line">&#125;</span><br><span class="line">foo3(<span class="number">20</span>) <span class="comment">//'10' 创建变量的顺序是 形参a, function a()&#123;&#125;, var a;执行的顺序是 a=10; console</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo3</span>(<span class="params">a</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> a </span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">    <span class="built_in">console</span>.log(a)</span><br><span class="line">&#125;</span><br><span class="line">foo3(<span class="number">20</span>) <span class="comment">//'function a()&#123;&#125;' 创建变量的顺序是 形参a, function a()&#123;&#125;, var a;执行的顺序是 console</span></span><br></pre></td></tr></table></figure></p>
+<p>2、执行阶段</p>
+<ul>
+<li>在当前上下文上运行/解释函数代码，并随着代码一行行执行指派变量的值。</li>
+</ul>
+<h3 id="BFC-Block-Formatting-Context"><a href="#BFC-Block-Formatting-Context" class="headerlink" title="BFC(Block Formatting Context)"></a>BFC(Block Formatting Context)</h3><p>BFC是一个独立的渲染区域，内部的元素遵循一定的规则去布局，不会影响外部元素也不会被外部元素影响。</p>
+<h4 id="生成BFC"><a href="#生成BFC" class="headerlink" title="生成BFC"></a>生成BFC</h4><ul>
+<li>根元素</li>
+<li>oveflow不为visible</li>
+<li>float不为none</li>
+<li>display: inline-block</li>
+<li>绝对定位absolute和fixed</li>
+<li>flex元素和直接子元素</li>
+<li>grid元素和直接子元素</li>
+<li>表格相关</li>
+<li>display 值为 flow-root 的元素</li>
+</ul>
+<h4 id="BFC布局规则"><a href="#BFC布局规则" class="headerlink" title="BFC布局规则"></a>BFC布局规则</h4><ol>
+<li>每个元素的margin box的左边，与包含块border box的左边相接触(对于从左往右的格式化，否则相反)。即使存在浮动也是如此。</li>
+<li>BFC的区域不会与float box重叠。（结合1、2，实现两栏布局）</li>
+<li>同一个BFC中相邻的box在垂直方向上的margin会合并 （外边距折叠）</li>
+<li>内部的box会在垂直方向上一个接一个放置</li>
+<li>计算BFC的高度时，浮动元素也参与计算（可以参考清除浮动前，外部元素的高度没有被撑起来）</li>
+</ol>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><ul>
+<li>清除浮动就是创建了一个新的BFC来包含浮动元素（oveflow:hidden/auto）</li>
+<li>属于同一BFC的两块级元素的外边距会折叠<ul>
+<li>相邻元素之间</li>
+<li>父元素与第一个或最后一个子元素</li>
+<li>空的块级元素上下边距会折叠</li>
+</ul>
+</li>
+</ul>
+<h3 id="cookie、sessionStorage与localStorage"><a href="#cookie、sessionStorage与localStorage" class="headerlink" title="cookie、sessionStorage与localStorage"></a>cookie、sessionStorage与localStorage</h3><ul>
+<li>cookie 4k 设置过期时间 每次http请求都会带上cookie 设置httponly的无法被js读取</li>
+<li>sessionStorage 5M 永久 仅在客户端</li>
+<li>localStorage  5M 会话期间 仅在客户端</li>
+</ul>
+<h3 id="盒模型"><a href="#盒模型" class="headerlink" title="盒模型"></a>盒模型</h3><p>margin, border, padding，content </p>
+<ul>
+<li>IE的怪异盒模型 盒子的总宽度 = margin + css设置的width  对应box-sizing的border-box</li>
+<li>标准盒模型 盒子的总宽度 = margin + border + padding + css设置的width  对应box-sizing的content-box<br><strong>应用</strong>：百分比的布局，在不同状态之间切换的button等</li>
+</ul>
+<h3 id="flex弹性布局"><a href="#flex弹性布局" class="headerlink" title="flex弹性布局"></a>flex弹性布局</h3><p>有水平的主轴和垂直的交叉轴</p>
+<ul>
+<li>flex-direction</li>
+<li>flex-wrap 排列不下时如何换行</li>
+<li>flex-flow: [direction] [wrap]</li>
+<li>justify-content</li>
+<li>align-Items</li>
+<li>align-content: 当有多根主轴时，即item不止一行的时候，多行在交叉轴上的对齐方式<br>item的属性</li>
+<li>order 布局顺序</li>
+<li>flex-shrink: 收缩 默认为1，表示当空间不足时，item自动缩小</li>
+<li>flex-grow: 延伸 默认为0，即当有多余空间时也不放大</li>
+<li>flex-basis: 项目在主轴上占据的空间，默认为auto</li>
+<li>align-self: 允许item有自己独特的在交叉轴上的对齐方式，默认值为auto，与父元素的align-items的值一样</li>
+</ul>
+<h3 id="深拷贝的实现"><a href="#深拷贝的实现" class="headerlink" title="深拷贝的实现"></a>深拷贝的实现</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> toString = <span class="built_in">Object</span>.prototype.toString;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span>(<span class="params">origin</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> cloned = &#123;&#125;</span><br><span class="line">    <span class="keyword">let</span> cls = toString.call(origin)</span><br><span class="line">    <span class="keyword">if</span>(cls == <span class="string">'[object Date]'</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> Ctor = origin.constructor</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Ctor(origin);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (cls == <span class="string">'[object Map]'</span>) &#123;</span><br><span class="line">        origin.forEach(<span class="function">(<span class="params">subValue, key</span>) =&gt;</span> &#123;</span><br><span class="line">            result.set(key, deepClone(subValue))</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (cls == <span class="string">'[object Set]'</span>) &#123;</span><br><span class="line">        origin.forEach(<span class="function">(<span class="params">subValue</span>) =&gt;</span> &#123;</span><br><span class="line">            cloned.add(deepClone(subValue))</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> origin == <span class="string">'object'</span> || <span class="keyword">typeof</span> origin == <span class="string">'array'</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">var</span> key <span class="keyword">in</span> origin) &#123;</span><br><span class="line">            cloned[key] = deepClone(origin[key]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        cloned = origin;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cloned;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="babel原理及插件开发"><a href="#babel原理及插件开发" class="headerlink" title="babel原理及插件开发"></a>babel原理及插件开发</h3><p>babel解析分为三步：</p>
+<ul>
+<li>使用@babel/parser解析器，根据estree规范构造AST语法树<ul>
+<li>默认支持最新的ECMAScript规范（ES2017）</li>
+<li>JSX Flow TypeScript</li>
+</ul>
+</li>
+<li>转换AST<ul>
+<li>根据一定的规则转换、修改AST（babel插件或者预置的stage-0，1，2，3，jsx等）</li>
+</ul>
+</li>
+<li>使用@babel/generator将AST转为code</li>
+</ul>
+<h3 id="stage-0"><a href="#stage-0" class="headerlink" title="stage-0"></a>stage-0</h3><ul>
+<li>transform-do-expressions 支持在react的jsx语法中使用if/else语句</li>
+<li>transform-function-bind 提供::去实现和bind一样的作用</li>
+</ul>
+<h3 id="stage-1"><a href="#stage-1" class="headerlink" title="stage-1"></a>stage-1</h3><ul>
+<li>transform-class-properties 支持property（不在prototype上）和static的定义</li>
+<li>…</li>
+</ul>
+<h3 id="stage-2"><a href="#stage-2" class="headerlink" title="stage-2"></a>stage-2</h3><p>让babel编译可以支持一些属性。</p>
+<ul>
+<li>syntax-trailing-function-commas 允许参数后添加逗号</li>
+<li>transform-object-reset-spread rest参数… 解构</li>
+</ul>
+<h3 id="stage-3"><a href="#stage-3" class="headerlink" title="stage-3"></a>stage-3</h3><ul>
+<li>transform-async-to-generator 支持async和await语法</li>
+<li>transform-exponentiation-operator 通过**这个符号进行幂操作</li>
+</ul>
+<h3 id="webpack打包原理，loader原理"><a href="#webpack打包原理，loader原理" class="headerlink" title="webpack打包原理，loader原理"></a>webpack打包原理，loader原理</h3><h4 id="webpack构建流程"><a href="#webpack构建流程" class="headerlink" title="webpack构建流程"></a>webpack构建流程</h4><ul>
+<li>合并shell的参数和config.js配置的参数</li>
+<li>注册所有配置的插件，让插件监听webpack生命周期</li>
+<li>从entry入口开始解析文件，构建AST语法树，递归查找依赖</li>
+<li>根据loader配置的规则对文件进行处理</li>
+<li>递归完后得到每个文件的最终结果</li>
+<li>应用plugin插件扩展webpack的功能</li>
+<li>最后根据entry配置生成chunk，输出chunk<br>可以说一下持久化缓存的过程。<br>从 webpack2 开始，已经内置了对 ES6、CommonJS、AMD 模块化语句的支持。但不包括新的ES6语法转为ES5代码，这部分工作还是留给了babel及其插件。</li>
+</ul>
+<h3 id="es6模块化-JS模块化Commonjs-UMD"><a href="#es6模块化-JS模块化Commonjs-UMD" class="headerlink" title="es6模块化 JS模块化Commonjs,UMD"></a>es6模块化 JS模块化Commonjs,UMD</h3><h4 id="commonjs"><a href="#commonjs" class="headerlink" title="commonjs"></a>commonjs</h4><p>NodeJs的模块规范<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> foo = <span class="built_in">require</span>(<span class="string">'./'</span>)</span><br></pre></td></tr></table></figure></p>
+<h3 id="UMD"><a href="#UMD" class="headerlink" title="UMD"></a>UMD</h3><p>如果是 Node 环境 就是使用 CommonJS 规范， 如果不是就判断是否为 AMD 环境， 最后导出全局变量。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">global, factory</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">typeof</span> exports === <span class="string">'object'</span> &amp;&amp; <span class="keyword">typeof</span> <span class="built_in">module</span> !== <span class="string">'undefined'</span> ?</span><br><span class="line">        <span class="built_in">module</span>.exports = factory()  <span class="comment">//CommonJS规范</span></span><br><span class="line">        :</span><br><span class="line">        <span class="keyword">typeof</span> define === <span class="string">'function'</span> &amp;&amp; define.amd ?</span><br><span class="line">             define(factory)   <span class="comment">//AMD规范</span></span><br><span class="line">             :</span><br><span class="line">            (global.libName = factory());   <span class="comment">//全局变量</span></span><br><span class="line">&#125;(<span class="keyword">this</span>, (<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="string">'use strict'</span>;&#125;)));</span><br></pre></td></tr></table></figure></p>
+<h3 id="ES6-Module规范"><a href="#ES6-Module规范" class="headerlink" title="ES6 Module规范"></a>ES6 Module规范</h3><p>ES6 模块的设计思想是尽量的静态化，使得编译时就能确定模块的依赖关系，以及输入和输出的变量。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// es6模块 导出</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123; <span class="attr">age</span>: <span class="number">1</span>, <span class="attr">a</span>: <span class="string">'hello'</span>, <span class="attr">foo</span>:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// es6模块 导入</span></span><br><span class="line"><span class="keyword">import</span> foo <span class="keyword">from</span> <span class="string">'./foo'</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="技术栈以及遇到的问题"><a href="#技术栈以及遇到的问题" class="headerlink" title="技术栈以及遇到的问题"></a>技术栈以及遇到的问题</h3><p>React + React-Router + Sass + Rem + Webpack打包<br><strong>问题</strong></p>
+<ul>
+<li>资源同步问题 gitsubtree</li>
+<li>正文页历史滚动位置：正文页和从其他页面返回第一步都是onpopstate事件（只对pushState和replaceState的页面有效）拿到key值，但是从其他页面返回，页面会reload一下，reload之前（先判断key值是否存在于历史位置中）存下当前key值和posHistory[key]值，在页面reload后，再恢复位置。</li>
+<li>微信url返回问题</li>
+<li>二维码无法识别问题</li>
+<li>代码分片</li>
+</ul>
+<p><strong>其他</strong></p>
+<ul>
+<li>polyfill引入方式</li>
+</ul>
+<h3 id="如何提高webpack打包速度"><a href="#如何提高webpack打包速度" class="headerlink" title="如何提高webpack打包速度"></a>如何提高webpack打包速度</h3><ul>
+<li>热更新或热替换</li>
+<li>选择合适的devtool：sourceMap设置</li>
+<li>babel-loader开启缓存</li>
+<li>全局script标签引入react/react-dom等第三方库</li>
+<li>DllPlugin和DllReferencePlugin动态链接库</li>
+<li>提取公共代码</li>
+<li>使用HappyPack多进程打包构建</li>
+<li>优化打包文件路径配置，使用include和exclude</li>
+<li>ModuleConcatenationPlugin插件开启作用域提升：它将一些有联系的模块，放到一个闭包函数里面去，通过减少闭包函数数量从而加快JS的执行速度</li>
+<li>noParse：有时不需要解析某些模块的依赖（这些模块并没有依赖，或者并根本就没有模块化）</li>
+<li>异步加载</li>
+<li>只引入模块中的一部分</li>
+<li>如何提高UglifyJsPlugin的压缩速度<ul>
+<li>cache 设置缓存</li>
+<li>parallel 开启多进程并行压缩</li>
+<li>sourceMap 帮助定位问题，但是可以关闭提高压缩速度</li>
+</ul>
+</li>
+</ul>
+<h3 id="react问题"><a href="#react问题" class="headerlink" title="react问题"></a>react问题</h3>
       
 
       
@@ -320,9 +589,18 @@
   
 <nav id="article-nav">
   
+    <a href="/2019/03/26/表单和post参数总结/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          表单和post参数总结
+        
+      </div>
+    </a>
   
-    <a href="/2019/03/18/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Hello World</div>
+  
+    <a href="/2019/03/07/打点实践总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">打点实践总结</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -450,11 +728,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -462,11 +740,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color4">es7</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es7</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -482,15 +760,23 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">npm包</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">组件开发</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -514,11 +800,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -530,11 +820,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">

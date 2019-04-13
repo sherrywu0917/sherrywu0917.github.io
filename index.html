@@ -158,6 +158,145 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-react-setState更新机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/02/react-setState更新机制/">react-setState更新机制</a>
+    </h1>
+  
+
+        
+        <a href="/2019/04/02/react-setState更新机制/" class="archive-article-date">
+  	<time datetime="2019-04-02T02:08:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="setState更新机制"><a href="#setState更新机制" class="headerlink" title="setState更新机制"></a>setState更新机制</h2><p>如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。</p>
+<h3 id="V15版本为例"><a href="#V15版本为例" class="headerlink" title="V15版本为例"></a>V15版本为例</h3><h4 id="step1-setState"><a href="#step1-setState" class="headerlink" title="step1: setState"></a>step1: setState</h4><p>ReactBaseClassses.js<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ReactComponent.prototype.setState = <span class="function"><span class="keyword">function</span> (<span class="params">partialState, callback</span>) </span>&#123;</span><br><span class="line">  <span class="comment">//  将setState事务放进队列中</span></span><br><span class="line">  <span class="keyword">this</span>.updater.enqueueSetState(<span class="keyword">this</span>, partialState);</span><br><span class="line">  <span class="keyword">if</span> (callback) &#123;</span><br><span class="line">    <span class="keyword">this</span>.updater.enqueueCallback(<span class="keyword">this</span>, callback, <span class="string">'setState'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>调用enqueueSetState将要更新的部分状态值partialState放入队列中，再将callback放到callback队列中。<br>
+        
+      
+
+      
+    </p></div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">setState</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/04/02/react-setState更新机制/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-表单和post参数总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/26/表单和post参数总结/">表单和post参数总结</a>
+    </h1>
+  
+
+        
+        <a href="/2019/03/26/表单和post参数总结/" class="archive-article-date">
+  	<time datetime="2019-03-26T08:50:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>post请求下的content-type类型:</p>
+<h3 id="application-json"><a href="#application-json" class="headerlink" title="application/json"></a>application/json</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Request Payload:</span><br><span class="line">&#123;layouts: [&quot;1&quot;, &quot;2&quot;, &quot;5&quot;]&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="application-x-www-form-urlencoded"><a href="#application-x-www-form-urlencoded" class="headerlink" title="application/x-www-form-urlencoded"></a>application/x-www-form-urlencoded</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Query String Parameters</span><br><span class="line">sourceUuid:np_c3sEKMgU3Xau_Tl0fmsqyReIdKH9OXQpby_FSNhz__ppcy0EKQ</span><br><span class="line">articleUuid:np_eXoyZJwfsX-q8j5OLm0pyEbYGK0</span><br><span class="line">forceFollow:0</span><br><span class="line">isContinue:0</span><br><span class="line">forceAutoPurchase:1</span><br></pre></td></tr></table></figure>
+<h3 id="multipart-form-data"><a href="#multipart-form-data" class="headerlink" title="multipart/form-data"></a>multipart/form-data</h3><p>使用表单上传文件时，必须让 form 的 enctype 等于这个值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryBJIFBCE2CA2Fwbyl</span><br></pre></td></tr></table></figure></p>
+<h3 id="text-xml"><a href="#text-xml" class="headerlink" title="text/xml"></a>text/xml</h3><p>例如XML-RPC请求。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">methodCall</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">methodName</span>&gt;</span>examples.getStateName<span class="tag">&lt;/<span class="name">methodName</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">params</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span><span class="tag">&lt;<span class="name">i4</span>&gt;</span>41<span class="tag">&lt;/<span class="name">i4</span>&gt;</span><span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">params</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">methodCall</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>get请求的content-type只有application/x-www-form-urlencoded这一种。</p>
+<p>form表单中action带有参数</p>
+<ol>
+<li>get表单请求<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">"get"</span> <span class="attr">action</span>=<span class="string">"/somePage.html?param1=foo&amp;param2=foo"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"param2"</span>&gt;</span>bar<span class="tag">&lt;/<span class="name">input</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"param3"</span>&gt;</span>bar<span class="tag">&lt;/<span class="name">input</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>最终得到的参数是：<br>Query String Parameters<br>param2: bar<br>param3: bar<br>get请求的表单在拼接参数的时候，会丢掉action指定的URL中带上的参数。</p>
+<ol start="2">
+<li>post表单请求：<br>enctype属性默认值是’application/x-www-form-urlencoded’，还支持’multipart/form-data’和’text/plain’<h4 id="application-x-www-form-urlencoded-1"><a href="#application-x-www-form-urlencoded-1" class="headerlink" title="application/x-www-form-urlencoded"></a>application/x-www-form-urlencoded</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">action</span>=<span class="string">"/somePage.html?param1=foo&amp;param2=foo"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"param2"</span> <span class="attr">value</span>=<span class="string">"bar"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"param3"</span> <span class="attr">value</span>=<span class="string">"baz"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>最终得到的参数是：<br>Query String Parameters<br>param1: foo<br>param2: foo</p>
+<p>Form Data<br>param2: bar<br>param3: baz</p>
+<h4 id="text-plain"><a href="#text-plain" class="headerlink" title="text/plain"></a>text/plain</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">action</span>=<span class="string">"/somePage.html?param1=foo&amp;param2=foo"</span> <span class="attr">enctype</span>=<span class="string">"text/plain"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"param2"</span> <span class="attr">value</span>=<span class="string">"bar"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"param3"</span> <span class="attr">value</span>=<span class="string">"baz"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>最终得到的参数是：<br>Query String Parameters<br>param1: foo<br>param2: foo</p>
+<p>Request Payload<br>param2=bar<br>param3=baz</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/03/26/表单和post参数总结/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-reading-record" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -193,43 +332,11 @@
 <li><p>多路复用<br>多路复用允许同时通过单一的 HTTP/2 连接发起多重的请求-响应消息。<br>在http1.0和1.1协议下，浏览器在同一时间针对同一域名下的请求有一定数量的限制。不同浏览器限制的数量不一样。</p>
 </li>
 <li><p>二进制分帧<br>http2.0在应用层和传输层之间增加了一个二进制分帧层，在该层中，会将传输信息分割成更小的消息和帧。将http1.x的头部信息封装在到了HEADER frame，相应的Request Body封装到DATA frame中。<br>http2.0让所有数据流共用一个连接，有效地使用TCP连接，减少服务端的链接压力，内存占用更少，实现高带宽。<br>此外，减少了TCP慢启动的时间。</p>
-</li>
-<li><p>首部压缩<br>支持首部压缩，使用了HPACK算法。</p>
-</li>
-<li><p>服务端推送<br>服务器可以向客户端推送可能需要的资源，对一个请求发送多个响应。</p>
-<blockquote>
-<p>「如果客户端早已在缓存中有了一份 copy 怎么办？」<br>一个推荐的解决方案是，客户端使用一个简洁的 Cache Digest 来告诉服务器，哪些已经在缓存中存在。</p>
-</blockquote>
-</li>
-<li><p>设置资源的优先级<br>浏览器可以一次请求多个资源，指定一些优先级信息来帮助确定应该如何处理这些资源，然后等待服务器发回所有数据，而不是一次请求一个。如果浏览器和服务器都支持优先级，则应使用浏览器指定的规则并使用所有可用带宽来传递资源，而不会有资源之间的相互竞争。</p>
-</li>
-</ol>
-<p>支持http2.0的前提是使用了SSL/TLS9(安全传输层协议)，如果网站没有使用SSL/TLS，接入http2.0协议带来的性能提升大致可以被TLS带来的性能损耗所抵消。<br><a href="https://www.mnot.net/talks/h2fe/" target="_blank" rel="noopener">https://www.mnot.net/talks/h2fe/</a><br><a href="https://www.w3ctech.com/topic/1563#tip7sharding" target="_blank" rel="noopener">https://www.w3ctech.com/topic/1563#tip7sharding</a><br><a href="https://juejin.im/post/5c1d9b8ae51d4559746922de" target="_blank" rel="noopener">https://juejin.im/post/5c1d9b8ae51d4559746922de</a></p>
-<h2 id="xss攻击"><a href="#xss攻击" class="headerlink" title="xss攻击"></a>xss攻击</h2><p>例如：<a href="http://xxx/search?keyword=&quot;&gt;" target="_blank" rel="noopener">http://xxx/search?keyword=&quot;&gt;</a><script>alert(‘XSS’);</script><br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">value</span>=<span class="string">"&lt;%= getParameter("</span><span class="attr">keyword</span>") %&gt;</span>"&gt;</span><br><span class="line"></span><br><span class="line">// 参数拼接后</span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">value</span>=<span class="string">""</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript">alert(<span class="string">'XSS'</span>);</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>"&gt;</span><br></pre></td></tr></table></figure></p>
-<p>跨站脚本攻击（Cross-site scripting），分为存储型(存储到数据库中)、反射型(网站服务端将恶意代码从URL中取出，拼接在HTML中返回给浏览器)和Dom型(前端浏览器拼接并执行)，需要前端处理的是Dom型。<br>预防：</p>
-<ul>
-<li>合适的HTML转义，完善的转义库需要针对上下文制定多种规则，例如 HTML 属性、HTML 文字内容、HTML 注释、跳转链接、内联 JavaScript 字符串、内联 CSS 样式表等等</li>
-<li>利用模板引擎 开启模板引擎自带的 HTML 转义功能</li>
-<li>避免内联事件 尽量不要使用 onLoad=”onload(‘‘)”</li>
-<li>避免拼接 HTML</li>
-<li>时刻保持警惕 在插入位置为 DOM 属性、链接等位置时</li>
-<li>增加攻击难度，降低攻击后果 通过 CSP、输入长度配置、接口安全措施等方法，增加攻击的难度，降低攻击的后果</li>
-<li>主动检测和发现 可使用 XSS 攻击字符串和自动扫描工具寻找潜在的 XSS 漏洞</li>
-</ul>
-<p>可以手动拼接字符串<code>jaVasCript:/*-/*</code>/<em>`/</em>‘/<em>“/**/(/</em> */oNcliCk=alert() )//%0D%0A%0d%0a//&lt;/stYle/&lt;/titLe/&lt;/teXtarEa/&lt;/scRipt/–!&gt;\x3csVg/&lt;sVg/oNloAd=alert()//&gt;\x3e`去检查</p>
-<h2 id="position-fixed"><a href="#position-fixed" class="headerlink" title="position:fixed"></a>position:fixed</h2><p>position:fixed 的元素将相对于屏幕视口（viewport）的位置来指定其位置。并且元素的位置在屏幕滚动时不会改变。<br><strong>但是当元素祖先的 transform 属性非 none 时，容器由视口改为该祖先。</strong><br>设置为position:fixed的元素，如果存在transform为非none的元素祖先时，会相对该元素去进行定位。因为transform设置为非none时，会创建一个堆叠上下文和包含块，会影响子元素的固定定位。<br>不是所有的创建新的堆叠上下文都被影响fixed定位，在最新的Chrome浏览器下，只有下面3种还会影响：</p>
-<ul>
-<li>设置了 transform-style: preserve-3d 的元素</li>
-<li>perspective 值不为 none 的元素</li>
-<li>在 will-change 中指定了任意 CSS 属性<br>但不同浏览器表现不同，所以要具体问题具体分析。</li>
-</ul>
-<h2 id="vm-wh"><a href="#vm-wh" class="headerlink" title="vm wh"></a>vm wh</h2><p>显示器宽度: screen.width<br>浏览器宽度: window.outerWidth<br>网页宽度: window.innerWidth</p>
-<p>wm wh是相对与网页的宽高的，网页的宽为100vm，网页的高度为100vh</p>
-
+        
       
 
       
-    </div>
+    </li></ol></div>
     <div class="article-info article-info-index">
       
       
@@ -238,61 +345,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2019/03/18/reading-record/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/18/hello-world/">Hello World</a>
-    </h1>
-  
-
-        
-        <a href="/2019/03/18/hello-world/" class="archive-article-date">
-  	<time datetime="2019-03-18T02:27:14.362Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/18/hello-world/">展开全文 >></a>
         </p>
       
 
@@ -337,10 +389,6 @@
 <li><a href="https://juejin.im/post/5c7e541b6fb9a049e06415a5?utm_source=gold_browser_extension" target="_blank" rel="noopener">如何在 Web 关闭页面时发送 Ajax 请求</a></li>
 <li><a href="https://juejin.im/post/5b694b5de51d4519700fa56a" target="_blank" rel="noopener">[译] 使用 Web Beacon API 记录活动</a></li>
 </ul>
-<p>post请求<br>content-type:</p>
-<h3 id="application-json"><a href="#application-json" class="headerlink" title="application/json"></a>application/json</h3><p>Request Payload:<br>{layouts: [“1”, “2”, “5”]}</p>
-<h3 id="application-x-www-form-urlencoded"><a href="#application-x-www-form-urlencoded" class="headerlink" title="application/x-www-form-urlencoded"></a>application/x-www-form-urlencoded</h3><p>Query String Parameters<br>sourceUuid:np_c3sEKMgU3Xau_Tl0fmsqyReIdKH9OXQpby_FSNhz__ppcy0EKQ<br>articleUuid:np_eXoyZJwfsX-q8j5OLm0pyEbYGK0<br>forceFollow:0<br>isContinue:0<br>forceAutoPurchase:1</p>
-<h3 id="multipart-form-data"><a href="#multipart-form-data" class="headerlink" title="multipart/form-data"></a>multipart/form-data</h3><p>使用表单上传文件时，必须让 form 的 enctype 等于这个值。<br>Content-Type: multipart/form-data; boundary=—-WebKitFormBoundaryBJIFBCE2CA2Fwbyl</p>
 
       
 
@@ -354,6 +402,85 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2019/03/07/打点实践总结/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-react-diff算法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/02/react-diff算法/">react-diff算法</a>
+    </h1>
+  
+
+        
+        <a href="/2019/03/02/react-diff算法/" class="archive-article-date">
+  	<time datetime="2019-03-02T02:19:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="react-diff算法"><a href="#react-diff算法" class="headerlink" title="react diff算法"></a>react diff算法</h2><p>React diff 会帮助我们计算出<strong>Virtual DOM</strong>中真正变化的部分，并只针对该部分进行实际 DOM 操作，而非重新渲染整个页面，从而保证了每次操作更新后页面的高效渲染，因此 Virtual DOM 与 diff 是保证 React 性能口碑的幕后推手。</p>
+<h3 id="React-diff-前提"><a href="#React-diff-前提" class="headerlink" title="React diff 前提"></a>React diff 前提</h3><ul>
+<li>Web UI中DOM节点跨层级的移动操作特别少，可以忽略不计。-&gt; 所以，只比较同一层级的。tree diff</li>
+<li>拥有相同类的两个组件会生成相似的树结构，反之生成不同的树结构。-&gt; component diff</li>
+<li>对于同一层级的子节点，添加唯一key值区分。-&gt; element diff<br>React将O(n^3) 复杂度的问题转换成 O(n) 。</li>
+</ul>
+<h3 id="tree-diff"><a href="#tree-diff" class="headerlink" title="tree diff"></a>tree diff</h3><p>通过updateDepth对Virtual DOM 树进行层级控制，只会对<strong>同一层级</strong>下的同一父节点的子节点进行比较。<br>当出现跨层级的DOM移动操作时，会新建节点，不会去移动，所以React建议不进行DOM节点跨层级的操作。</p>
+<h3 id="component-diff"><a href="#component-diff" class="headerlink" title="component diff"></a>component diff</h3><ul>
+<li>如果是同一类型的组件，按照原策略继续比较 virtual DOM tree。</li>
+<li>如果不是，则将该组件判断为 dirty component，从而替换整个组件下的所有子节点。</li>
+<li>对于同一类型的组件，允许用户通过shouldComponentUpdate()来判断组件是否diff，以及PureComponent的shouldComponentUpdate的shallowEqual</li>
+</ul>
+<h3 id="element-diff"><a href="#element-diff" class="headerlink" title="element diff"></a>element diff</h3><p>对于同一层级的节点，React diff提供了三种节点操作：INSERT_MARKUP（插入）、MOVE_EXISTING（移动）和 REMOVE_NODE（删除）。<br>使用<strong>设置唯一key</strong>的方式进行优化，首先对新集合的点进行遍历，对于已经存在的点，判断当前节点在老集合中的位置child._mountIndex是否小于lastIndex(表示访问过的节点在老集合中最右的位置)，若小于，说明该节点在新集合中的位置靠后，则移动该节点；反之，则不动。<br>对于不存在的点，则创建该节点。<br>新集合的点diff遍历完成后，需要再遍历老集合，删去老集合中存在但新集合中不存在的点。<br>PS: 在遍历之前，会先更新节点的子元素和创建新元素，最终返回的就是待遍历的新集合</p>
+<p>##REFs:<br><a href="https://zhuanlan.zhihu.com/p/20346379" target="_blank" rel="noopener">React 源码剖析系列 － 不可思议的 react diff</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">diff</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/03/02/react-diff算法/">展开全文 >></a>
         </p>
       
 
@@ -394,59 +521,26 @@
         <h3 id="什么是JSX-——浏览器是如何识别它的？"><a href="#什么是JSX-——浏览器是如何识别它的？" class="headerlink" title="什么是JSX?——浏览器是如何识别它的？"></a>什么是JSX?——浏览器是如何识别它的？</h3><p>JSX是facebook普及的一种标记语言，通过babel/TSC等工具会编译为<code>React.createElement</code>function。所以在React每个组件中，虽然没有显式用到React，但都需要<code>import React from &#39;react&#39;</code>。</p>
 <h4 id="JSX是如何区分React-Component和HTML元素的？"><a href="#JSX是如何区分React-Component和HTML元素的？" class="headerlink" title="JSX是如何区分React Component和HTML元素的？"></a>JSX是如何区分React Component和HTML元素的？</h4><p>通过元素首字母的大小写，如果首字母大写，则认为是React组件，小写的话则会被认为是HTML元素。可以在<a href="https://babeljs.io/repl/#?presets=react&amp;code_lz=GYVwdgxgLglg9mABACwKYBt1wBQEpEDeAUIogE6pQhlIA8AJjAG4B8AEhlogO5xnr0AhLQD0jVgG4iAXyJA" target="_blank" rel="noopener">online Babel compiler</a>中试一下。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>Hello world!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// after babel compiler</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> React.createElement(</span><br><span class="line">    <span class="string">"div"</span>,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    <span class="string">"Hello world!"</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>Hello world!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// after babel compiler</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> React.createElement(</span><br><span class="line">    Div,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    <span class="string">"Hello world!"</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>此外，把一个组件赋给<code>this.component</code>并且写<code>&lt;this.component /&gt;</code>也会起作用。</p>
-<h3 id="react16生命周期"><a href="#react16生命周期" class="headerlink" title="react16生命周期"></a>react16生命周期</h3><h4 id="Mounting"><a href="#Mounting" class="headerlink" title="Mounting"></a>Mounting</h4><ul>
-<li>constructor()</li>
-<li>static getDerivedStateFromProps()</li>
-<li>render()</li>
-<li>componentDidMount</li>
-</ul>
-<p>不建议使用<code>UNSAFE_componentWillMount()</code></p>
-<h4 id="Updating"><a href="#Updating" class="headerlink" title="Updating"></a>Updating</h4><ul>
-<li>static getDerivedStateFromProps()</li>
-<li>shouldComponentUpdate()</li>
-<li>render()</li>
-<li>getSnapshotBeforeUpdate()</li>
-<li>componentDidUpdate()</li>
-</ul>
-<p>不建议使用<code>UNSAFE_componentWillReceiveProps()</code>和<code>UNSAFE_componentWillUpdate()</code><br><code>UNSAFE_componentWillReceiveProps()</code>经常会带来bug和不一致的问题。</p>
-<h4 id="Unmounting"><a href="#Unmounting" class="headerlink" title="Unmounting"></a>Unmounting</h4><ul>
-<li>componentWillUnmount()</li>
-</ul>
-<p><code>getDerivedStateFromProps(props, state)</code>每次render之前都会被触发，与<code>componentWillReceiveProps</code>只在父组件rerender时会触发不一样。此外，<code>getDerivedStateFromProps</code>方法不建议经常使用，使用前想一想是否有替代方案。</p>
-<h3 id="加分题：数据获取为什么用-componentDidMount-而不是-constructor？"><a href="#加分题：数据获取为什么用-componentDidMount-而不是-constructor？" class="headerlink" title="加分题：数据获取为什么用 componentDidMount 而不是 constructor？"></a>加分题：数据获取为什么用 componentDidMount 而不是 constructor？</h3><p>你希望听到的两个原因会是：“在渲染发生之前数据不会存在” —— 虽然不是主要原因，但它向您显示该人员了解组件的处理方式; “在 React Fiber 中使用新的异步渲染……” —— 有人一直在努力学习。</p>
-<ul>
-<li>r1: SSR模式下，componentWillMount在server端也是会被调用的，内容返回到client端后，componentWillMount会被第二次调用，如果在componentWillMount中处理数据获取则会被调用两次。</li>
-<li>r2: 在componentWillMount中调用setState不会触发rerender，所以一般不会被用来获取数据。</li>
-<li>r3: React16之后采用了Fiber架构，类似ComponentWillMount的生命周期钩子都有可能执行多次，所以不在这些生命周期中做有副作用的操作，比如请求数据。</li>
-<li>r4: constructor用来初始化组件，作用应该保持纯粹，不应该引入数据获取这种有副作用的操作。</li>
-</ul>
-<h4 id="react-fiber纤程"><a href="#react-fiber纤程" class="headerlink" title="react fiber纤程"></a>react fiber纤程</h4><p>fiber是纤程颗粒化的概念，一个线程可以包含多个Fiber，主要是对react更新机制的优化。React16之前的版本，更新组件会一直占用主线程，如果组件树过大，则可能会导致浏览器失去响应。在React16中加入的fiber可以将同步任务拆解，每次执行完一小片后，都会把控制权交还给react负责任务调度的模块，如果有优先级更高的任务，就先执行高优先级的任务。</p>
-<h5 id="拆什么"><a href="#拆什么" class="headerlink" title="拆什么"></a>拆什么</h5><p>首先，看React的渲染，包括两个阶段：调度阶段(reconciliation)和渲染阶段(commit)。</p>
-<ul>
-<li>调度阶段react根据数据更新virtual DOM，再运用diff算法找到需要VDOM change。这一部分的工作是可以拆分的。</li>
-<li>渲染阶段根据计算出的所有diff去一次性更新真实的DOM。<br>组件比较庞大时，diff运算会比较耗时，不可控，所以需要拆分的是调度阶段。</li>
-</ul>
-<h5 id="怎么拆"><a href="#怎么拆" class="headerlink" title="怎么拆"></a>怎么拆</h5><p>fiber tree的部分结构如下所示，将简单的数结构，变成了基于单链表的树结构。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    alternate: Fiber|null, //在fiber更新时克隆出的镜像fiber，对fiber的修改会标记在这个fiber上</span><br><span class="line">    nextEffect: Fiber | null, // 单链表结构，方便遍历 Fiber Tree 上有副作用的节点</span><br><span class="line">    pendingWorkPriority: PriorityLevel, // 标记子树上待更新任务的优先级</span><br><span class="line"></span><br><span class="line">    stateNode: any, // 管理 instance 自身的特性</span><br><span class="line">    return: Fiber|null, // 指向 Fiber Tree 中的父节点</span><br><span class="line">    child: Fiber|null, // 指向第一个子节点</span><br><span class="line">    sibling: Fiber|null, // 指向兄弟节点</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h5 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h5><p>因为是单链表(A → B → C)的结构，所以在每次执行到某个节点(A → B)被中断后，下次可以从该节点(B → C)接着执行。<br>requestIdleCallback会让一个低优先级的任务在空闲期被调用，而requestAnimationFrame会让一个高优先级的任务在下一个栈帧被调用，从而保证了主线程按照优先级执行 fiber 单元。</p>
-<blockquote>
-<p>优先级顺序为：文本框输入 &gt; 本次调度结束需完成的任务 &gt; 动画过渡 &gt; 交互反馈 &gt; 数据更新 &gt; 不会显示但以防将来会显示的任务。</p>
-</blockquote>
-<p>因为react fiber机制，一个任务很可能执行到一半就被其他优先级更高的任务所替代，或者因为时间原因而被终止。当再次执行这个任务时，是从头开始执行一遍，就会导致组件的某些 will 生命周期可能被多次调用而影响性能。</p>
-<p>REFs:</p>
-<ul>
-<li><a href="https://juejin.im/post/5bca74cfe51d450e9163351b" target="_blank" rel="noopener">[译]以面试官的角度来看React工作面试</a></li>
-<li><a href="https://juejin.im/post/5be969656fb9a049ad76931f" target="_blank" rel="noopener">浅析 React Fiber</a></li>
-<li><a href="https://tech.youzan.com/react-fiber/" target="_blank" rel="noopener">浅谈React 16中的Fiber机制</a></li>
-</ul>
-
+<p>此外，把一个组件赋给<code>this.component</code>并且写<code>&lt;this.component /&gt;</code>也会起作用。<br>
+        
       
 
       
-    </div>
+    </p></div>
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -776,122 +870,6 @@
 
 
   
-    <article id="post-函数式编程的应用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/24/函数式编程的应用/">函数式编程的应用</a>
-    </h1>
-  
-
-        
-        <a href="/2018/08/24/函数式编程的应用/" class="archive-article-date">
-  	<time datetime="2018-08-24T01:38:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="react的render方法"><a href="#react的render方法" class="headerlink" title="react的render方法"></a>react的render方法</h3><p>render()函数应该纯净，意味着其不应该改变组件的状态，其每次调用都应返回相同的结果，同时不直接和浏览器交互。若需要和浏览器交互，将任务放在componentDidMount()阶段或其他的生命周期方法。保持render() 方法纯净使得组件更容易思考。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/08/24/函数式编程的应用/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-菜鸟优化之路" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/08/菜鸟优化之路/">菜鸟优化之路</a>
-    </h1>
-  
-
-        
-        <a href="/2018/08/08/菜鸟优化之路/" class="archive-article-date">
-  	<time datetime="2018-08-08T08:21:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="DeviceTiming工具"><a href="#DeviceTiming工具" class="headerlink" title="DeviceTiming工具"></a>DeviceTiming工具</h1><p>最近了解到<a href="https://github.com/danielmendel/DeviceTiming" target="_blank" rel="noopener">DeviceTiming</a>工具，可以帮助我们监测js在不同设备上的解析和执行时间，运行环境是在开发环境下。<br>搬运下git上的安装、运行命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//安装</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/etsy/DeviceTiming.git</span><br><span class="line"><span class="built_in">cd</span> DeviceTiming</span><br><span class="line">npm install</span><br><span class="line"></span><br><span class="line">//运行</span><br><span class="line">./devicetiming server /path/to/your/js</span><br></pre></td></tr></table></figure></p>
-<p><strong> 注意：devicetiming会改变被监控的js，要先备份好，不过有git记录的就不用担心了 </strong><br>运行了之后，用不同的设备访问开发环境下的站点，最后reload<code>http://localhost:8537/</code>页面，可以看到不同设备对js的解析和执行时间，如下图所示：<br><img src="/image/deviceTiming.png" width="1200px"><br>可以看到不同设备的ua信息，每个js的parse和exec时间。从上到下，三个设备分别是微信开发者工具、iphone、安卓机。从数据上看，安卓机parse和exec花费的时间最久，花费时间越长，用户的体验就会越差。<br>该站点面向的用户中安卓机份额更高，<code>how to optimize</code>显得比较重要。</p>
-<h1 id="how-to-optimize"><a href="#how-to-optimize" class="headerlink" title="how to optimize"></a>how to optimize</h1><h2 id="尾部调用优化（TCO）"><a href="#尾部调用优化（TCO）" class="headerlink" title="尾部调用优化（TCO）"></a>尾部调用优化（TCO）</h2><p>尾调用概念就是在函数最后一步调用其他函数。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">bar</span>(<span class="params">y</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> foo( y + <span class="number">1</span> );    <span class="comment">// 尾部调用</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">baz</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> + bar( <span class="number">40</span> );   <span class="comment">// 不是尾部调用</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">baz();                      <span class="comment">// 42</span></span><br></pre></td></tr></table></figure></p>
-<p><code>bar</code>函数的最后一步是调用<code>foo( y + 1 )</code>，属于尾部调用；而在<code>baz</code>函数中，调用完<code>bar(40)</code>后，还有执行<code>+ 1</code>的操作，就不属于尾部调用了。<br>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">前端性能优化</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/08/08/菜鸟优化之路/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -1009,11 +987,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1021,11 +999,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color4">es7</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es7</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1041,15 +1019,23 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">npm包</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">组件开发</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1073,11 +1059,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1089,11 +1079,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">

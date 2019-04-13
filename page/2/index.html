@@ -158,6 +158,122 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-函数式编程的应用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/24/函数式编程的应用/">函数式编程的应用</a>
+    </h1>
+  
+
+        
+        <a href="/2018/08/24/函数式编程的应用/" class="archive-article-date">
+  	<time datetime="2018-08-24T01:38:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="react的render方法"><a href="#react的render方法" class="headerlink" title="react的render方法"></a>react的render方法</h3><p>render()函数应该纯净，意味着其不应该改变组件的状态，其每次调用都应返回相同的结果，同时不直接和浏览器交互。若需要和浏览器交互，将任务放在componentDidMount()阶段或其他的生命周期方法。保持render() 方法纯净使得组件更容易思考。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/08/24/函数式编程的应用/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-菜鸟优化之路" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/08/菜鸟优化之路/">菜鸟优化之路</a>
+    </h1>
+  
+
+        
+        <a href="/2018/08/08/菜鸟优化之路/" class="archive-article-date">
+  	<time datetime="2018-08-08T08:21:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="DeviceTiming工具"><a href="#DeviceTiming工具" class="headerlink" title="DeviceTiming工具"></a>DeviceTiming工具</h1><p>最近了解到<a href="https://github.com/danielmendel/DeviceTiming" target="_blank" rel="noopener">DeviceTiming</a>工具，可以帮助我们监测js在不同设备上的解析和执行时间，运行环境是在开发环境下。<br>搬运下git上的安装、运行命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//安装</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/etsy/DeviceTiming.git</span><br><span class="line"><span class="built_in">cd</span> DeviceTiming</span><br><span class="line">npm install</span><br><span class="line"></span><br><span class="line">//运行</span><br><span class="line">./devicetiming server /path/to/your/js</span><br></pre></td></tr></table></figure></p>
+<p><strong> 注意：devicetiming会改变被监控的js，要先备份好，不过有git记录的就不用担心了 </strong><br>运行了之后，用不同的设备访问开发环境下的站点，最后reload<code>http://localhost:8537/</code>页面，可以看到不同设备对js的解析和执行时间，如下图所示：<br><img src="/image/deviceTiming.png" width="1200px"><br>可以看到不同设备的ua信息，每个js的parse和exec时间。从上到下，三个设备分别是微信开发者工具、iphone、安卓机。从数据上看，安卓机parse和exec花费的时间最久，花费时间越长，用户的体验就会越差。<br>该站点面向的用户中安卓机份额更高，<code>how to optimize</code>显得比较重要。</p>
+<h1 id="how-to-optimize"><a href="#how-to-optimize" class="headerlink" title="how to optimize"></a>how to optimize</h1><h2 id="尾部调用优化（TCO）"><a href="#尾部调用优化（TCO）" class="headerlink" title="尾部调用优化（TCO）"></a>尾部调用优化（TCO）</h2><p>尾调用概念就是在函数最后一步调用其他函数。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">bar</span>(<span class="params">y</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> foo( y + <span class="number">1</span> );    <span class="comment">// 尾部调用</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">baz</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> + bar( <span class="number">40</span> );   <span class="comment">// 不是尾部调用</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">baz();                      <span class="comment">// 42</span></span><br></pre></td></tr></table></figure></p>
+<p><code>bar</code>函数的最后一步是调用<code>foo( y + 1 )</code>，属于尾部调用；而在<code>baz</code>函数中，调用完<code>bar(40)</code>后，还有执行<code>+ 1</code>的操作，就不属于尾部调用了。<br>
+        
+      
+
+      
+    </p></div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">前端性能优化</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/08/08/菜鸟优化之路/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-JS函数式编程笔记(下)" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -876,150 +992,6 @@
 
 
   
-    <article id="post-继承-原型链" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/10/继承-原型链/">继承&amp;原型链</a>
-    </h1>
-  
-
-        
-        <a href="/2018/04/10/继承-原型链/" class="archive-article-date">
-  	<time datetime="2018-04-10T09:14:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="基于proto和prototype的原型链"><a href="#基于proto和prototype的原型链" class="headerlink" title="基于proto和prototype的原型链"></a>基于<strong>proto</strong>和prototype的原型链</h1><p>关于<code>__proto__</code>属性，MDN上的解释如下：</p>
-<blockquote>
-<p>The <strong>proto</strong> property of Object.prototype is an accessor property (a getter function and a setter function) that exposes the internal [[Prototype]] (either an object or null) of the object through which it is accessed.</p>
-</blockquote>
-<p>即是说，<code>__proto__</code> 属性指向了实例对象的原型Constructor.prototype。</p>
-<p>首先用一张图来总结<code>__proto__</code>和<code>prototype</code>的关系：<br><img src="/image/jsobj_full.jpg" width="600px"></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">继承</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">原型链</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/04/10/继承-原型链/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-npm转盘组件开发" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/09/npm转盘组件开发/">npm转盘组件开发</a>
-    </h1>
-  
-
-        
-        <a href="/2018/02/09/npm转盘组件开发/" class="archive-article-date">
-  	<time datetime="2018-02-09T06:39:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-02-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>在开始开发之前，首先要准备好node环境和npm账户，nodeJS基本都有安装好，要做的就是注册npm：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ npm adduser</span><br><span class="line">Username: your name</span><br><span class="line">Password: your password</span><br><span class="line">Email: (this IS public) your email</span><br></pre></td></tr></table></figure></p>
-<p>查询当前账号或者登陆别的用户：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm whoami</span><br><span class="line">$ npm login</span><br></pre></td></tr></table></figure></p>
-<h3 id="包管理工具lerna"><a href="#包管理工具lerna" class="headerlink" title="包管理工具lerna"></a>包管理工具lerna</h3><p>项目组采用了<a href="https://github.com/lerna/lerna" target="_blank" rel="noopener">lerna</a>包管理工具，可以在一个仓库下管理多个npm包，基于monorepo理念。</p>
-<blockquote>
-<p>Monorepo is a unified source code repository used by an organisation to host as much of its code as possible.<br>Monorepo 它是一种管理 organisation 代码的方式，在这种方式下会摒弃原先一个 module 一个 repo 的方式，取而代之的是把所有的 modules 都放在一个 repo 内来管理。</p>
-</blockquote>
-<p>lerna安装和初始化<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install lerna -g</span><br><span class="line">lerna init</span><br></pre></td></tr></table></figure></p>
-<p>初始化后，目录里面会自动生成/packages、lerna.json和package.json。<br>执行<code>lerna bootstrap</code>会自动为项目进行npm install和npm link操作，npm的作用是边开发边试用，具体使用参考<a href="http://javascript.ruanyifeng.com/nodejs/npm.html#toc18" target="_blank" rel="noopener">npm link</a>。<br>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">npm包</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">组件开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/02/09/npm转盘组件开发/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
@@ -1137,11 +1109,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1149,11 +1121,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color4">es7</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es7</a>
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1169,15 +1141,23 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">npm包</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">组件开发</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1201,11 +1181,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1217,11 +1201,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">
