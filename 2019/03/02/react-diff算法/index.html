@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="lying fox">
 <meta property="og:description" content="react diff算法React diff 会帮助我们计算出Virtual DOM中真正变化的部分，并只针对该部分进行实际 DOM 操作，而非重新渲染整个页面，从而保证了每次操作更新后页面的高效渲染，因此 Virtual DOM 与 diff 是保证 React 性能口碑的幕后推手。 React diff 前提 Web UI中DOM节点跨层级的移动操作特别少，可以忽略不计。-&amp;gt; 所以，只比">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-13T15:31:17.997Z">
+<meta property="og:updated_time" content="2019-04-13T16:09:23.317Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="react-diff算法">
 <meta name="twitter:description" content="react diff算法React diff 会帮助我们计算出Virtual DOM中真正变化的部分，并只针对该部分进行实际 DOM 操作，而非重新渲染整个页面，从而保证了每次操作更新后页面的高效渲染，因此 Virtual DOM 与 diff 是保证 React 性能口碑的幕后推手。 React diff 前提 Web UI中DOM节点跨层级的移动操作特别少，可以忽略不计。-&amp;gt; 所以，只比">
@@ -185,7 +185,7 @@
 <h3 id="React-diff-前提"><a href="#React-diff-前提" class="headerlink" title="React diff 前提"></a>React diff 前提</h3><ul>
 <li>Web UI中DOM节点跨层级的移动操作特别少，可以忽略不计。-&gt; 所以，只比较同一层级的。tree diff</li>
 <li>拥有相同类的两个组件会生成相似的树结构，反之生成不同的树结构。-&gt; component diff</li>
-<li>对于同一层级的子节点，添加唯一key值区分。-&gt; element diff<br>React将O(n^3) 复杂度的问题转换成 O(n) 。</li>
+<li>对于同一层级的子节点，添加唯一key值区分。-&gt; element diff<br>React基于上述三大策略，将O(n^3) 复杂度的问题转换成 O(n) 。</li>
 </ul>
 <h3 id="tree-diff"><a href="#tree-diff" class="headerlink" title="tree diff"></a>tree diff</h3><p>通过updateDepth对Virtual DOM 树进行层级控制，只会对<strong>同一层级</strong>下的同一父节点的子节点进行比较。<br>当出现跨层级的DOM移动操作时，会新建节点，不会去移动，所以React建议不进行DOM节点跨层级的操作。</p>
 <h3 id="component-diff"><a href="#component-diff" class="headerlink" title="component diff"></a>component diff</h3><ul>
@@ -418,15 +418,15 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -446,19 +446,19 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">readonly</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es7</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -474,23 +474,15 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">npm包</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">组件开发</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -503,6 +495,14 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">require</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -530,11 +530,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
+                <a href="javascript:void(0)" class="js-tag color5">sass</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">sass</a>
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">

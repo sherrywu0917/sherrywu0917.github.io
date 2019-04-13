@@ -226,6 +226,69 @@
 
 
   
+    <article id="post-优化之路" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/02/优化之路/">前端优化-蹒跚学步</a>
+    </h1>
+  
+
+        
+        <a href="/2019/04/02/优化之路/" class="archive-article-date">
+  	<time datetime="2019-04-02T01:38:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h1><p>项目是基于React开发，webpack打包的多页面h5应用，其中部分页面又是基于React-router的SPA。开发的过程中，也一直在尝试对项目进行优化，这儿主要记录了对<code>代码分片</code>、<code>持久化缓存</code>和<code>图片优化</code>的处理。</p>
+<p>优化之路漫漫，蹒跚而来。</p>
+<hr>
+<h1 id="动态加载组件"><a href="#动态加载组件" class="headerlink" title="动态加载组件"></a>动态加载组件</h1><h2 id="Code-splitting-代码分片"><a href="#Code-splitting-代码分片" class="headerlink" title="Code splitting(代码分片)"></a>Code splitting(代码分片)</h2><p>当前端代码越来越复杂，代码体积越来越大时，需要考虑对加载的资源进行细粒度的分割，按需加载。<br>webpack支持两种语法实现动态地加载模块：</p>
+<ul>
+<li><p><a href="https://webpack.js.org/api/module-methods/#require-ensure" target="_blank" rel="noopener">require.ensure</a><br>给定 dependencies 参数，将其对应的文件拆分到一个单独的 bundle 中，此 bundle 会被异步加载。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>.ensure(dependencies: <span class="built_in">String</span>[], <span class="attr">callback</span>: <span class="function"><span class="keyword">function</span>(<span class="params">require</span>), <span class="title">chunkName</span>: <span class="title">String</span>)</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><a href="https://webpack.js.org/api/module-methods/#import-" target="_blank" rel="noopener">import</a><br>调用 import() 之处，被作为分离的模块起点，意思是，被请求的模块和它引用的所有子模块，会分离到一个单独的 chunk 中。会返回一个Promise对象。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span>(</span><br><span class="line">  <span class="comment">/* webpackChunkName: "my-chunk-name" */</span></span><br><span class="line">  <span class="comment">/* webpackMode: "lazy" (default)*/</span></span><br><span class="line">  <span class="string">'path/to/module'</span>) -&gt; <span class="built_in">Promise</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><code>webpackChunkName</code>用来设置chunk的名字；<code>webpackMode</code>默认值是<code>lazy</code>，还有<code>lazy-once</code>、<code>eager</code>、<code>weak</code>。按需加载的默认加载形式是async。<br>
+        
+      
+
+      
+    </p></div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/04/02/优化之路/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-表单和post参数总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -317,7 +380,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>beacon 请求方法均为POST，且不支持修改<br>兼容性 <a href="https://caniuse.com/#search=beacon" target="_blank" rel="noopener">https://caniuse.com/#search=beacon</a></p>
+        <p>//TODO<br>beacon 请求方法均为POST，且不支持修改<br>兼容性 <a href="https://caniuse.com/#search=beacon" target="_blank" rel="noopener">https://caniuse.com/#search=beacon</a></p>
 <ul>
 <li>polyfill <a href="https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js" target="_blank" rel="noopener">https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js</a></li>
 <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon</a></li>
@@ -378,7 +441,7 @@
 <h3 id="React-diff-前提"><a href="#React-diff-前提" class="headerlink" title="React diff 前提"></a>React diff 前提</h3><ul>
 <li>Web UI中DOM节点跨层级的移动操作特别少，可以忽略不计。-&gt; 所以，只比较同一层级的。tree diff</li>
 <li>拥有相同类的两个组件会生成相似的树结构，反之生成不同的树结构。-&gt; component diff</li>
-<li>对于同一层级的子节点，添加唯一key值区分。-&gt; element diff<br>React将O(n^3) 复杂度的问题转换成 O(n) 。</li>
+<li>对于同一层级的子节点，添加唯一key值区分。-&gt; element diff<br>React基于上述三大策略，将O(n^3) 复杂度的问题转换成 O(n) 。</li>
 </ul>
 <h3 id="tree-diff"><a href="#tree-diff" class="headerlink" title="tree diff"></a>tree diff</h3><p>通过updateDepth对Virtual DOM 树进行层级控制，只会对<strong>同一层级</strong>下的同一父节点的子节点进行比较。<br>当出现跨层级的DOM移动操作时，会新建节点，不会去移动，所以React建议不进行DOM节点跨层级的操作。</p>
 <h3 id="component-diff"><a href="#component-diff" class="headerlink" title="component diff"></a>component diff</h3><ul>
@@ -583,69 +646,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2019/01/28/lottie实践/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-优化之路" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/12/24/优化之路/">前端优化-蹒跚学步</a>
-    </h1>
-  
-
-        
-        <a href="/2018/12/24/优化之路/" class="archive-article-date">
-  	<time datetime="2018-12-24T01:38:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h1><p>项目是基于React开发，webpack打包的多页面h5应用，其中部分页面又是基于React-router的SPA。开发的过程中，也一直在尝试对项目进行优化，这儿主要记录了对<code>代码分片</code>、<code>持久化缓存</code>和<code>图片优化</code>的处理。</p>
-<p>优化之路漫漫，蹒跚而来。</p>
-<hr>
-<h1 id="动态加载组件"><a href="#动态加载组件" class="headerlink" title="动态加载组件"></a>动态加载组件</h1><h2 id="Code-splitting-代码分片"><a href="#Code-splitting-代码分片" class="headerlink" title="Code splitting(代码分片)"></a>Code splitting(代码分片)</h2><p>当前端代码越来越复杂，代码体积越来越大时，需要考虑对加载的资源进行细粒度的分割，按需加载。<br>webpack支持两种语法实现动态地加载模块：</p>
-<ul>
-<li><p><a href="https://webpack.js.org/api/module-methods/#require-ensure" target="_blank" rel="noopener">require.ensure</a><br>给定 dependencies 参数，将其对应的文件拆分到一个单独的 bundle 中，此 bundle 会被异步加载。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>.ensure(dependencies: <span class="built_in">String</span>[], <span class="attr">callback</span>: <span class="function"><span class="keyword">function</span>(<span class="params">require</span>), <span class="title">chunkName</span>: <span class="title">String</span>)</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p><a href="https://webpack.js.org/api/module-methods/#import-" target="_blank" rel="noopener">import</a><br>调用 import() 之处，被作为分离的模块起点，意思是，被请求的模块和它引用的所有子模块，会分离到一个单独的 chunk 中。会返回一个Promise对象。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span>(</span><br><span class="line">  <span class="comment">/* webpackChunkName: "my-chunk-name" */</span></span><br><span class="line">  <span class="comment">/* webpackMode: "lazy" (default)*/</span></span><br><span class="line">  <span class="string">'path/to/module'</span>) -&gt; <span class="built_in">Promise</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p><code>webpackChunkName</code>用来设置chunk的名字；<code>webpackMode</code>默认值是<code>lazy</code>，还有<code>lazy-once</code>、<code>eager</code>、<code>weak</code>。按需加载的默认加载形式是async。<br>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/12/24/优化之路/">展开全文 >></a>
         </p>
       
 
@@ -949,15 +949,15 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -977,19 +977,19 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">readonly</a>
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es7</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1005,23 +1005,15 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">npm包</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">组件开发</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1034,6 +1026,14 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">require</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1061,11 +1061,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
+                <a href="javascript:void(0)" class="js-tag color5">sass</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">sass</a>
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">
