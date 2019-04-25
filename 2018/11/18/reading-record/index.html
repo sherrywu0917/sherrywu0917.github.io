@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="lying fox">
 <meta property="og:description" content="你的Tree-Shaking并没什么卵用 Tree-Shaking的原理  ES6的模块引入是静态分析的，故而可以在编译时正确判断到底加载了什么代码。 分析程序流，判断哪些变量未被使用、引用，进而删除此代码   但现实比较骨感，es6的代码经过babel和webpack编译打包后，产生的副作用(可能会改变外部变量)导致多余的代码并未被删掉。babel6在编译的时候，会调用_createClass方">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-13T16:22:34.061Z">
+<meta property="og:updated_time" content="2019-04-25T15:04:27.187Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="reading-record">
 <meta name="twitter:description" content="你的Tree-Shaking并没什么卵用 Tree-Shaking的原理  ES6的模块引入是静态分析的，故而可以在编译时正确判断到底加载了什么代码。 分析程序流，判断哪些变量未被使用、引用，进而删除此代码   但现实比较骨感，es6的代码经过babel和webpack编译打包后，产生的副作用(可能会改变外部变量)导致多余的代码并未被删掉。babel6在编译的时候，会调用_createClass方">
@@ -344,7 +344,12 @@
 <li>[].<strong>proto</strong> == Array.prototype</li>
 <li>[].constructor == Array</li>
 <li>Object.prototype.toString.call([]) == ‘[object Array]’</li>
-<li>Array.isArray([])<h4 id="类数组-vs-数组"><a href="#类数组-vs-数组" class="headerlink" title="类数组 vs 数组"></a>类数组 vs 数组</h4>类数组有arguments、Dom对象列表(NodeList)、带length属性的对象（如：{1: ‘mon’, 3: ‘wed’, length: 4}）<br><strong>类数组转成数组</strong></li>
+<li>Array.isArray([])</li>
+</ul>
+<p>对于自定义的类A，修改了A.prototype后，修改原型之前创建的实例的原型链不会发生改变。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> a = <span class="keyword">new</span> A();</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">A.prototype = B.prototype;</span><br><span class="line">a <span class="keyword">instanceof</span> A <span class="comment">//false</span></span><br><span class="line">a.__proto__ == A.prototype <span class="comment">//false</span></span><br></pre></td></tr></table></figure></p>
+<p>因为instanceof是在原型链上查找的，所以instanceof和<strong>proto</strong>判断实例的方式都是false</p>
+<h4 id="类数组-vs-数组"><a href="#类数组-vs-数组" class="headerlink" title="类数组 vs 数组"></a>类数组 vs 数组</h4><p>类数组有arguments、Dom对象列表(NodeList)、带length属性的对象（如：{1: ‘mon’, 3: ‘wed’, length: 4}）<br><strong>类数组转成数组</strong></p>
+<ul>
 <li>Array.prototype.slice.call(arrayLike)</li>
 <li>[…arrayLike]</li>
 <li>Array.from(arrayLike)<br>转为数组后就可以使用数组众多的方法，例如map、filter、slice、join、reduce、sort等等。</li>
@@ -496,7 +501,91 @@
 </ul>
 </li>
 </ul>
-<h3 id="react问题"><a href="#react问题" class="headerlink" title="react问题"></a>react问题</h3>
+<h3 id="promise"><a href="#promise" class="headerlink" title="promise"></a>promise</h3><h4 id="错误catch问题"><a href="#错误catch问题" class="headerlink" title="错误catch问题"></a>错误catch问题</h4><ol>
+<li>将原本的callback形式的函数Promise化，然后通过promise.then(xxx).catch()去捕获异步操作中抛出的错误。</li>
+<li>在使用try/catch的时候，要配合async/await去使用，因为这样能保证异步函数的同步执行，这样能在try/catch方法中捕获异步函数中抛出的错误。</li>
+</ol>
+<h4 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h4><ul>
+<li>实例方法： then, catch, finally</li>
+<li>静态方法： all, race, resolve, reject<ul>
+<li>Promise.resolve([xxx]) 接收的参数可以是Promise实例、thenable对象、原始值、空，可以用来实现async函数<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">spawn</span>(<span class="params">genF</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> gen = genF();</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">step</span>(<span class="params">nextF</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">let</span> next;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        next = nextF();</span><br><span class="line">      &#125; <span class="keyword">catch</span>(e) &#123;</span><br><span class="line">        <span class="keyword">return</span> reject(e);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span>(next.done) &#123;</span><br><span class="line">        <span class="keyword">return</span> resolve(next.value);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">Promise</span>.resolve(next.value).then(<span class="function"><span class="keyword">function</span>(<span class="params">v</span>) </span>&#123;</span><br><span class="line">        step(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> gen.next(v); &#125;);</span><br><span class="line">      &#125;, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">        step(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> gen.throw(e); &#125;);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    step(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> gen.next(<span class="literal">undefined</span>); &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="JSbridge原理"><a href="#JSbridge原理" class="headerlink" title="JSbridge原理"></a>JSbridge原理</h2><h3 id="JavaScript-调用-Native"><a href="#JavaScript-调用-Native" class="headerlink" title="JavaScript 调用 Native"></a>JavaScript 调用 Native</h3><ul>
+<li>客户端通过webview提供的API，向JavaScript的Context（window）中注入对象和方法，让JavaScript调用时，直接执行相应的 Native 代码逻辑，达到 JavaScript 调用 Native 的目的</li>
+<li>Web 端通过某种方式（例如 iframe.src）发送 URL Scheme 请求，之后 Native 拦截到请求并根据 URL SCHEME（包括所带的参数）进行相关操作。（需要创建请求、耗时、url长度限制、参数不够直观）<h3 id="Native-调用-JavaScript"><a href="#Native-调用-JavaScript" class="headerlink" title="Native 调用 JavaScript"></a>Native 调用 JavaScript</h3></li>
+<li>执行拼接 JavaScript 字符串，从外部调用 JavaScript 中的方法，因此 JavaScript 的方法必须在全局的 window 上。</li>
+</ul>
+<h2 id="html的font-size计算"><a href="#html的font-size计算" class="headerlink" title="html的font-size计算"></a>html的font-size计算</h2><ul>
+<li>wy: font值 / 100 = deviceWidth / 750</li>
+<li>taobao： font值 <em> r / 75 </em> r = deviceWidth / 750 </li>
+</ul>
+<h2 id="rest参数和扩展运算符"><a href="#rest参数和扩展运算符" class="headerlink" title="rest参数和扩展运算符"></a>rest参数和扩展运算符</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">push</span>(<span class="params">array, ...items</span>) </span>&#123; <span class="comment">//这个...是rest参数，将其他参数放到items数组中</span></span><br><span class="line">  array.push(...items);  <span class="comment">//这个...是扩展运算符，可以看作是rest的逆运算</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>任何 Iterator 接口的对象，都可以用扩展运算符转为真正的数组。</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> nodeList = <span class="built_in">document</span>.querySelectorAll(<span class="string">'div'</span>);</span><br><span class="line"><span class="keyword">var</span> array = [...nodeList];</span><br></pre></td></tr></table></figure></p>
+<h2 id="解构赋值"><a href="#解构赋值" class="headerlink" title="解构赋值"></a>解构赋值</h2><p>解构赋值默认会调用Iterator 接口，除此之外扩展运算符、for…of循环、yield*、Map、set、Array.from、Promise.all、Promise.race等等任何接收数组为参数的场合，都调用了Iterator接口。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//数组解构</span></span><br><span class="line"><span class="keyword">let</span> [a, b, c] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//对象结构</span></span><br><span class="line"><span class="keyword">let</span> &#123;foo&#125; = &#123;<span class="attr">foo</span>: <span class="number">1</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//字符串结构</span></span><br><span class="line"><span class="keyword">const</span> [a, b, c, d, e] = <span class="string">'hello'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//数值和布尔值 会被转成对象</span></span><br><span class="line"><span class="keyword">let</span> &#123;<span class="attr">toString</span>: s&#125; = <span class="number">123</span>;</span><br><span class="line">s === <span class="built_in">Number</span>.prototype.toString <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> &#123;<span class="attr">toString</span>: s&#125; = <span class="literal">true</span>;</span><br><span class="line">s === <span class="built_in">Boolean</span>.prototype.toString <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//函数参数的解构赋值</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">[x, y]</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> x + y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">add([<span class="number">1</span>, <span class="number">2</span>]); <span class="comment">// 3</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="对象的遍历"><a href="#对象的遍历" class="headerlink" title="对象的遍历"></a>对象的遍历</h2><ul>
+<li>for…in循环：只遍历对象自身的和继承的可枚举的属性。</li>
+<li>Object.keys()：返回对象自身的所有可枚举的属性的键名。</li>
+<li>JSON.stringify()：只串行化对象自身的可枚举的属性。</li>
+<li><p>Object.assign()： 忽略enumerable为false的属性，只拷贝对象自身的可枚举的属性。</p>
+</li>
+<li><p>Object.getOwnPropertyNames(obj)：返回对象自身的所有可枚举+不可枚举的属性（但不包括Symbol属性）的键名。</p>
+</li>
+<li>Object.getOwnPropertySymbols(obj)：返回对象自身的所有Symbol属性的键名。</li>
+<li>Reflect.ownKeys(obj)：返回对象自身的所有键名。</li>
+</ul>
+<h2 id="具备Iterator接口的数据结构"><a href="#具备Iterator接口的数据结构" class="headerlink" title="具备Iterator接口的数据结构"></a>具备Iterator接口的数据结构</h2><ul>
+<li>Map</li>
+<li>Set</li>
+<li>Array</li>
+<li>String</li>
+<li>arguments</li>
+<li>NodeList</li>
+<li>TypedArray<br><strong>对象不具备Iterator属性，所以不支持for…of..遍历</strong></li>
+</ul>
+<h3 id="Map和WeakMap的区别"><a href="#Map和WeakMap的区别" class="headerlink" title="Map和WeakMap的区别"></a>Map和WeakMap的区别</h3><ul>
+<li>WeakMap只能使用对象作为键名</li>
+<li>WeakMap没有遍历操作<br>因为没有办法列出所有键名，某个键名是否存在完全不可预测，跟垃圾回收机制是否运行相关。这一刻可以取到键名，下一刻垃圾回收机制突然运行了，这个键名就没了，为了防止出现不确定性，就统一规定不能取到键名。</li>
+<li>WeakMap无法清空，即不支持clear方法</li>
+<li>WeakMap只支持set、get、has、delete4个API</li>
+</ul>
+<h3 id="Object和Map的区别"><a href="#Object和Map的区别" class="headerlink" title="Object和Map的区别"></a>Object和Map的区别</h3><ul>
+<li><p>Object的key值都会默认转为string</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> object = &#123;&#125;;</span><br><span class="line">object[<span class="number">4</span>] = <span class="number">40</span>;</span><br><span class="line">object[&#123;&#125;] = <span class="number">100</span>;</span><br><span class="line">object[<span class="literal">NaN</span>] = <span class="number">50</span>;</span><br><span class="line">object[<span class="built_in">Symbol</span>.key] = <span class="number">60</span>; </span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> key <span class="keyword">in</span> object)&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">typeof</span>(key));</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//string</span></span><br><span class="line"><span class="comment">//string</span></span><br><span class="line"><span class="comment">//string</span></span><br><span class="line"><span class="comment">//string</span></span><br><span class="line"><span class="built_in">console</span>.log(object);</span><br><span class="line"><span class="comment">//&#123;4: 40, [object Object]: 100, NaN: 50, undefined: 60&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Map的键值不局限于字符串，可以是各种类型的值（包括对象）</p>
+</li>
+<li>Object不具备Iterator属性，所以不支持for…of遍历</li>
+</ul>
+<h2 id="generator和yeild"><a href="#generator和yeild" class="headerlink" title="generator和yeild"></a>generator和yeild</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">var</span> n1 = <span class="keyword">yield</span> <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(n1)</span><br><span class="line">    <span class="keyword">var</span> n2 = <span class="keyword">yield</span> <span class="number">3</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(n2)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'end'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> g = f();</span><br><span class="line">g.next(); <span class="comment">// &#123;value: 1, done: false&#125;</span></span><br><span class="line">g.next(); <span class="comment">// &#123;value: 2, done: false&#125;</span></span><br><span class="line">g.next(<span class="number">2</span>); <span class="comment">// 2 &#123;value: 3, done: false&#125;</span></span><br><span class="line">g.next(); <span class="comment">// undefined &#123;value: 'end', done: true&#125; </span></span><br><span class="line">g.next(); <span class="comment">// &#123;value: undefined, done: true&#125;</span></span><br></pre></td></tr></table></figure>
+<p>如果有return值，会将return语句后面的表达式的值，作为返回的对象的value属性值，但此时的遍历已经结束，done为true。for…of只会返回done为false的遍历值。<br>yield表达式本身没有返回值，或者说总是返回undefined。next方法可以带一个参数，该参数就会被当作上一个yield表达式的返回值。<br>Generator函数只有在调用next()方法的时候，才会被执行。</p>
+<h2 id="按顺序完成异步操作"><a href="#按顺序完成异步操作" class="headerlink" title="按顺序完成异步操作"></a>按顺序完成异步操作</h2><h3 id="promise-1"><a href="#promise-1" class="headerlink" title="promise"></a>promise</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">logInOrder</span>(<span class="params">urls</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 远程读取所有URL</span></span><br><span class="line">  <span class="keyword">const</span> textPromises = urls.map(<span class="function"><span class="params">url</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> fetch(url).then(<span class="function"><span class="params">response</span> =&gt;</span> response.text());</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 按次序输出</span></span><br><span class="line">  textPromises.reduce(<span class="function">(<span class="params">chain, textPromise</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> chain.then(<span class="function"><span class="params">()</span> =&gt;</span> textPromise)</span><br><span class="line">      .then(<span class="function"><span class="params">text</span> =&gt;</span> <span class="built_in">console</span>.log(text));</span><br><span class="line">  &#125;, <span class="built_in">Promise</span>.resolve());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="async"><a href="#async" class="headerlink" title="async"></a>async</h3><p><a href="https://objcer.com/2017/10/12/async-await-with-forEach/" target="_blank" rel="noopener">https://objcer.com/2017/10/12/async-await-with-forEach/</a><br><figure class="highlight js"><figcaption><span>顺序进行</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">logInOrder</span>(<span class="params">urls</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> url <span class="keyword">of</span> urls) &#123;</span><br><span class="line">    <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(url);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">await</span> response.text());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">logInOrder</span>(<span class="params">urls</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 并发读取远程URL 并发执行，因为只有async函数内部是继发执行，外部不受影响</span></span><br><span class="line">  <span class="keyword">const</span> textPromises = urls.map(<span class="keyword">async</span> url =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(url);</span><br><span class="line">    <span class="keyword">return</span> response.text();</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 按次序输出  for..of循环内部使用了await，因此实现了按顺序输出。</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> textPromise <span class="keyword">of</span> textPromises) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">await</span> textPromise);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//Promise.all(textPromises).then(result =&gt; console.log(result)); 并发</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="内存泄露"><a href="#内存泄露" class="headerlink" title="内存泄露"></a>内存泄露</h2><blockquote>
+<p>定义：不再用到的内存没有及时释放，就叫做内存泄露。<br>垃圾回收，如果一个变量的引用计数为0，则表示这个值不再用到了，因此可以将这块内存释放。</p>
+</blockquote>
+<h4 id="防止内存泄露"><a href="#防止内存泄露" class="headerlink" title="防止内存泄露"></a>防止内存泄露</h4><ul>
+<li>WeakMap和WeakSet</li>
+<li>引用置为null</li>
+<li>移除事件绑定</li>
+<li>小心全局变量</li>
+<li>小心闭包</li>
+</ul>
+<h4 id="常见的内存泄露场景"><a href="#常见的内存泄露场景" class="headerlink" title="常见的内存泄露场景"></a>常见的内存泄露场景</h4><ol>
+<li>意外的全局变量</li>
+<li>定时器的处理函数没有及时释放，没有调用clearInterval方法</li>
+<li>脱离 DOM 的引用</li>
+<li>闭包上下文绑定后没有被释放</li>
+</ol>
+<h2 id="Promise和setTimeout区别"><a href="#Promise和setTimeout区别" class="headerlink" title="Promise和setTimeout区别"></a>Promise和setTimeout区别</h2><ul>
+<li>事件循环</li>
+<li>MacroTask</li>
+<li>MicroTask</li>
+</ul>
+
       
 
       
@@ -704,11 +793,7 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">函数式编程</a>
+                <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -716,7 +801,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es6</a>
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">函数式编程</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -744,11 +833,15 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">font-face</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -760,10 +853,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">npm包</a>
               </li>
              
@@ -772,7 +861,15 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -808,19 +905,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">sass</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">

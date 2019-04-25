@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="lying fox">
 <meta property="og:description" content="什么是JSX?——浏览器是如何识别它的？JSX是facebook普及的一种标记语言，通过babel/TSC等工具会编译为React.createElementfunction。所以在React每个组件中，虽然没有显式用到React，但都需要import React from &amp;#39;react&amp;#39;。 JSX是如何区分React Component和HTML元素的？通过元素首字母的大小写，如">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-13T15:30:56.880Z">
+<meta property="og:updated_time" content="2019-04-25T15:04:00.463Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="react相关问题">
 <meta name="twitter:description" content="什么是JSX?——浏览器是如何识别它的？JSX是facebook普及的一种标记语言，通过babel/TSC等工具会编译为React.createElementfunction。所以在React每个组件中，虽然没有显式用到React，但都需要import React from &amp;#39;react&amp;#39;。 JSX是如何区分React Component和HTML元素的？通过元素首字母的大小写，如">
@@ -191,12 +191,12 @@
 <li>render()</li>
 <li>componentDidMount</li>
 </ul>
-<p>不建议使用<code>UNSAFE_componentWillMount()</code>，因为它是在render之前执行，所以不会触发重新渲染。在该方法内调用setState会和constructor里的初始化state合并执行，应该放到constructor中去初始化。</p>
+<p>子类必须在构造函数第一行执行super(props)，否则我们无法在构造函数里拿到this对象，因为子类的实例要通过父类的构造函数完成塑造，得到与父类实例相同的属性和方法。es6的继承是先将是先将父类实例对象的属性和方法，加到this上面（所以必须先调用super方法），然后再用子类的构造函数修改this。ES5 的继承，实质是先创造子类的实例对象this，然后再将父类的方法添加到this上面（Parent.apply(this)）<br>不建议使用<code>UNSAFE_componentWillMount()</code>，因为它是在render之前执行，所以不会触发重新渲染。在该方法内调用setState会和constructor里的初始化state合并执行，应该放到constructor中去初始化。</p>
 <h4 id="Updating"><a href="#Updating" class="headerlink" title="Updating"></a>Updating</h4><ul>
-<li>static getDerivedStateFromProps(nextProps, prevState)</li>
+<li>static getDerivedStateFromProps(nextProps, prevState) //会返回一个对象来更新当前的state对象</li>
 <li>shouldComponentUpdate()</li>
 <li>render()</li>
-<li>getSnapshotBeforeUpdate(prevProps, prevState) 在dom更新前</li>
+<li>getSnapshotBeforeUpdate(prevProps, prevState) 在dom更新前，可以保存之前的滚动位置，便于在componentDidUpdate中去恢复</li>
 <li>componentDidUpdate(prevProps, prevState, snapshot) 在dom更新后,snapshot的值是getSnapshotBeforeUpdate的返回值</li>
 </ul>
 <p>不建议使用<code>UNSAFE_componentWillReceiveProps()</code>和<code>UNSAFE_componentWillUpdate()</code>，一次更新可能会调用多次。<br><code>UNSAFE_componentWillReceiveProps()</code>经常会带来bug和不一致的问题，例如在该方法中设置input值，当父组件更新的时候，用户的输入就会被置空。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">class EmailInput extends Component &#123;</span><br><span class="line">  state = &#123; email: this.props.email &#125;;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    return &lt;input onChange=&#123;this.handleChange&#125; value=&#123;this.state.email&#125; /&gt;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  handleChange = event =&gt; &#123;</span><br><span class="line">    this.setState(&#123; email: event.target.value &#125;);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  componentWillReceiveProps(nextProps) &#123;</span><br><span class="line">    // This will erase any local state updates!</span><br><span class="line">    // Do not do this.</span><br><span class="line">    this.setState(&#123; email: nextProps.email &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -204,6 +204,11 @@
 <li>componentWillUnmount()</li>
 </ul>
 <p><code>getDerivedStateFromProps(props, state)</code>每次render之前都会被触发，与<code>componentWillReceiveProps</code>只在父组件rerender时会触发不一样。此外，<code>getDerivedStateFromProps</code>方法不建议经常使用，使用前想一想是否有替代方案。</p>
+<h4 id="错误捕获"><a href="#错误捕获" class="headerlink" title="错误捕获"></a>错误捕获</h4><ul>
+<li>static getDerivedStateFromError(error)</li>
+<li>componentDidCatch(error, info)<br>错误边界(Error Boundaries) 仅可以捕获其子组件的错误。<br>使用static getDerivedStateFromError()在抛出错误后渲染回退UI。 使用 componentDidCatch() 来记录错误信息。</li>
+</ul>
+<h4 id="异步加载"><a href="#异步加载" class="headerlink" title="异步加载"></a>异步加载</h4><p>React V16.6引入的新特性lazy，以及React-loadable库。</p>
 <h4 id="getDerivedStateFromProps应用"><a href="#getDerivedStateFromProps应用" class="headerlink" title="getDerivedStateFromProps应用"></a>getDerivedStateFromProps应用</h4><h3 id="加分题：数据获取为什么用-componentDidMount-而不是-constructor？"><a href="#加分题：数据获取为什么用-componentDidMount-而不是-constructor？" class="headerlink" title="加分题：数据获取为什么用 componentDidMount 而不是 constructor？"></a>加分题：数据获取为什么用 componentDidMount 而不是 constructor？</h3><p>你希望听到的两个原因会是：“在渲染发生之前数据不会存在” —— 虽然不是主要原因，但它向您显示该人员了解组件的处理方式; “在 React Fiber 中使用新的异步渲染……” —— 有人一直在努力学习。</p>
 <ul>
 <li>r1: SSR模式下，componentWillMount在server端也是会被调用的，内容返回到client端后，componentWillMount会被第二次调用，如果在componentWillMount中处理数据获取则会被调用两次。</li>
@@ -248,6 +253,10 @@
 <li>减少了组件无意义的重渲染（当 state 和 props 没有发生变化时），当结合 immutable 数据时其优更为明显；</li>
 <li>隔离了父组件与子组件的状态变化；</li>
 </ul>
+<ol start="3">
+<li>若是数组和对象等引用类型，则要引用不同，才会渲染</li>
+<li>如果prop和state每次都会变，那么PureComponent的效率还不如Component，因为你知道的，进行浅比较也是需要时间</li>
+</ol>
 
       
 
@@ -467,11 +476,7 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">函数式编程</a>
+                <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -479,7 +484,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es6</a>
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">函数式编程</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -507,11 +516,15 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">css</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">font-face</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">css</a>
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -523,10 +536,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">npm包</a>
               </li>
              
@@ -535,7 +544,15 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -571,19 +588,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">sass</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">
