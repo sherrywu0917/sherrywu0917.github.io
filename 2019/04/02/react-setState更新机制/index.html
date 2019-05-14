@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="lying fox">
 <meta property="og:description" content="setState更新机制如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。 V15版本为例step1: setStateReactBaseClassses.js1234567ReactComponent.prototype.setState = function (partialState, callback) &amp;#123;">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-15T02:59:59.358Z">
+<meta property="og:updated_time" content="2019-05-09T06:41:23.549Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="react-setState更新机制">
 <meta name="twitter:description" content="setState更新机制如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。 V15版本为例step1: setStateReactBaseClassses.js1234567ReactComponent.prototype.setState = function (partialState, callback) &amp;#123;">
@@ -192,7 +192,7 @@
 <p>调用batchedUpdates方法去批量更新的时候，还是会先去判断当前事务是否处于更新过程中，如果是，则调用传入的enqueueUpdate方法，将组件实例push到dirtyComponents中。反之，去执行批量更新。</p>
 <p><strong>step5: transaction</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * &lt;pre&gt;</span><br><span class="line"> *                       wrappers (injected at creation time)</span><br><span class="line"> *                                      +        +</span><br><span class="line"> *                                      |        |</span><br><span class="line"> *                    +-----------------|--------|--------------+</span><br><span class="line"> *                    |                 v        |              |</span><br><span class="line"> *                    |      +---------------+   |              |</span><br><span class="line"> *                    |   +--|    wrapper1   |---|----+         |</span><br><span class="line"> *                    |   |  +---------------+   v    |         |</span><br><span class="line"> *                    |   |          +-------------+  |         |</span><br><span class="line"> *                    |   |     +----|   wrapper2  |--------+   |</span><br><span class="line"> *                    |   |     |    +-------------+  |     |   |</span><br><span class="line"> *                    |   |     |                     |     |   |</span><br><span class="line"> *                    |   v     v                     v     v   | wrapper</span><br><span class="line"> *                    | +---+ +---+   +---------+   +---+ +---+ | invariants</span><br><span class="line"> * perform(anyMethod) | |   | |   |   |         |   |   | |   | | maintained</span><br><span class="line"> * +-----------------&gt;|-|---|-|---|--&gt;|anyMethod|---|---|-|---|-|--------&gt;</span><br><span class="line"> *                    | |   | |   |   |         |   |   | |   | |</span><br><span class="line"> *                    | |   | |   |   |         |   |   | |   | |</span><br><span class="line"> *                    | |   | |   |   |         |   |   | |   | |</span><br><span class="line"> *                    | +---+ +---+   +---------+   +---+ +---+ |</span><br><span class="line"> *                    |  initialize                    close    |</span><br><span class="line"> *                    +-----------------------------------------+</span><br><span class="line"> * &lt;/pre&gt;</span><br><span class="line"> */</span><br></pre></td></tr></table></figure></p>
 <p>transaction对象暴露了一个perform方法，传入的anyMethod，都会被wrapper包裹，每次先执行完所有wrapper的initialize方法，再去执行anyMethod，最后去执行所有wrapper的close方法。<br>在ReactDefaultBatchingStrategy.js,tranction 的 wrapper有两个 FLUSH_BATCHED_UPDATES, RESET_BATCHED_UPDATES。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> RESET_BATCHED_UPDATES = &#123;</span><br><span class="line">  initialize: emptyFunction,</span><br><span class="line">  close: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    ReactDefaultBatchingStrategy.isBatchingUpdates = <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> FLUSH_BATCHED_UPDATES = &#123;</span><br><span class="line">  initialize: emptyFunction,</span><br><span class="line">  close: ReactUpdates.flushBatchedUpdates.bind(ReactUpdates)</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> TRANSACTION_WRAPPERS = [FLUSH_BATCHED_UPDATES, RESET_BATCHED_UPDATES];</span><br></pre></td></tr></table></figure></p>
-<p>两个wrapper的initialize方法都是空的，在callback之后，RESET_BATCHED_UPDATES会将isBatchingUpdates标志位置为false，FLUSH_BATCHED_UPDATES 是执行flushBatchedUpdates，它会循环所有dirtyComponent(Q: 这儿应该是这次批量更新开始时已有的dirty组件实例吧),调用updateComponent来执行所有的生命周期方法：componentWillReceiveProps，componentShouldUpdate，componentWillUpdate，render，componentDidUpdate，最后完成更新。</p>
+<p>两个wrapper的initialize方法都是空的，在callback之后，FLUSH_BATCHED_UPDATES会循环所有dirtyComponent(批量更新过程中push进来的所有组件),调用updateComponent来执行所有的生命周期方法：componentWillReceiveProps，componentShouldUpdate，componentWillUpdate，render，componentDidUpdate，完成更新，并且并执行它的pendingCallbacks，即setState设置的callback；RESET_BATCHED_UPDATES会将isBatchingUpdates标志位置为false，FLUSH_BATCHED_UPDATES 是执行flushBatchedUpdates，。</p>
 <p>REFS: <a href="https://imweb.io/topic/5b189d04d4c96b9b1b4c4ed6" target="_blank" rel="noopener">https://imweb.io/topic/5b189d04d4c96b9b1b4c4ed6</a></p>
 <h3 id="react合成事件中的setState"><a href="#react合成事件中的setState" class="headerlink" title="react合成事件中的setState"></a>react合成事件中的setState</h3><p>react的合成事件还是会通过 ReactUpdates.batchedUpdates 去批量更新，ReactUpdate中的batchedUpdates，还是调用了batchingStrategy的batchedUpdates方法。如果在事件中调用setState方法，也会进入dirtyComponent流程，即所谓的异步。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">batchedUpdates</span>(<span class="params">callback, a, b, c, d, e</span>) </span>&#123;</span><br><span class="line">  ensureInjected();</span><br><span class="line">  <span class="keyword">return</span> batchingStrategy.batchedUpdates(callback, a, b, c, d, e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h3 id="原生事件绑定和setTimeout中setState"><a href="#原生事件绑定和setTimeout中setState" class="headerlink" title="原生事件绑定和setTimeout中setState"></a>原生事件绑定和setTimeout中setState</h3><p>原生事件绑定不会通过合成事件的方式处理，自然也不会进入更新事务的处理流程。setTimeout也一样，在setTimeout回调执行时已经完成了原更新组件流程，不会放入dirtyComponent进行异步更新，其结果自然是同步的。</p>
@@ -470,19 +470,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es7</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
+                <a href="javascript:void(0)" class="js-tag color4">es7</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -494,6 +490,10 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">npm包</a>
               </li>
              
@@ -502,15 +502,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -543,6 +535,14 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">

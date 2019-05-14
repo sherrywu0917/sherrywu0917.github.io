@@ -158,6 +158,131 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Untitled-1" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+function instance(Cls, ...params) {
+    var obj = {};
+    Cls.apply(obj, params);
+    // for(var key in Cls.prototype) {
+    //     obj[key] = Cls.prototype[key];
+    // }
+    obj['__proto__'] = Cls.prototype;
+    return obj
+}
+
+function filterStr(str) {
+    let stack = [];
+    for(var char of str) {
+        if(char !== 'b') {
+            if(char === 'c') {
+                let len = stack.length;
+                if(stack[len -1] === 'a') {
+                    stack.splice(len-2)
+                }
+                else {
+                    stack.push(char)
+                }
+            }
+            else {
+                stack.push(char)
+            }
+        }
+    }
+    return stack.join('');
+}
+
+
+//输出0 1 2 3 4 5
+//https://juejin.im/post/58cf180b0ce4630057d6727c#heading-1
+var tasks = [];
+for (var i = 0; i < 5; i++) {
+    (function(j) {
+        tasks.push(new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    console.log(new Date, j);
+                    resolve();
+                }, 1000 * j);  // 这里修改 0~4 的定时器时间
+            })
+        )
+    })(i);
+}
+
+Promise.all(tasks).then(() => {
+    setTimeout(() => {
+        console.log(new Date, i);
+    }, 1000)
+})
+
+//输出0 1 2 3 4 5
+var tasks = [];
+for (var i = 0; i < 5; i++) {
+    tasks.push(((j) => new Promise((resolve, reject) => {
+            setTimeout(() => {
+                console.log(new Date, j);
+                resolve();
+            }, 1000 * j);  // 这里修改 0~4 的定时器时间
+        }))(i)
+    )
+}
+
+Promise.all(tasks).then(() => {
+    setTimeout(() => {
+        console.log(new Date, i);
+    }, 1000)
+})
+
+//输出0 1 2 3 4 5
+const sleep = (timeountMS) => new Promise((resolve) => {
+    setTimeout(resolve, timeountMS);
+});
+(async() => {
+    for (var i = 0; i < 5; i++) {
+        await sleep(1000);
+        console.log(new Date, i);
+    }
+    
+    await sleep(1000);
+    console.log(new Date, i);
+})()
+
+//编写一个程序将数组扁平化去并除其中重复部分数据，最终得到一个升序且不重复的数组
+var arr = [ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10];
+Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/05/06/Untitled-1/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-优化之路" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -802,74 +927,6 @@
 
 
   
-    <article id="post-菜鸟优化之路-图片webp-lazyload" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/27/菜鸟优化之路-图片webp-lazyload/">菜鸟优化之路-图片webp&amp;lazyload</a>
-    </h1>
-  
-
-        
-        <a href="/2018/09/27/菜鸟优化之路-图片webp-lazyload/" class="archive-article-date">
-  	<time datetime="2018-09-27T12:17:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="webp图片优化"><a href="#webp图片优化" class="headerlink" title="webp图片优化"></a>webp图片优化</h2><p>WebP是由google开发的一种图片格式，优势体现在它具有更优的图像数据压缩算法，能带来更小的图片体积，而且拥有肉眼识别无差异的图像质量；同时具备了无损和有损的压缩模式、Alpha 透明以及动画的特性，在 JPEG 和 PNG 上的转化效果都相当优秀、稳定和统一。<br><a href="https://caniuse.com/#search=webp" target="_blank" rel="noopener">webp兼容性</a>见下图<br><img src="/image/webp_caniuse.png" width="800px"><br>其中chrome和opera支持得比较好，safari和firefox目前不支持，但已经在实验阶段。</p>
-<h2 id="检测浏览器是否支持webp格式"><a href="#检测浏览器是否支持webp格式" class="headerlink" title="检测浏览器是否支持webp格式"></a>检测浏览器是否支持webp格式</h2><h3 id="方法1-canvas的toDataURL"><a href="#方法1-canvas的toDataURL" class="headerlink" title="方法1: canvas的toDataURL"></a>方法1: canvas的toDataURL</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkWebp</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="built_in">document</span>.createElement(<span class="string">'canvas'</span>).toDataURL(<span class="string">'image/webp'</span>).indexOf(<span class="string">'data:image/webp'</span>) == <span class="number">0</span>);</span><br><span class="line">    &#125;<span class="keyword">catch</span>(err) &#123;</span><br><span class="line">        <span class="keyword">return</span>  <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//or</span></span><br><span class="line">    !![].map &amp;&amp; <span class="built_in">document</span>.createElement(<span class="string">'canvas'</span>).toDataURL(<span class="string">'image/webp'</span>).indexOf(<span class="string">'data:image/webp'</span>) == <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对比一下chrome和ie下<code>document.createElement(&#39;canvas&#39;).toDataURL(&#39;image/webp&#39;)</code>下的输出：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ie</span></span><br><span class="line"><span class="string">"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAADGSURBVHhe7cExAQAAAMKg9U9tCF8gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAONUAv9QAAcDhjokAAAAASUVORK5CYII="</span></span><br><span class="line"><span class="comment">//chrome</span></span><br><span class="line"><span class="string">"data:image/webp;base64,UklGRrgAAABXRUJQVlA4WAoAAAAQAAAAKwEAlQAAQUxQSBIAAAABBxARERCQJP7/H0X0P+1/QwBWUDgggAAAAHANAJ0BKiwBlgA+bTaZSaQjIqEgKACADYlpbuF2sRtACewD32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99qwAAP7/1gAAAAAAAAAA"</span></span><br></pre></td></tr></table></figure></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">前端性能优化</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">webp</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/09/27/菜鸟优化之路-图片webp-lazyload/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -999,19 +1056,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es7</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
+                <a href="javascript:void(0)" class="js-tag color4">es7</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1023,6 +1076,10 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">npm包</a>
               </li>
              
@@ -1031,15 +1088,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1072,6 +1121,14 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">

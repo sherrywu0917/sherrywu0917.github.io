@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="lying fox">
 <meta property="og:description" content="什么是JSX?——浏览器是如何识别它的？JSX是facebook普及的一种标记语言，通过babel/TSC等工具会编译为React.createElementfunction。所以在React每个组件中，虽然没有显式用到React，但都需要import React from &amp;#39;react&amp;#39;。 JSX是如何区分React Component和HTML元素的？通过元素首字母的大小写，如">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-25T15:04:00.463Z">
+<meta property="og:updated_time" content="2019-05-07T11:32:35.445Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="react相关问题">
 <meta name="twitter:description" content="什么是JSX?——浏览器是如何识别它的？JSX是facebook普及的一种标记语言，通过babel/TSC等工具会编译为React.createElementfunction。所以在React每个组件中，虽然没有显式用到React，但都需要import React from &amp;#39;react&amp;#39;。 JSX是如何区分React Component和HTML元素的？通过元素首字母的大小写，如">
@@ -257,6 +257,10 @@
 <li>若是数组和对象等引用类型，则要引用不同，才会渲染</li>
 <li>如果prop和state每次都会变，那么PureComponent的效率还不如Component，因为你知道的，进行浅比较也是需要时间</li>
 </ol>
+<h2 id="key值的作用"><a href="#key值的作用" class="headerlink" title="key值的作用"></a>key值的作用</h2><ul>
+<li>提高diff的效率</li>
+<li>避免就地复用</li>
+</ul>
 
       
 
@@ -512,19 +516,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es7</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
+                <a href="javascript:void(0)" class="js-tag color4">es7</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -536,6 +536,10 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">npm包</a>
               </li>
              
@@ -544,15 +548,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -585,6 +581,14 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">

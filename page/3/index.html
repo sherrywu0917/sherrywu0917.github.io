@@ -158,6 +158,89 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-core-decorators源码简析——autobind" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/12/core-decorators源码简析——autobind/">core-decorators源码简析——autobind</a>
+    </h1>
+  
+
+        
+        <a href="/2018/04/12/core-decorators源码简析——autobind/" class="archive-article-date">
+  	<time datetime="2018-04-12T12:22:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="入口函数"><a href="#入口函数" class="headerlink" title="入口函数"></a>入口函数</h2><p>先看入口函数，通过<code>export default</code>暴露的autobind函数，通过<code>...args</code>形式的rest参数获取函数的多余参数，这儿是所有参数。通过decorator形式有两种调用方式：</p>
+<ul>
+<li>@autobind()，会返回一个匿名函数<code>function (...argsClass) {return handle(argsClass);}</code>，argsClass为最终decorator传入的参数，函数内部返回了handle函数；在修饰器外面再封装一层函数的方式，可以用于接收额外的参数；</li>
+<li>@autobind，args即为decorator传入的参数，直接调用handle函数</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 两种调用方式</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 2. @autobind</span></span><br><span class="line"><span class="comment"> * @param  &#123;...[type]&#125; args [description]</span></span><br><span class="line"><span class="comment"> * @return &#123;[type]&#125;         [description]</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">autobind</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (args.length === <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">...argsClass</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> handle(argsClass);</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> handle(args);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="handle函数"><a href="#handle函数" class="headerlink" title="handle函数"></a>handle函数</h2><p>handle函数根据参数的长度去判断修饰类型，当args参数长度为1时，是对类的修饰，该参数即所要修饰的目标类；当长度为3时，是对方法的修饰，参数和Object.defineProperty的参数相对应<code>target, name, descriptor:{value, configurable, enumerable, writable}</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handle</span>(<span class="params">args</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (args.length === <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> autobindClass(...args);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> autobindMethod(...args);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="对类的修饰"><a href="#对类的修饰" class="headerlink" title="对类的修饰"></a>对类的修饰</h2><ul>
+<li><code>Object.getOwnPropertyDescriptors</code>会以键值对的形式返回某对象属性的描述对象descriptor；</li>
+<li><code>getOwnKeys</code>方法会返回一个数组，包含目标类原型对象上所有的属性的键名，包括不可枚举属性以及Symbol属性<br><code>autobindClass</code>遍历目标类原型上的所有方法，若某个属性对应的value类型是<code>function</code>并且属性不是<code>constructor</code>，则用<code>Object.defineProperty</code>对该属性进行重新赋值，调用<code>autobindMethod</code>实现对该方法的autobind；
+        
+      
+
+      
+    </li></ul></div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">core-decorators</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">decorator</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">autobind</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/04/12/core-decorators源码简析——autobind/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-继承-原型链" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -797,79 +880,6 @@
 
 
   
-    <article id="post-webpack配置" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/27/webpack配置/">webpack配置</a>
-    </h1>
-  
-
-        
-        <a href="/2017/06/27/webpack配置/" class="archive-article-date">
-  	<time datetime="2017-06-27T07:06:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="dll动态链接库优化打包"><a href="#dll动态链接库优化打包" class="headerlink" title="dll动态链接库优化打包"></a>dll动态链接库优化打包</h3><p>为dll单独配置一个webpack.dll.config.js文件，在entry中引入你要打包到vendor的模块，通常是一些通用的不涉及业务的库。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> webpack = <span class="built_in">require</span>(<span class="string">'webpack'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    entry: &#123;<span class="attr">vendor</span>: [<span class="string">'react'</span>, <span class="string">'react-dom'</span>]&#125;,</span><br><span class="line">    output: &#123;</span><br><span class="line">        path: <span class="string">'./dist'</span>,</span><br><span class="line">        filename: <span class="string">'[name].bundle.js'</span>,</span><br><span class="line">        library: <span class="string">'[name]'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    plugins:[</span><br><span class="line">        <span class="keyword">new</span> webpack.DllPlugin(&#123;</span><br><span class="line">            path: <span class="string">'./dist/[name]-manifest.json'</span>,</span><br><span class="line">            name: <span class="string">'[name]'</span>,</span><br><span class="line">            context: __dirname,</span><br><span class="line">        &#125;)</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><strong>webpack.DllPlugin</strong>的选项中，path是manifest文件的输出路径；name是dll暴露的对象名，要跟output.library保持一致。执行<code>webpack --config webpack.dll.config.js</code>后会在dist文件夹下面生成<font color="#F44336">vendor.manifest.json</font>和<font color="#F44336">vendor.bundle.js</font>。其中vendor.manifest.json长这样：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"vendor"</span>,</span><br><span class="line">  <span class="string">"content"</span>: &#123;</span><br><span class="line">    <span class="string">"./node_modules/react/react.js"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="string">"./node_modules/react/lib/React.js"</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="string">"./node_modules/process/browser.js"</span>: <span class="number">3</span>,</span><br><span class="line">    <span class="string">"./node_modules/object-assign/index.js"</span>: <span class="number">4</span>,</span><br><span class="line">    <span class="string">"./node_modules/react/lib/ReactBaseClasses.js"</span>: <span class="number">5</span>,</span><br><span class="line">    <span class="string">"./node_modules/react/lib/reactProdInvariant.js"</span>: <span class="number">6</span>,</span><br><span class="line">    <span class="string">"./node_modules/react/lib/ReactNoopUpdateQueue.js"</span>: <span class="number">7</span>,</span><br><span class="line">    <span class="string">"./node_modules/fbjs/lib/warning.js"</span>: <span class="number">8</span>,</span><br><span class="line">    ......</span><br></pre></td></tr></table></figure>
-<p>webpack将每个库进行了编号，之后dll user可以读取该文件，根据这个索引来引用。</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">webpack</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">前端打包</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">require</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/06/27/webpack配置/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
@@ -999,19 +1009,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">es7</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">css</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
+                <a href="javascript:void(0)" class="js-tag color4">es7</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1023,6 +1029,10 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">npm包</a>
               </li>
              
@@ -1031,15 +1041,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1072,6 +1074,14 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
              
               <li class="article-tag-list-item">
