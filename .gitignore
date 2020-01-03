@@ -13,7 +13,13 @@ node_modules
 *.sublime-workspace
 /.externalToolBuilders/
 
+.DS_Store
+Thumbs.db
+db.json
+*.log
+node_modules/
+public/
+.deploy*/
+
 # *.bat
 *.iml
-
-.DS_Store

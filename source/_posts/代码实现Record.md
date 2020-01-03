@@ -1,4 +1,8 @@
-
+---
+title: 代码实现Record
+date: 2019-04-03 09:38:54
+tags:
+---
 ``` js
 function instance(Cls, ...params) {
     var obj = {};

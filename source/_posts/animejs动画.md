@@ -21,10 +21,10 @@ const floatAnimation = anime({
 其中各个属性代表的含义如下：
 - `targets`代表动画的目标对象，这边的值是css选择器，也可以是dom元素、数组，或是JS对象；
 - `translateY`代表将要发生动画的属性，不带单位的时候，默认单位为px，此外还支持其他多种赋值方式；
-      - 百分比：`translateY: '100%'`
-      - 相对数值：`translateY: { value: '*=2.5',duration: 1000}`，相对于translateY的初始值去计算
-      - 设置初始值：`translateY: [100, 250]`，设置数组的形式，会将translateY的初始值设置为100px，并且从100px移动到250px
-      - 函数：`translateY: function(el, i, l) {return (l - i) * 50;}`
+    - 百分比：`translateY: '100%'`
+    - 相对数值：`translateY: { value: '*=2.5',duration: 1000}`，相对于translateY的初始值去计算
+    - 设置初始值：`translateY: [100, 250]`，设置数组的形式，会将translateY的初始值设置为100px，并且从100px移动到250px
+    - 函数：`translateY: function(el, i, l) {return (l - i) * 50;}`
 - `duration`代表动画的持续时间，单位为毫秒；
 - `loop`定义了动画是否需要循环，默认值为false；
 - `direction`的意义和animation-direction属性一致，定义是否应该轮流反向播放动画，可选的值有正向动画`normal`、反向动画`reverse`和往返动画`alternate`；
