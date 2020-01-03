@@ -158,101 +158,85 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Untitled-1" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-代码实现" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">instance</span>(<span class="params">Cls, ...params</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> obj = &#123;&#125;;</span><br><span class="line">    Cls.apply(obj, params);</span><br><span class="line">    <span class="comment">// for(var key in Cls.prototype) &#123;</span></span><br><span class="line">    <span class="comment">//     obj[key] = Cls.prototype[key];</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    obj[<span class="string">'__proto__'</span>] = Cls.prototype;</span><br><span class="line">    <span class="keyword">return</span> obj</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filterStr</span>(<span class="params">str</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> stack = [];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> char <span class="keyword">of</span> str) &#123;</span><br><span class="line">        <span class="keyword">if</span>(char !== <span class="string">'b'</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>(char === <span class="string">'c'</span>) &#123;</span><br><span class="line">                <span class="keyword">let</span> len = stack.length;</span><br><span class="line">                <span class="keyword">if</span>(stack[len <span class="number">-1</span>] === <span class="string">'a'</span>) &#123;</span><br><span class="line">                    stack.splice(len<span class="number">-2</span>)</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    stack.push(char)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                stack.push(char)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stack.join(<span class="string">''</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//输出0 1 2 3 4 5</span></span><br><span class="line"><span class="comment">//https://juejin.im/post/58cf180b0ce4630057d6727c#heading-1</span></span><br><span class="line"><span class="keyword">var</span> tasks = [];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    (<span class="function"><span class="keyword">function</span>(<span class="params">j</span>) </span>&#123;</span><br><span class="line">        tasks.push(<span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">                setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">                    <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, j);</span><br><span class="line">                    resolve();</span><br><span class="line">                &#125;, <span class="number">1000</span> * j);  <span class="comment">// 这里修改 0~4 的定时器时间</span></span><br><span class="line">            &#125;)</span><br><span class="line">        )</span><br><span class="line">    &#125;)(i);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.all(tasks).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, i);</span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出0 1 2 3 4 5</span></span><br><span class="line"><span class="keyword">var</span> tasks = [];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    tasks.push(<span class="function">(<span class="params">(j</span>) =&gt;</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">            setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, j);</span><br><span class="line">                resolve();</span><br><span class="line">            &#125;, <span class="number">1000</span> * j);  <span class="comment">// 这里修改 0~4 的定时器时间</span></span><br><span class="line">        &#125;))(i)</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.all(tasks).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, i);</span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出0 1 2 3 4 5</span></span><br><span class="line"><span class="keyword">const</span> sleep = <span class="function">(<span class="params">timeountMS</span>) =&gt;</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">    setTimeout(resolve, timeountMS);</span><br><span class="line">&#125;);</span><br><span class="line">(<span class="keyword">async</span>() =&gt; &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">await</span> sleep(<span class="number">1000</span>);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, i);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">await</span> sleep(<span class="number">1000</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, i);</span><br><span class="line">&#125;)()</span><br><span class="line"></span><br><span class="line"><span class="comment">//编写一个程序将数组扁平化去并除其中重复部分数据，最终得到一个升序且不重复的数组</span></span><br><span class="line"><span class="keyword">var</span> arr = [ [<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>], [<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, [<span class="number">11</span>, <span class="number">12</span>, [<span class="number">12</span>, <span class="number">13</span>, [<span class="number">14</span>] ] ] ], <span class="number">10</span>];</span><br><span class="line"><span class="built_in">Array</span>.from(<span class="keyword">new</span> <span class="built_in">Set</span>(arr.flat(<span class="literal">Infinity</span>))).sort(<span class="function">(<span class="params">a, b</span>) =&gt;</span> (a - b))</span><br></pre></td></tr></table></figure>
+      
 
-function instance(Cls, ...params) {
-    var obj = {};
-    Cls.apply(obj, params);
-    // for(var key in Cls.prototype) {
-    //     obj[key] = Cls.prototype[key];
-    // }
-    obj['__proto__'] = Cls.prototype;
-    return obj
-}
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
 
-function filterStr(str) {
-    let stack = [];
-    for(var char of str) {
-        if(char !== 'b') {
-            if(char === 'c') {
-                let len = stack.length;
-                if(stack[len -1] === 'a') {
-                    stack.splice(len-2)
-                }
-                else {
-                    stack.push(char)
-                }
-            }
-            else {
-                stack.push(char)
-            }
-        }
-    }
-    return stack.join('');
-}
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/01/03/代码实现/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
 
 
-//输出0 1 2 3 4 5
-//https://juejin.im/post/58cf180b0ce4630057d6727c#heading-1
-var tasks = [];
-for (var i = 0; i < 5; i++) {
-    (function(j) {
-        tasks.push(new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    console.log(new Date, j);
-                    resolve();
-                }, 1000 * j);  // 这里修改 0~4 的定时器时间
-            })
-        )
-    })(i);
-}
 
-Promise.all(tasks).then(() => {
-    setTimeout(() => {
-        console.log(new Date, i);
-    }, 1000)
-})
 
-//输出0 1 2 3 4 5
-var tasks = [];
-for (var i = 0; i < 5; i++) {
-    tasks.push(((j) => new Promise((resolve, reject) => {
-            setTimeout(() => {
-                console.log(new Date, j);
-                resolve();
-            }, 1000 * j);  // 这里修改 0~4 的定时器时间
-        }))(i)
-    )
-}
 
-Promise.all(tasks).then(() => {
-    setTimeout(() => {
-        console.log(new Date, i);
-    }, 1000)
-})
 
-//输出0 1 2 3 4 5
-const sleep = (timeountMS) => new Promise((resolve) => {
-    setTimeout(resolve, timeountMS);
-});
-(async() => {
-    for (var i = 0; i < 5; i++) {
-        await sleep(1000);
-        console.log(new Date, i);
-    }
+
+
+  
+    <article id="post-animejs动画" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    await sleep(1000);
-    console.log(new Date, i);
-})()
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/12/27/animejs动画/">animejs动画入门</a>
+    </h1>
+  
 
-//编写一个程序将数组扁平化去并除其中重复部分数据，最终得到一个升序且不重复的数组
-var arr = [ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10];
-Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
+        
+        <a href="/2019/12/27/animejs动画/" class="archive-article-date">
+  	<time datetime="2019-12-27T03:26:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-27</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>anime.js是一个灵活的轻量JavaScript动画库，支持CSS属性、JS对象、DOM属性和SVG。压缩后仅6.2K，且不依赖任何第三方库，加载迅速。在<a href="https://github.com/juliangarnier/anime" target="_blank" rel="noopener">git</a>上Usedby数量8.5k, Star数量为33.5k。此外，anime遵从MIT开源协议,可应用于各种商业网站或app而无需付费。</p>
+<h3 id="简单的浮动动画"><a href="#简单的浮动动画" class="headerlink" title="简单的浮动动画"></a>简单的浮动动画</h3><p>首先看一个简单的示例，实现了气泡的上下浮动动画，效果详见<a href="https://codepen.io/sherrywu0917/pen/yLyoNQj" target="_blank" rel="noopener">浮动动画</a>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> floatAnimation = anime(&#123;</span><br><span class="line">    targets: <span class="string">'.bubble'</span>,</span><br><span class="line">    translateY: <span class="number">20</span>, <span class="comment">// --&gt; '20px'</span></span><br><span class="line">    duration: <span class="number">600</span>,</span><br><span class="line">    loop: <span class="literal">true</span>,</span><br><span class="line">    direction: <span class="string">'alternate'</span>,</span><br><span class="line">    easing: <span class="string">'easeInOutSine'</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>其中各个属性代表的含义如下：</p>
+<ul>
+<li><code>targets</code>代表动画的目标对象，这边的值是css选择器，也可以是dom元素、数组，或是JS对象；</li>
+<li><code>translateY</code>代表将要发生动画的属性，不带单位的时候，默认单位为px，此外还支持其他多种赋值方式；<pre><code>- 百分比：`translateY: &apos;100%&apos;`
+- 相对数值：`translateY: { value: &apos;*=2.5&apos;,duration: 1000}`，相对于translateY的初始值去计算
+- 设置初始值：`translateY: [100, 250]`，设置数组的形式，会将translateY的初始值设置为100px，并且从100px移动到250px
+- 函数：`translateY: function(el, i, l) {return (l - i) * 50;}`
+</code></pre></li>
+<li><code>duration</code>代表动画的持续时间，单位为毫秒；</li>
+<li><code>loop</code>定义了动画是否需要循环，默认值为false；</li>
+<li><code>direction</code>的意义和animation-direction属性一致，定义是否应该轮流反向播放动画，可选的值有正向动画<code>normal</code>、反向动画<code>reverse</code>和往返动画<code>alternate</code>；</li>
+<li><code>easing</code>定义了动画缓动函数，和css3中的animation-timing-function意义一致，设置该参数时可以参考该网站<a href="https://easings.net/en" target="_blank" rel="noopener">Easing Functions Cheat Sheet</a>去选择合适的缓动函数。</li>
+</ul>
+<h3 id="点击触发抖动动画，结束后恢复浮动"><a href="#点击触发抖动动画，结束后恢复浮动" class="headerlink" title="点击触发抖动动画，结束后恢复浮动"></a>点击触发抖动动画，结束后恢复浮动</h3><p>基于上面的漂浮动画，新增一个小功能：点击小球的时候，小球左右抖动，抖动结束后，恢复浮动动画。具体效果参见<a href="https://codepen.io/sherrywu0917/pen/yLyoNQj" target="_blank" rel="noopener">抖动动画</a>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> shakeAnimation = anime(&#123;</span><br><span class="line">    targets: <span class="string">'.bubble'</span>,</span><br><span class="line">    keyframes: [</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="string">'25px'</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="number">0</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="string">'-25px'</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="number">0</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="string">'15px'</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="number">0</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="string">'-15px'</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="number">0</span> &#125;</span><br><span class="line">    ],</span><br><span class="line">    duration: <span class="number">600</span>,</span><br><span class="line">    delay: <span class="number">300</span>,</span><br><span class="line">    endDelay: <span class="number">500</span>,</span><br><span class="line">    easing: <span class="string">'linear'</span>,</span><br><span class="line">    begin: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        floatAnimation.pause();</span><br><span class="line">    &#125;,</span><br><span class="line">    complete: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        floatAnimation.play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>这组动画的实现有几个关键点，<strong>关键帧</strong>-<code>keyframes</code>、<strong>延迟设置</strong>-<code>delay</code>、<code>endDelay</code>，<strong>事件函数</strong><code>begin</code>、<code>complete</code>以及<strong>动画控制方法</strong><code>play</code>和<code>pause</code>。<br>其中，<code>keyframes</code>是用数组定义的关键帧，和animation中用@keyframes实现动画的方式基本一致，如果关键帧内没有指定duration，则每个关键帧的持续时间将等于动画总持续时间除以关键帧数。<br><code>delay</code>和<code>endDelay</code>用来设置动画的延迟时间，完整的动画过程是：</p>
+<ol>
+<li>先触发begin事件，暂停floatAnimation；</li>
+<li>过了delay设置的300ms后，开始执行keyframes定义的抖动动画，持续时间是600ms；</li>
+<li>抖动动画结束后500ms，会触发complete事件，floatAnimation会恢复执行。<br>从start事件被触发到complete事件被触发，整个动画持续的时间为300 + 600 + 500 = 1400ms。<br><code>play</code>和<code>pause</code>方法用来控制动画的执行和暂停，animejs还提供了<code>restart</code>和<code>reverse</code>方法去控制动画的重新开始和反转，如果期望动画跳转到某个特定时间，可以使用<code>seek</code>方法去设置跳转时间。</li>
+</ol>
+<h3 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h3><p>animejs从3.x版本开始不兼容webkitTransform属性，默认只支持transform属性，在一些低版本的手机上使用，例如ios8手机上，会遇到一些动画不生效的问题。如果需要兼容这些机型，可以给animejs库增加对webkitTrannsform属性的支持，手动修改源码，重新publish一个支持webkitTransform属性的npm包。<br>首先使用了animejs源码提供的<code>getCSSValue</code>方法去检测浏览器是否支持transform属性，对于不支持的，使用webkitTransform属性去替换，具体的修改可以参考下图。<br><img src="/image/webkit-anime.png" width="800px"><br><code>getCSSValue</code>方法的实现如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getCSSValue</span>(<span class="params">el, prop, unit</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (prop <span class="keyword">in</span> el.style) &#123;</span><br><span class="line">    <span class="keyword">var</span> uppercasePropName = prop.replace(<span class="regexp">/([a-z])([A-Z])/g</span>, <span class="string">'$1-$2'</span>).toLowerCase();</span><br><span class="line">    <span class="keyword">var</span> value = el.style[prop] || getComputedStyle(el).getPropertyValue(uppercasePropName) || <span class="string">'0'</span>;</span><br><span class="line">    <span class="keyword">return</span> unit ? convertPxToUnit(el, value, unit) : value;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>关键是<code>prop in el.style</code>的判断，对于不支持transform属性的值，会直接返回undefined，支持该属性的会返回属性值，没有设置过transform值的默认会返回一个字符串’none’或者’0’。<br>修改后重新发布了<a href="https://www.npmjs.com/package/webkit-animejs" target="_blank" rel="noopener">webkit-animejs</a>，有需要的可以直接使用。</p>
 
       
 
@@ -265,7 +249,7 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/06/Untitled-1/">展开全文 >></a>
+          <a class="article-more-a" href="/2019/12/27/animejs动画/">展开全文 >></a>
         </p>
       
 
@@ -485,6 +469,61 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
 
 
   
+    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/18/hello-world/">Hello World</a>
+    </h1>
+  
+
+        
+        <a href="/2019/03/18/hello-world/" class="archive-article-date">
+  	<time datetime="2019-03-18T02:27:14.362Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/03/18/hello-world/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-打点实践总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -505,13 +544,17 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>//TODO<br>beacon 请求方法均为POST，且不支持修改<br>兼容性 <a href="https://caniuse.com/#search=beacon" target="_blank" rel="noopener">https://caniuse.com/#search=beacon</a></p>
+        <p>beacon 请求方法均为POST，且不支持修改<br>兼容性 <a href="https://caniuse.com/#search=beacon" target="_blank" rel="noopener">https://caniuse.com/#search=beacon</a></p>
 <ul>
 <li>polyfill <a href="https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js" target="_blank" rel="noopener">https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js</a></li>
 <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon</a></li>
 <li><a href="https://juejin.im/post/5c7e541b6fb9a049e06415a5?utm_source=gold_browser_extension" target="_blank" rel="noopener">如何在 Web 关闭页面时发送 Ajax 请求</a></li>
 <li><a href="https://juejin.im/post/5b694b5de51d4519700fa56a" target="_blank" rel="noopener">[译] 使用 Web Beacon API 记录活动</a></li>
 </ul>
+<p>post请求<br>content-type:</p>
+<h3 id="application-json"><a href="#application-json" class="headerlink" title="application/json"></a>application/json</h3><p>Request Payload:<br>{layouts: [“1”, “2”, “5”]}</p>
+<h3 id="application-x-www-form-urlencoded"><a href="#application-x-www-form-urlencoded" class="headerlink" title="application/x-www-form-urlencoded"></a>application/x-www-form-urlencoded</h3><p>Query String Parameters<br>sourceUuid:np_c3sEKMgU3Xau_Tl0fmsqyReIdKH9OXQpby_FSNhz__ppcy0EKQ<br>articleUuid:np_eXoyZJwfsX-q8j5OLm0pyEbYGK0<br>forceFollow:0<br>isContinue:0<br>forceAutoPurchase:1</p>
+<h3 id="multipart-form-data"><a href="#multipart-form-data" class="headerlink" title="multipart/form-data"></a>multipart/form-data</h3><p>使用表单上传文件时，必须让 form 的 enctype 等于这个值。<br>Content-Type: multipart/form-data; boundary=—-WebKitFormBoundaryBJIFBCE2CA2Fwbyl</p>
 
       
 
@@ -642,8 +685,8 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="什么是JSX-——浏览器是如何识别它的？"><a href="#什么是JSX-——浏览器是如何识别它的？" class="headerlink" title="什么是JSX?——浏览器是如何识别它的？"></a>什么是JSX?——浏览器是如何识别它的？</h3><p>JSX是facebook普及的一种标记语言，通过babel/TSC等工具会编译为<code>React.createElement</code>function。所以在React每个组件中，虽然没有显式用到React，但都需要<code>import React from &#39;react&#39;</code>。</p>
-<h4 id="JSX是如何区分React-Component和HTML元素的？"><a href="#JSX是如何区分React-Component和HTML元素的？" class="headerlink" title="JSX是如何区分React Component和HTML元素的？"></a>JSX是如何区分React Component和HTML元素的？</h4><p>通过元素首字母的大小写，如果首字母大写，则认为是React组件，小写的话则会被认为是HTML元素。可以在<a href="https://babeljs.io/repl/#?presets=react&amp;code_lz=GYVwdgxgLglg9mABACwKYBt1wBQEpEDeAUIogE6pQhlIA8AJjAG4B8AEhlogO5xnr0AhLQD0jVgG4iAXyJA" target="_blank" rel="noopener">online Babel compiler</a>中试一下。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>Hello world!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// after babel compiler</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> React.createElement(</span><br><span class="line">    <span class="string">"div"</span>,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    <span class="string">"Hello world!"</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>Hello world!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// after babel compiler</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> React.createElement(</span><br><span class="line">    Div,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    <span class="string">"Hello world!"</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="JSX是如何区分React-Component和HTML元素的？"><a href="#JSX是如何区分React-Component和HTML元素的？" class="headerlink" title="JSX是如何区分React Component和HTML元素的？"></a>JSX是如何区分React Component和HTML元素的？</h4><p>通过元素首字母的大小写，如果首字母大写，则认为是React组件，小写的话则会被认为是HTML元素。可以在<a href="https://babeljs.io/repl/#?presets=react&amp;code_lz=GYVwdgxgLglg9mABACwKYBt1wBQEpEDeAUIogE6pQhlIA8AJjAG4B8AEhlogO5xnr0AhLQD0jVgG4iAXyJA" target="_blank" rel="noopener">online Babel compiler</a>中试一下。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &lt;div&gt;Hello world!&lt;/div&gt;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// after babel compiler</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> React.createElement(</span><br><span class="line">    <span class="string">"div"</span>,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    <span class="string">"Hello world!"</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &lt;div&gt;Hello world!&lt;/div&gt;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// after babel compiler</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> React.createElement(</span><br><span class="line">    Div,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    <span class="string">"Hello world!"</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>此外，把一个组件赋给<code>this.component</code>并且写<code>&lt;this.component /&gt;</code>也会起作用。<br>
         
       
@@ -788,145 +831,6 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
 
 
   
-    <article id="post-reading-record" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/18/reading-record/">reading-record</a>
-    </h1>
-  
-
-        
-        <a href="/2018/11/18/reading-record/" class="archive-article-date">
-  	<time datetime="2018-11-18T02:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="你的Tree-Shaking并没什么卵用"><a href="#你的Tree-Shaking并没什么卵用" class="headerlink" title="你的Tree-Shaking并没什么卵用"></a><a href="https://juejin.im/post/5a5652d8f265da3e497ff3de#comment" target="_blank" rel="noopener">你的Tree-Shaking并没什么卵用</a></h2><blockquote>
-<p>Tree-Shaking的原理</p>
-<ul>
-<li>ES6的模块引入是静态分析的，故而可以在编译时正确判断到底加载了什么代码。</li>
-<li>分析程序流，判断哪些变量未被使用、引用，进而删除此代码</li>
-</ul>
-</blockquote>
-<p>但现实比较骨感，es6的代码经过babel和webpack编译打包后，产生的副作用(可能会改变外部变量)导致多余的代码并未被删掉。<br>babel6在编译的时候，会调用_createClass方法，使用Object.defineProperty去定义类里面的方法，原因是因为在es6的特性中，类里面声明的方法是不可枚举的。所以设置<code>{ &quot;loose&quot;: false }</code>宽松模式，让babel编译的时候不必去严格遵循es6的特性。<br>此外，UglifyJS不会进行程序流分析，所以在压缩的时候无法排除掉可能有副作用的代码，所以这部分代码还是会被打包进去。<br>使用babel6/webpack打包可以考虑结合使用<code>BabelMinifyWebpackPlugin</code>，思路是先进行uglifyJS代码压缩，再去编译。</p>
-<blockquote>
-<p>评论中指出：关于Person和Apple阐述Babel副作用的例子在Babel升级到Babel7之后确实已经不存在了，使用Babel7的正式版和Webpack4亲测。</p>
-</blockquote>
-<h2 id="http2-0-相比-1-0有哪些重大改进？"><a href="#http2-0-相比-1-0有哪些重大改进？" class="headerlink" title="http2.0 相比 1.0有哪些重大改进？"></a><a href="https://www.zhihu.com/question/34074946" target="_blank" rel="noopener">http2.0 相比 1.0有哪些重大改进？</a></h2><ol>
-<li><p>多路复用<br>多路复用允许同时通过单一的 HTTP/2 连接发起多重的请求-响应消息。<br>在http1.0和1.1协议下，浏览器在同一时间针对同一域名下的请求有一定数量的限制。不同浏览器限制的数量不一样。</p>
-</li>
-<li><p>二进制分帧<br>http2.0在应用层和传输层之间增加了一个二进制分帧层，在该层中，会将传输信息分割成更小的消息和帧。将http1.x的头部信息封装在到了HEADER frame，相应的Request Body封装到DATA frame中。<br>http2.0让所有数据流共用一个连接，有效地使用TCP连接，减少服务端的链接压力，内存占用更少，实现高带宽。<br>此外，减少了TCP慢启动的时间。</p>
-        
-      
-
-      
-    </li></ol></div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/11/18/reading-record/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-菜鸟优化之路-前端性能测试工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/09/菜鸟优化之路-前端性能测试工具/">菜鸟优化之路-前端性能测试工具sitespeed.io</a>
-    </h1>
-  
-
-        
-        <a href="/2018/10/09/菜鸟优化之路-前端性能测试工具/" class="archive-article-date">
-  	<time datetime="2018-10-09T12:08:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="制定优化目标"><a href="#制定优化目标" class="headerlink" title="制定优化目标"></a>制定优化目标</h2><h3 id="度量标准"><a href="#度量标准" class="headerlink" title="度量标准"></a>度量标准</h3><ul>
-<li>首次有效绘制（First Meaningful Paint，简称FMP，当主要内容呈现在页面上）</li>
-<li>英雄渲染时间（Hero Rendering Times，度量用户体验的新指标，当用户最关心的内容渲染完成）</li>
-<li>可交互时间（Time to Interactive，简称TTI，指页面布局已经稳定，关键的页面字体是可见的，并且主进程可用于处理用户输入，基本上用户可以点击UI并与其交互）</li>
-<li>输入响应（Input responsiveness，界面响应用户输入所需的时间）</li>
-<li>感知速度指数（Perceptual Speed Index，简称PSI，测量页面在加载过程中视觉上的变化速度，分数越低越好）</li>
-<li>自定义指标，由业务需求和用户体验来决定。<br>FMP与英雄渲染时间非常相似，但它们不一样的地方在于FMP不区分内容是否有用，不区分渲染出的内容是否是用户关心的。</li>
-</ul>
-<h3 id="设定目标"><a href="#设定目标" class="headerlink" title="设定目标"></a>设定目标</h3><p>基于<a href="https://developers.google.com/web/fundamentals/performance/rail?hl=zh-cn" target="_blank" rel="noopener">RAIL</a>模型去制定优化的目标，<code>RAIL</code>是一种以用户为中心的性能模型，主要从响应、动画、空闲、加载四个层面去衡量页面性能。<br>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">前端性能优化</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">sitespeed.io</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/10/09/菜鸟优化之路-前端性能测试工具/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -941,7 +845,7 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2019 Sherry
+    		&copy; 2020 Sherry
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -1088,14 +992,6 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">diff</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">webpack</a>
               </li>
              
@@ -1116,19 +1012,11 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1140,7 +1028,23 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">diff</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
             
             <div class="clearfix"></div>

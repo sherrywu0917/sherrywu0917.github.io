@@ -158,6 +158,176 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-cmd小工具开发" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/31/cmd小工具开发/">cmd小工具开发</a>
+    </h1>
+  
+
+        
+        <a href="/2018/05/31/cmd小工具开发/" class="archive-article-date">
+  	<time datetime="2018-05-31T02:02:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-31</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="cmd项目初始化"><a href="#cmd项目初始化" class="headerlink" title="cmd项目初始化"></a>cmd项目初始化</h3><p>首先新建一个文件夹，并且初始化package.json，同时在bin文件夹下面创建入口文件index.js。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm init <span class="comment">#初始化'package.json'文件</span></span><br></pre></td></tr></table></figure></p>
+<p>index.js文件头部有<code>#!/usr/bin/env node</code>，叫做<a href="https://en.wikipedia.org/wiki/Shebang_(Unix" target="_blank" rel="noopener">shebang</a>)，指定脚本解释程序为<code>node</code>。<br>package.json文件中bin字段配置了cmd命令将执行的js文件，如下所示：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"mkfile-cli"</span>,</span><br><span class="line">  <span class="string">"version"</span>: <span class="string">"1.0.7"</span>,</span><br><span class="line">  <span class="string">"main"</span>: <span class="string">"index.js"</span>,</span><br><span class="line">  <span class="string">"bin"</span>: &#123;</span><br><span class="line">    <span class="string">"mk"</span>: <span class="string">"bin/index.js"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"repository"</span>: &#123;</span><br><span class="line">    <span class="string">"type"</span> : <span class="string">"git"</span>,</span><br><span class="line">    <span class="string">"url"</span> : <span class="string">"https://xxx"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"author"</span>: <span class="string">"sherrywu"</span>,</span><br><span class="line">  <span class="string">"license"</span>: <span class="string">"ISC"</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><ul>
+<li>可以运行<code>node bin/index.js</code>命令</li>
+<li>通过<code>npm link</code>的方式</li>
+<li>还可以通过<code>npm install . -g</code>安装到全局</li>
+</ul>
+<h3 id="cmd命令行工具开发"><a href="#cmd命令行工具开发" class="headerlink" title="cmd命令行工具开发"></a>cmd命令行工具开发</h3><h4 id="commander-js"><a href="#commander-js" class="headerlink" title="commander.js"></a>commander.js</h4><p><a href="https://github.com/tj/commander.js" target="_blank" rel="noopener">Commander</a>是一个轻量级、强大的命令行开发框架，提供了封装好的API，帮助用户快速开发命令行工具。</p>
+<h5 id="安装："><a href="#安装：" class="headerlink" title="安装："></a>安装：</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install commander --save</span><br></pre></td></tr></table></figure>
+<h4 id="option"><a href="#option" class="headerlink" title="option"></a>option</h4><p>option()方法的定义</p>
+<ul>
+<li><p>option(flags, description, fn, defaultValue)</p>
+<ul>
+<li>flags <string> : 自定义参数，格式为”-shortFlag, –longFlag null|<code>&lt;value&gt;</code>|[value]|<code>&lt;value&gt;</code>..<code>&lt;value&gt;</code>“</string></li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>-shortFlag：”-“后面跟的是自定义参数的短标志，一般用longFlag的第一个字母(区分大小写)</li>
+<li>–longFlag ：”–”后面跟的是自定义参数的长标志，shortFlag和longFlag必须同时存在，</li>
+<li>null|<code>&lt;value&gt;</code>|[value]：有3种情况<ul>
+<li>null——可以不带参数</li>
+<li><code>&lt;value&gt;</code>——“&lt;&gt;”修饰，参数必须。</li>
+<li>[value]——”[]“修饰, 参数可选。</li>
+</ul>
+</li>
+<li>description <string> : 对flags参数的描述</string></li>
+<li>fn &lt;Function|Mixed&gt; : 自定义处理参数的方法，如果传入的不是一个方法，会先判断是否为一个正则表达式，如果不是，则视为defaultValue（默认值），</li>
+<li>defaultValue <mixed> ：自定义参数默认值</mixed></li>
+<li>返回值 <object>：commander对象</object></li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">program</span><br><span class="line">    .version(<span class="string">'1.0.1'</span>)</span><br><span class="line">    .option(<span class="string">'-n, --new &lt;filename&gt;'</span>, <span class="string">'创建文件'</span>)</span><br><span class="line">    .parse(process.argv);</span><br><span class="line"><span class="keyword">if</span>(program.new || program.n) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'文件名：'</span> + (program.new || program.n))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过<code>mk -h</code>可以查看帮助文档，-h 和 -V都是commander封装好的命令:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ mk -h</span><br><span class="line"></span><br><span class="line">  Usage: index [options]</span><br><span class="line"></span><br><span class="line">  Options:</span><br><span class="line"></span><br><span class="line">    -V, --version         output the version number</span><br><span class="line">    -n, --new &lt;filename&gt;  创建文件</span><br><span class="line">    -h, --<span class="built_in">help</span>            output usage information</span><br></pre></td></tr></table></figure></p>
+<h4 id="on事件监听"><a href="#on事件监听" class="headerlink" title="on事件监听"></a>on事件监听</h4><p>此外还可以自定义help文档，通过监听–help触发定义的回调方法。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">program.on(<span class="string">'--help'</span>, <span class="function"><span class="title">function</span></span> () &#123;</span><br><span class="line">    console.log(<span class="string">'  自定义的例子:'</span>)</span><br><span class="line">    console.log(<span class="string">''</span>)</span><br><span class="line">    console.log(<span class="string">'    输出命令  mk -n test -k activityList'</span>)</span><br><span class="line">    console.log(<span class="string">'    输出命令  mk --new test'</span>)</span><br><span class="line">    console.log(<span class="string">''</span>)</span><br><span class="line">&#125;)</span><br><span class="line">.parse(process.argv);</span><br></pre></td></tr></table></figure></p>
+<p><code>program.parse</code> 会解析命令行参数以及触发回调方法，因为nodejs的emit会立刻触发事件，所以将该方法放在命令及事件监听的最后面。</p>
+<h4 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h4><p>运行<code>mk -n test -k activityList</code>命令，可以通过program.n和program.k分别获得文件名’test’和模板key值’activityList’。</p>
+<h4 id="主要流程"><a href="#主要流程" class="headerlink" title="主要流程"></a>主要流程</h4><p>运行<code>mk -n test -k activityList</code>，读取<code>mk.json</code>文件中定义的模板,根据key值读取此次创建文件的模板来源：</p>
+<ul>
+<li>dir: 创建文件的目标位置</li>
+<li>suffix: 文件后缀</li>
+<li>tpl: 文件模板，模板内容可以自定义，使用的模板语法是<a href="https://mozilla.github.io/nunjucks/" target="_blank" rel="noopener">nunjucks</a>。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"fileList"</span> : [</span><br><span class="line">        &#123;<span class="attr">"dir"</span>: <span class="string">"test/js"</span>, <span class="attr">"suffix"</span>: <span class="string">"js"</span>, <span class="attr">"tpl"</span>: <span class="string">"tpl/js.tpl"</span>&#125;,</span><br><span class="line">        &#123;<span class="attr">"dir"</span>: <span class="string">"test/css"</span>, <span class="attr">"suffix"</span>: <span class="string">"css"</span>, <span class="attr">"tpl"</span>: <span class="string">"tpl/css.tpl"</span>&#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"activityList"</span> : [</span><br><span class="line">        &#123;<span class="attr">"dir"</span>: <span class="string">"activity/js"</span>, <span class="attr">"suffix"</span>: <span class="string">"js"</span>, <span class="attr">"tpl"</span>: <span class="string">"tpl/js.tpl"</span>&#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="npm包开发"><a href="#npm包开发" class="headerlink" title="npm包开发"></a>npm包开发</h3><p>首先要<code>npm adduser</code>来注册个npm账号，如果已经有账号，可以使用<code>npm login</code>来登录。<br>通过<code>npm version &lt;update_type&gt;</code>对版本进行管理，更新了版本号后发布：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm publish</span><br></pre></td></tr></table></figure></p>
+<p>最终发布的npm包见<a href="https://www.npmjs.com/package/mkfile-cli" target="_blank" rel="noopener">mkfile-cli</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/05/31/cmd小工具开发/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-core-decorators源码简析——readonly" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/17/core-decorators源码简析——readonly/">core-decorators源码简析——readonly</a>
+    </h1>
+  
+
+        
+        <a href="/2018/04/17/core-decorators源码简析——readonly/" class="archive-article-date">
+  	<time datetime="2018-04-17T07:40:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-17</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>直接看源码，<code>readonly.js</code>代码非常简短，核心函数是<code>handleDescriptor</code>，通过修改描述对象descriptor的writable属性为false，将目标属性置为不可修改。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; decorate &#125; <span class="keyword">from</span> <span class="string">'./private/utils'</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handleDescriptor</span>(<span class="params">target, key, descriptor</span>) </span>&#123;</span><br><span class="line">  descriptor.writable = <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">return</span> descriptor;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">readonly</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> decorate(handleDescriptor, args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中<code>decorate</code>函数定义在utils文件中，具体如下:<br>
+        
+      
+
+      
+    </p></div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">core-decorators</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">decorator</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">readonly</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/04/17/core-decorators源码简析——readonly/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-core-decorators源码简析——autobind" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -619,6 +789,10 @@
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">ontouchstart</span>=<span class="string">""</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <h3 id="beforeunload事件"><a href="#beforeunload事件" class="headerlink" title="beforeunload事件"></a>beforeunload事件</h3><p>兼容问题：为了优化用户体验，新式浏览器会要求有交互才会触发beforeunload事件，例如新版本的chrome浏览器。<br>PS: 从Firefox 4、 Chrome 51、Opera 38 和Safari 9.1开始，通用确认信息代替事件返回的字符串，即无法通过下面的方式自定义文案。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.onbeforeunload = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">  e = e || <span class="built_in">window</span>.event;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 兼容IE8和Firefox 4之前的版本</span></span><br><span class="line">  <span class="keyword">if</span> (e) &#123;</span><br><span class="line">    e.returnValue = <span class="string">'关闭提示'</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+</span></span><br><span class="line">  <span class="keyword">return</span> <span class="string">'关闭提示'</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 <p>HTML5规范中指出，在该事件中调用window.alert(), window.confirm(), 和 window.prompt()，会被忽略。详细的可参考<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/onbeforeunload" target="_blank" rel="noopener">MDN</a>。</p>
+<h3 id="get请求没有body"><a href="#get请求没有body" class="headerlink" title="get请求没有body"></a>get请求没有body</h3><p>HTTP规范也不推荐这么做：<br>下面来自 rfc7231 ：</p>
+<blockquote>
+<p>A payload within a GET request message has no defined semantics;   sending a payload body on a GET request might cause some existing   implementations to reject the request.</p>
+</blockquote>
 
       
 
@@ -731,155 +905,6 @@
 
 
   
-    <article id="post-分站开发总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/07/27/分站开发总结/">项目开发record</a>
-    </h1>
-  
-
-        
-        <a href="/2017/07/27/分站开发总结/" class="archive-article-date">
-  	<time datetime="2017-07-27T01:38:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="前端目录结构"><a href="#前端目录结构" class="headerlink" title="前端目录结构"></a>前端目录结构</h3><p>基于React + React-Router + Sass开发的webpack打包的多页面应用，其中正文页面和搜索页面是基于React-Router开发的单页面应用。路由类型采用的是BrowserRouter，在移动端pushState/replaceState没有兼容问题，可以放心使用。如果是要兼容IE9及以下，则不能使用BrowserRouter，建议使用HashRouter。此外，使用BrowserRouter后，可以借助history的特性帮助我们实现记录每个页面的历史停留位置。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">|-- assets</span><br><span class="line">  |</span><br><span class="line">  |-- config //webpack编译</span><br><span class="line">  |    |-- base.js //基础编译配置</span><br><span class="line">  |    |-- dev.js  //开发环境编译配置</span><br><span class="line">  |    |-- dll.js  //动态链接库编译配置</span><br><span class="line">  |    |-- hot.js  //热替换编译配置</span><br><span class="line">  |    |-- prod.js //开发环境编译配置</span><br><span class="line">  |    |-- util.js //定义配置相关的通用方法和变量</span><br><span class="line">  |</span><br><span class="line">  |-- src                //源码目录</span><br><span class="line">  |    |-- component        // 组件</span><br><span class="line">  |    |      |-- common      //公共组件</span><br><span class="line">  |    |      |--             //其他子组件</span><br><span class="line">  |    |-- entry              //入口js，与静态html文件相对应</span><br><span class="line">  |    |-- util               //通用方法</span><br><span class="line">  |    |-- image            //图片资源</span><br><span class="line">  |    |-- style            //样式</span><br><span class="line">  |</span><br><span class="line">  |-- template              //html模板，动态生成html文件</span><br><span class="line">  |</span><br><span class="line">  |-- mock.json      // mock数据</span><br><span class="line">  |-- server_hot.js  //实现热更新、拦截并处理前端请求(返回本地页面、mock数据，其他请求转发到服务端处理)  </span><br><span class="line">  |</span><br><span class="line">|-- dist //构建目录</span><br></pre></td></tr></table></figure></p>
-<p>其中，模板中是静态html文件，在没有添加后端路由的情况下，通过server_hot.js中的页面映射去访问前端页面，例如当匹配到路径/index时，返回index.html页面，结合mock数据，真正实现了前后端分离。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> templateMap = &#123;</span><br><span class="line">    <span class="string">'/search'</span>: <span class="string">'search.html'</span>,</span><br><span class="line">    <span class="string">'/search/book'</span>: <span class="string">'search.html'</span>,</span><br><span class="line">    <span class="string">'/index'</span>: <span class="string">'index.html'</span>,</span><br><span class="line">    <span class="string">'/history'</span>: <span class="string">'history.html'</span>,</span><br><span class="line">    <span class="string">'/rank'</span>: <span class="string">'rank.html'</span>,</span><br><span class="line">    <span class="string">'/home/more'</span>: <span class="string">'more.html'</span>,</span><br><span class="line">    <span class="string">'/category'</span>: <span class="string">'category.html'</span>,</span><br><span class="line">    <span class="string">'/info'</span>: <span class="string">'info.html'</span>,</span><br><span class="line">    <span class="string">'/detail'</span>: <span class="string">'detail.html'</span>,</span><br><span class="line">    <span class="string">'/book/reader'</span>: <span class="string">'reader.html'</span>,</span><br><span class="line">    <span class="string">'/recharge'</span>: <span class="string">'recharge.html'</span>,</span><br><span class="line">    <span class="string">'/catalog'</span>: <span class="string">'catalog.html'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> mapItem <span class="keyword">in</span> templateMap) &#123;</span><br><span class="line">    app.get(mapItem, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">        res.sendFile(__dirname + <span class="string">'/template/'</span> + templateMap[mapItem]);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h4 id="API转发后获取服务端数据失败的问题"><a href="#API转发后获取服务端数据失败的问题" class="headerlink" title="API转发后获取服务端数据失败的问题"></a>API转发后获取服务端数据失败的问题</h4><p>在使用http-proxy-middleware转发请求到后端时，发现有部分请求无法获得返回数据，首先可以确定的是请求被转发到后端了。调试发现后端会验证站点相关信息，在验证host的时候报错。猜测可能是请求转发后header里的host信息丢失，查询<a href="https://www.npmjs.com/package/http-proxy-middleware#http-proxy-middleware-options" target="_blank" rel="noopener">API</a>发现可以设置option.headers，如下所示。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> proxyMiddleware = <span class="built_in">require</span>(<span class="string">'http-proxy-middleware'</span>);</span><br><span class="line"><span class="keyword">var</span> apiProxy = proxyMiddleware(<span class="string">'/api'</span>, &#123; <span class="attr">target</span>: <span class="string">'http://ypxst.kuxuanbook.yuedu.163.com'</span>, <span class="attr">headers</span>: &#123;<span class="attr">host</span>: <span class="string">'ypxst.kuxuanbook.yuedu.163.com'</span>&#125;&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>设置好host后，就可以正常获取接口返回数据了。</p>
-<h4 id="POST请求验证XSRF-TOKEN"><a href="#POST请求验证XSRF-TOKEN" class="headerlink" title="POST请求验证XSRF-TOKEN"></a>POST请求验证XSRF-TOKEN</h4><p>之前阅读常用的方式是后端写入freemarker模板或者通过异步接口获得，这次和后端约定统一放在cookie中。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">headers: &#123;</span><br><span class="line">    <span class="string">'Content-Type'</span>: <span class="string">'application/x-www-form-urlencoded'</span>,</span><br><span class="line">    <span class="string">'X-XSRF-TOKEN'</span>: csrf_token</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>从cookie中读取token后封装在post接口中，写在headers里面，这样在使用的时候就直接调用post方法，无需关注token验证。</p>
-<h4 id="使用git-subtree同步assets工程"><a href="#使用git-subtree同步assets工程" class="headerlink" title="使用git subtree同步assets工程"></a>使用git subtree同步assets工程</h4><p>assets资源存在于novel-webapp-wap和novel-webapp-recharge两个工程下面，recharge工程下面用到的是充值页面，其他页面都在wap工程下，之所以分开为两个工程是因为涉及到支付，充值的域名需要是唯一的，而分站的域名很多。为了保证二者资源的同步，可以使用git subtree实现子工程的同步。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取远端novel-webapp-assets的更新</span></span><br><span class="line">git subtree pull --prefix=src/main/webapp/assets ssh://git@g.hz.netease.com:22222/novel/novel-webapp-assets.git master --squash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将本地assets更新推送到远端novel-webapp-assets</span></span><br><span class="line">git subtree push --prefix=src/main/webapp/assets ssh://git@g.hz.netease.com:22222/novel/novel-webapp-assets.git master --squash</span><br></pre></td></tr></table></figure></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">总结</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">webpack</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/07/27/分站开发总结/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-css效果" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/30/css效果/">css效果</a>
-    </h1>
-  
-
-        
-        <a href="/2017/06/30/css效果/" class="archive-article-date">
-  	<time datetime="2017-06-30T11:44:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-30</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="仿古效果"><a href="#仿古效果" class="headerlink" title="仿古效果"></a>仿古效果</h3><blockquote>
-<p>CSS处理图像效果：仿古效果[<a href="https://www.w3cplus.com/css3/vintage-washout.html]" target="_blank" rel="noopener">https://www.w3cplus.com/css3/vintage-washout.html]</a></p>
-</blockquote>
-<p>冲洗效果: 通过减轻暗色阴影和改变一些阴影的细节（改变暗色的细节），看上去就是在亮度的范围降低颜色对比度。</p>
-<ul>
-<li><p>混合模式：lighten<br>将lighten混合模式应用于一个重叠元素或者一个伪元素上。你可以在某个元素上使用background-blend-mode:lighten或者使用多个混合模式，也可以在覆盖元素上使用mix-blend-mode:lighten。建议使用多个背景。</p>
-</li>
-<li><p>应用<br>使用@mixin</p>
-<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@<span class="keyword">mixin</span> fade-it(<span class="variable">$img</span>, <span class="variable">$shadow</span>: <span class="number">#536</span>) &#123;</span><br><span class="line">  <span class="attribute">background</span>: url(<span class="string">'#&#123;$img&#125;'</span>), <span class="variable">$shadow</span>;</span><br><span class="line">  <span class="attribute">background-blend-mode</span>: lighten;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.apply-base</span> &#123;</span><br><span class="line">  @<span class="keyword">include</span> fade-it(<span class="string">'1.jpg'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.apply-unique-shade</span> &#123;</span><br><span class="line">  @<span class="keyword">include</span> fade-it(<span class="string">'2.jpg'</span>, <span class="number">#293e78</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>编译后的css<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.apply-base</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(<span class="string">'1.jpg'</span>), <span class="number">#536</span>;</span><br><span class="line">  <span class="attribute">background-blend-mode</span>: lighten;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.apply-unique-shade</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(<span class="string">'2.jpg'</span>), <span class="number">#293e78</span>;</span><br><span class="line">  <span class="attribute">background-blend-mode</span>: lighten;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/06/30/css效果/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
@@ -894,7 +919,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2019 Sherry
+    		&copy; 2020 Sherry
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -1041,14 +1066,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">diff</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">webpack</a>
               </li>
              
@@ -1069,19 +1086,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1093,7 +1102,23 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">diff</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
             
             <div class="clearfix"></div>

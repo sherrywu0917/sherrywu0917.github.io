@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="https://sherrywu0917.github.io">
   <title>打点实践总结 | lying fox</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="//TODObeacon 请求方法均为POST，且不支持修改兼容性 https://caniuse.com/#search=beacon  polyfill https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js https://developer.mozilla.org/zh-CN/docs/Web/A">
+  <meta name="description" content="beacon 请求方法均为POST，且不支持修改兼容性 https://caniuse.com/#search=beacon  polyfill https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js https://developer.mozilla.org/zh-CN/docs/Web/API/Nav">
 <meta property="og:type" content="article">
 <meta property="og:title" content="打点实践总结">
 <meta property="og:url" content="https://sherrywu0917.github.io/2019/03/07/打点实践总结/index.html">
 <meta property="og:site_name" content="lying fox">
-<meta property="og:description" content="//TODObeacon 请求方法均为POST，且不支持修改兼容性 https://caniuse.com/#search=beacon  polyfill https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js https://developer.mozilla.org/zh-CN/docs/Web/A">
+<meta property="og:description" content="beacon 请求方法均为POST，且不支持修改兼容性 https://caniuse.com/#search=beacon  polyfill https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js https://developer.mozilla.org/zh-CN/docs/Web/API/Nav">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-13T16:12:57.191Z">
+<meta property="og:updated_time" content="2019-03-18T12:59:45.640Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="打点实践总结">
-<meta name="twitter:description" content="//TODObeacon 请求方法均为POST，且不支持修改兼容性 https://caniuse.com/#search=beacon  polyfill https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js https://developer.mozilla.org/zh-CN/docs/Web/A">
+<meta name="twitter:description" content="beacon 请求方法均为POST，且不支持修改兼容性 https://caniuse.com/#search=beacon  polyfill https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js https://developer.mozilla.org/zh-CN/docs/Web/API/Nav">
   
     <link rel="alternative" href="/atom.xml" title="lying fox" type="application/atom+xml">
   
@@ -180,13 +180,17 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>//TODO<br>beacon 请求方法均为POST，且不支持修改<br>兼容性 <a href="https://caniuse.com/#search=beacon" target="_blank" rel="noopener">https://caniuse.com/#search=beacon</a></p>
+        <p>beacon 请求方法均为POST，且不支持修改<br>兼容性 <a href="https://caniuse.com/#search=beacon" target="_blank" rel="noopener">https://caniuse.com/#search=beacon</a></p>
 <ul>
 <li>polyfill <a href="https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js" target="_blank" rel="noopener">https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js</a></li>
 <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon</a></li>
 <li><a href="https://juejin.im/post/5c7e541b6fb9a049e06415a5?utm_source=gold_browser_extension" target="_blank" rel="noopener">如何在 Web 关闭页面时发送 Ajax 请求</a></li>
 <li><a href="https://juejin.im/post/5b694b5de51d4519700fa56a" target="_blank" rel="noopener">[译] 使用 Web Beacon API 记录活动</a></li>
 </ul>
+<p>post请求<br>content-type:</p>
+<h3 id="application-json"><a href="#application-json" class="headerlink" title="application/json"></a>application/json</h3><p>Request Payload:<br>{layouts: [“1”, “2”, “5”]}</p>
+<h3 id="application-x-www-form-urlencoded"><a href="#application-x-www-form-urlencoded" class="headerlink" title="application/x-www-form-urlencoded"></a>application/x-www-form-urlencoded</h3><p>Query String Parameters<br>sourceUuid:np_c3sEKMgU3Xau_Tl0fmsqyReIdKH9OXQpby_FSNhz__ppcy0EKQ<br>articleUuid:np_eXoyZJwfsX-q8j5OLm0pyEbYGK0<br>forceFollow:0<br>isContinue:0<br>forceAutoPurchase:1</p>
+<h3 id="multipart-form-data"><a href="#multipart-form-data" class="headerlink" title="multipart/form-data"></a>multipart/form-data</h3><p>使用表单上传文件时，必须让 form 的 enctype 等于这个值。<br>Content-Type: multipart/form-data; boundary=—-WebKitFormBoundaryBJIFBCE2CA2Fwbyl</p>
 
       
 
@@ -280,11 +284,11 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/03/26/表单和post参数总结/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2019/03/18/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          表单和post参数总结
+          Hello World
         
       </div>
     </a>
@@ -316,7 +320,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2019 Sherry
+    		&copy; 2020 Sherry
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -463,14 +467,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">diff</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">webpack</a>
               </li>
              
@@ -491,19 +487,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -515,7 +503,23 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">diff</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
             
             <div class="clearfix"></div>

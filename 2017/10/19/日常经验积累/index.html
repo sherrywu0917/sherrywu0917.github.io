@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="lying fox">
 <meta property="og:description" content="禁用复制功能123document.oncontextmenu = function() &amp;#123; return false; &amp;#125;  //禁用鼠标右键功能document.body.oncopy = function() &amp;#123; return false; &amp;#125;    //禁用复制功能document.onselectstart = function() &amp;#123;">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-03-18T02:27:14.365Z">
+<meta property="og:updated_time" content="2020-01-03T07:09:18.305Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="日常经验积累">
 <meta name="twitter:description" content="禁用复制功能123document.oncontextmenu = function() &amp;#123; return false; &amp;#125;  //禁用鼠标右键功能document.body.oncopy = function() &amp;#123; return false; &amp;#125;    //禁用复制功能document.onselectstart = function() &amp;#123;">
@@ -208,6 +208,10 @@
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">ontouchstart</span>=<span class="string">""</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <h3 id="beforeunload事件"><a href="#beforeunload事件" class="headerlink" title="beforeunload事件"></a>beforeunload事件</h3><p>兼容问题：为了优化用户体验，新式浏览器会要求有交互才会触发beforeunload事件，例如新版本的chrome浏览器。<br>PS: 从Firefox 4、 Chrome 51、Opera 38 和Safari 9.1开始，通用确认信息代替事件返回的字符串，即无法通过下面的方式自定义文案。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.onbeforeunload = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">  e = e || <span class="built_in">window</span>.event;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 兼容IE8和Firefox 4之前的版本</span></span><br><span class="line">  <span class="keyword">if</span> (e) &#123;</span><br><span class="line">    e.returnValue = <span class="string">'关闭提示'</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+</span></span><br><span class="line">  <span class="keyword">return</span> <span class="string">'关闭提示'</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 <p>HTML5规范中指出，在该事件中调用window.alert(), window.confirm(), 和 window.prompt()，会被忽略。详细的可参考<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/onbeforeunload" target="_blank" rel="noopener">MDN</a>。</p>
+<h3 id="get请求没有body"><a href="#get请求没有body" class="headerlink" title="get请求没有body"></a>get请求没有body</h3><p>HTTP规范也不推荐这么做：<br>下面来自 rfc7231 ：</p>
+<blockquote>
+<p>A payload within a GET request message has no defined semantics;   sending a payload body on a GET request might cause some existing   implementations to reject the request.</p>
+</blockquote>
 
       
 
@@ -348,7 +352,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2019 Sherry
+    		&copy; 2020 Sherry
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -495,14 +499,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">diff</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">webpack</a>
               </li>
              
@@ -523,19 +519,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -547,7 +535,23 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">diff</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
             
             <div class="clearfix"></div>

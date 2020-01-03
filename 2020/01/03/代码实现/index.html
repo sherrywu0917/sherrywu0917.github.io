@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="https://sherrywu0917.github.io">
   <title>lying fox</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="function instance(Cls, ...params) {     var obj = {};     Cls.apply(obj, params);     // for(var key in Cls.prototype) {     //     obj[key] = Cls.prototype[key];     // }     obj[&apos;__proto__&apos;] = Cls">
+  <meta name="description" content="12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788function instance(Cls, ...params)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="lying fox">
-<meta property="og:url" content="https://sherrywu0917.github.io/2019/05/06/Untitled-1/index.html">
+<meta property="og:url" content="https://sherrywu0917.github.io/2020/01/03/代码实现/index.html">
 <meta property="og:site_name" content="lying fox">
-<meta property="og:description" content="function instance(Cls, ...params) {     var obj = {};     Cls.apply(obj, params);     // for(var key in Cls.prototype) {     //     obj[key] = Cls.prototype[key];     // }     obj[&apos;__proto__&apos;] = Cls">
+<meta property="og:description" content="12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788function instance(Cls, ...params)">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-07T06:57:21.909Z">
+<meta property="og:updated_time" content="2020-01-03T07:09:18.304Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="lying fox">
-<meta name="twitter:description" content="function instance(Cls, ...params) {     var obj = {};     Cls.apply(obj, params);     // for(var key in Cls.prototype) {     //     obj[key] = Cls.prototype[key];     // }     obj[&apos;__proto__&apos;] = Cls">
+<meta name="twitter:description" content="12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788function instance(Cls, ...params)">
   
     <link rel="alternative" href="/atom.xml" title="lying fox" type="application/atom+xml">
   
@@ -160,102 +160,12 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Untitled-1" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-代码实现" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
     <div class="article-entry" itemprop="articleBody">
       
-        
-
-function instance(Cls, ...params) {
-    var obj = {};
-    Cls.apply(obj, params);
-    // for(var key in Cls.prototype) {
-    //     obj[key] = Cls.prototype[key];
-    // }
-    obj['__proto__'] = Cls.prototype;
-    return obj
-}
-
-function filterStr(str) {
-    let stack = [];
-    for(var char of str) {
-        if(char !== 'b') {
-            if(char === 'c') {
-                let len = stack.length;
-                if(stack[len -1] === 'a') {
-                    stack.splice(len-2)
-                }
-                else {
-                    stack.push(char)
-                }
-            }
-            else {
-                stack.push(char)
-            }
-        }
-    }
-    return stack.join('');
-}
-
-
-//输出0 1 2 3 4 5
-//https://juejin.im/post/58cf180b0ce4630057d6727c#heading-1
-var tasks = [];
-for (var i = 0; i < 5; i++) {
-    (function(j) {
-        tasks.push(new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    console.log(new Date, j);
-                    resolve();
-                }, 1000 * j);  // 这里修改 0~4 的定时器时间
-            })
-        )
-    })(i);
-}
-
-Promise.all(tasks).then(() => {
-    setTimeout(() => {
-        console.log(new Date, i);
-    }, 1000)
-})
-
-//输出0 1 2 3 4 5
-var tasks = [];
-for (var i = 0; i < 5; i++) {
-    tasks.push(((j) => new Promise((resolve, reject) => {
-            setTimeout(() => {
-                console.log(new Date, j);
-                resolve();
-            }, 1000 * j);  // 这里修改 0~4 的定时器时间
-        }))(i)
-    )
-}
-
-Promise.all(tasks).then(() => {
-    setTimeout(() => {
-        console.log(new Date, i);
-    }, 1000)
-})
-
-//输出0 1 2 3 4 5
-const sleep = (timeountMS) => new Promise((resolve) => {
-    setTimeout(resolve, timeountMS);
-});
-(async() => {
-    for (var i = 0; i < 5; i++) {
-        await sleep(1000);
-        console.log(new Date, i);
-    }
-    
-    await sleep(1000);
-    console.log(new Date, i);
-})()
-
-//编写一个程序将数组扁平化去并除其中重复部分数据，最终得到一个升序且不重复的数组
-var arr = [ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10];
-Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
-
+        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">instance</span>(<span class="params">Cls, ...params</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> obj = &#123;&#125;;</span><br><span class="line">    Cls.apply(obj, params);</span><br><span class="line">    <span class="comment">// for(var key in Cls.prototype) &#123;</span></span><br><span class="line">    <span class="comment">//     obj[key] = Cls.prototype[key];</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    obj[<span class="string">'__proto__'</span>] = Cls.prototype;</span><br><span class="line">    <span class="keyword">return</span> obj</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filterStr</span>(<span class="params">str</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> stack = [];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> char <span class="keyword">of</span> str) &#123;</span><br><span class="line">        <span class="keyword">if</span>(char !== <span class="string">'b'</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>(char === <span class="string">'c'</span>) &#123;</span><br><span class="line">                <span class="keyword">let</span> len = stack.length;</span><br><span class="line">                <span class="keyword">if</span>(stack[len <span class="number">-1</span>] === <span class="string">'a'</span>) &#123;</span><br><span class="line">                    stack.splice(len<span class="number">-2</span>)</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    stack.push(char)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                stack.push(char)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stack.join(<span class="string">''</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//输出0 1 2 3 4 5</span></span><br><span class="line"><span class="comment">//https://juejin.im/post/58cf180b0ce4630057d6727c#heading-1</span></span><br><span class="line"><span class="keyword">var</span> tasks = [];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    (<span class="function"><span class="keyword">function</span>(<span class="params">j</span>) </span>&#123;</span><br><span class="line">        tasks.push(<span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">                setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">                    <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, j);</span><br><span class="line">                    resolve();</span><br><span class="line">                &#125;, <span class="number">1000</span> * j);  <span class="comment">// 这里修改 0~4 的定时器时间</span></span><br><span class="line">            &#125;)</span><br><span class="line">        )</span><br><span class="line">    &#125;)(i);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.all(tasks).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, i);</span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出0 1 2 3 4 5</span></span><br><span class="line"><span class="keyword">var</span> tasks = [];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    tasks.push(<span class="function">(<span class="params">(j</span>) =&gt;</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">            setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, j);</span><br><span class="line">                resolve();</span><br><span class="line">            &#125;, <span class="number">1000</span> * j);  <span class="comment">// 这里修改 0~4 的定时器时间</span></span><br><span class="line">        &#125;))(i)</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.all(tasks).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, i);</span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出0 1 2 3 4 5</span></span><br><span class="line"><span class="keyword">const</span> sleep = <span class="function">(<span class="params">timeountMS</span>) =&gt;</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">    setTimeout(resolve, timeountMS);</span><br><span class="line">&#125;);</span><br><span class="line">(<span class="keyword">async</span>() =&gt; &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">await</span> sleep(<span class="number">1000</span>);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, i);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">await</span> sleep(<span class="number">1000</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, i);</span><br><span class="line">&#125;)()</span><br><span class="line"></span><br><span class="line"><span class="comment">//编写一个程序将数组扁平化去并除其中重复部分数据，最终得到一个升序且不重复的数组</span></span><br><span class="line"><span class="keyword">var</span> arr = [ [<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>], [<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, [<span class="number">11</span>, <span class="number">12</span>, [<span class="number">12</span>, <span class="number">13</span>, [<span class="number">14</span>] ] ] ], <span class="number">10</span>];</span><br><span class="line"><span class="built_in">Array</span>.from(<span class="keyword">new</span> <span class="built_in">Set</span>(arr.flat(<span class="literal">Infinity</span>))).sort(<span class="function">(<span class="params">a, b</span>) =&gt;</span> (a - b))</span><br></pre></td></tr></table></figure>
       
 
       
@@ -334,7 +244,7 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=https://sherrywu0917.github.io/2019/05/06/Untitled-1/" alt="微信分享二维码">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://sherrywu0917.github.io/2020/01/03/代码实现/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -349,8 +259,8 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
 <nav id="article-nav">
   
   
-    <a href="/2019/04/03/优化之路/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">前端优化-蹒跚学步</div>
+    <a href="/2019/12/27/animejs动画/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">animejs动画入门</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -375,7 +285,7 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2019 Sherry
+    		&copy; 2020 Sherry
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -522,14 +432,6 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">diff</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">webpack</a>
               </li>
              
@@ -550,19 +452,11 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -574,7 +468,23 @@ Array.from(new Set(arr.flat(Infinity))).sort((a, b) => (a - b))
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">diff</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
               </li>
             
             <div class="clearfix"></div>
