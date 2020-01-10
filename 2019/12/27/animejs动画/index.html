@@ -16,7 +16,7 @@
 <meta property="og:description" content="概述anime.js是一个灵活的轻量JavaScript动画库，支持CSS属性、JS对象、DOM属性和SVG。压缩后仅6.2K，且不依赖任何第三方库，加载迅速。在git上Usedby数量8.5k, Star数量为33.5k。此外，anime遵从MIT开源协议,可应用于各种商业网站或app而无需付费。 简单的浮动动画首先看一个简单的示例，实现了气泡的上下浮动动画，效果详见浮动动画。12345678c">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://sherrywu0917.github.io/image/webkit-anime.png">
-<meta property="og:updated_time" content="2020-01-03T07:09:18.302Z">
+<meta property="og:updated_time" content="2020-01-10T08:44:37.475Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="animejs动画入门">
 <meta name="twitter:description" content="概述anime.js是一个灵活的轻量JavaScript动画库，支持CSS属性、JS对象、DOM属性和SVG。压缩后仅6.2K，且不依赖任何第三方库，加载迅速。在git上Usedby数量8.5k, Star数量为33.5k。此外，anime遵从MIT开源协议,可应用于各种商业网站或app而无需付费。 简单的浮动动画首先看一个简单的示例，实现了气泡的上下浮动动画，效果详见浮动动画。12345678c">
@@ -187,11 +187,13 @@
 <p>其中各个属性代表的含义如下：</p>
 <ul>
 <li><code>targets</code>代表动画的目标对象，这边的值是css选择器，也可以是dom元素、数组，或是JS对象；</li>
-<li><code>translateY</code>代表将要发生动画的属性，不带单位的时候，默认单位为px，此外还支持其他多种赋值方式；<pre><code>- 百分比：`translateY: &apos;100%&apos;`
-- 相对数值：`translateY: { value: &apos;*=2.5&apos;,duration: 1000}`，相对于translateY的初始值去计算
-- 设置初始值：`translateY: [100, 250]`，设置数组的形式，会将translateY的初始值设置为100px，并且从100px移动到250px
-- 函数：`translateY: function(el, i, l) {return (l - i) * 50;}`
-</code></pre></li>
+<li><code>translateY</code>代表将要发生动画的属性，不带单位的时候，默认单位为px，此外还支持其他多种赋值方式：<ol>
+<li>百分比：<code>translateY: &#39;100%&#39;</code></li>
+<li>相对数值：<code>translateY: { value: &#39;*=2.5&#39;,duration: 1000}</code>，相对于translateY的初始值去计算</li>
+<li>设置初始值：<code>translateY: [100, 250]</code>，设置数组的形式，会将translateY的初始值设置为100px，并且从100px移动到250px</li>
+<li>函数：<code>translateY: function(el, i, l) {return (l - i) * 50;}</code></li>
+</ol>
+</li>
 <li><code>duration</code>代表动画的持续时间，单位为毫秒；</li>
 <li><code>loop</code>定义了动画是否需要循环，默认值为false；</li>
 <li><code>direction</code>的意义和animation-direction属性一致，定义是否应该轮流反向播放动画，可选的值有正向动画<code>normal</code>、反向动画<code>reverse</code>和往返动画<code>alternate</code>；</li>
@@ -299,18 +301,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2020/01/03/代码实现/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2020/01/03/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          (no title)
+          Hello World
         
       </div>
     </a>
   
   
-    <a href="/2019/04/03/优化之路/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">前端优化-蹒跚学步</div>
+    <a href="/2019/04/03/代码实现Record/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">代码实现Record</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -414,15 +416,15 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -435,6 +437,10 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">decorator</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -458,10 +464,6 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">下载</a>
               </li>
              
@@ -479,6 +481,30 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">组件开发</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">diff</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">setState</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">sass</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -502,27 +528,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">sass</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">前端性能优化</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -530,11 +536,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">diff</a>
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">setState</a>
+                <a href="javascript:void(0)" class="js-tag color1">天气开发、19年总结</a>
               </li>
             
             <div class="clearfix"></div>
