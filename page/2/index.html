@@ -158,71 +158,6 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-reading-record" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/18/reading-record/">reading-record</a>
-    </h1>
-  
-
-        
-        <a href="/2018/11/18/reading-record/" class="archive-article-date">
-  	<time datetime="2018-11-18T02:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="你的Tree-Shaking并没什么卵用"><a href="#你的Tree-Shaking并没什么卵用" class="headerlink" title="你的Tree-Shaking并没什么卵用"></a><a href="https://juejin.im/post/5a5652d8f265da3e497ff3de#comment" target="_blank" rel="noopener">你的Tree-Shaking并没什么卵用</a></h2><blockquote>
-<p>Tree-Shaking的原理</p>
-<ul>
-<li>ES6的模块引入是静态分析的，故而可以在编译时正确判断到底加载了什么代码。</li>
-<li>分析程序流，判断哪些变量未被使用、引用，进而删除此代码</li>
-</ul>
-</blockquote>
-<p>但现实比较骨感，es6的代码经过babel和webpack编译打包后，产生的副作用(可能会改变外部变量)导致多余的代码并未被删掉。<br>babel6在编译的时候，会调用_createClass方法，使用Object.defineProperty去定义类里面的方法，原因是因为在es6的特性中，类里面声明的方法是不可枚举的。所以设置<code>{ &quot;loose&quot;: false }</code>宽松模式，让babel编译的时候不必去严格遵循es6的特性。<br>此外，UglifyJS不会进行程序流分析，所以在压缩的时候无法排除掉可能有副作用的代码，所以这部分代码还是会被打包进去。<br>使用babel6/webpack打包可以考虑结合使用<code>BabelMinifyWebpackPlugin</code>，思路是先进行uglifyJS代码压缩，再去编译。</p>
-<blockquote>
-<p>评论中指出：关于Person和Apple阐述Babel副作用的例子在Babel升级到Babel7之后确实已经不存在了，使用Babel7的正式版和Webpack4亲测。</p>
-</blockquote>
-<h2 id="http2-0-相比-1-0有哪些重大改进？"><a href="#http2-0-相比-1-0有哪些重大改进？" class="headerlink" title="http2.0 相比 1.0有哪些重大改进？"></a><a href="https://www.zhihu.com/question/34074946" target="_blank" rel="noopener">http2.0 相比 1.0有哪些重大改进？</a></h2><ol>
-<li><p>多路复用<br>多路复用允许同时通过单一的 HTTP/2 连接发起多重的请求-响应消息。<br>在http1.0和1.1协议下，浏览器在同一时间针对同一域名下的请求有一定数量的限制。不同浏览器限制的数量不一样。</p>
-</li>
-<li><p>二进制分帧<br>http2.0在应用层和传输层之间增加了一个二进制分帧层，在该层中，会将传输信息分割成更小的消息和帧。将http1.x的头部信息封装在到了HEADER frame，相应的Request Body封装到DATA frame中。<br>http2.0让所有数据流共用一个连接，有效地使用TCP连接，减少服务端的链接压力，内存占用更少，实现高带宽。<br>此外，减少了TCP慢启动的时间。</p>
-        
-      
-
-      
-    </li></ol></div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/11/18/reading-record/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
     <article id="post-菜鸟优化之路-前端性能测试工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -946,6 +881,101 @@
 
 
   
+    <article id="post-cmd小工具开发" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/31/cmd小工具开发/">cmd小工具开发</a>
+    </h1>
+  
+
+        
+        <a href="/2018/05/31/cmd小工具开发/" class="archive-article-date">
+  	<time datetime="2018-05-31T02:02:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-31</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="cmd项目初始化"><a href="#cmd项目初始化" class="headerlink" title="cmd项目初始化"></a>cmd项目初始化</h3><p>首先新建一个文件夹，并且初始化package.json，同时在bin文件夹下面创建入口文件index.js。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm init <span class="comment">#初始化'package.json'文件</span></span><br></pre></td></tr></table></figure></p>
+<p>index.js文件头部有<code>#!/usr/bin/env node</code>，叫做<a href="https://en.wikipedia.org/wiki/Shebang_(Unix" target="_blank" rel="noopener">shebang</a>)，指定脚本解释程序为<code>node</code>。<br>package.json文件中bin字段配置了cmd命令将执行的js文件，如下所示：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"mkfile-cli"</span>,</span><br><span class="line">  <span class="string">"version"</span>: <span class="string">"1.0.7"</span>,</span><br><span class="line">  <span class="string">"main"</span>: <span class="string">"index.js"</span>,</span><br><span class="line">  <span class="string">"bin"</span>: &#123;</span><br><span class="line">    <span class="string">"mk"</span>: <span class="string">"bin/index.js"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"repository"</span>: &#123;</span><br><span class="line">    <span class="string">"type"</span> : <span class="string">"git"</span>,</span><br><span class="line">    <span class="string">"url"</span> : <span class="string">"https://xxx"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"author"</span>: <span class="string">"sherrywu"</span>,</span><br><span class="line">  <span class="string">"license"</span>: <span class="string">"ISC"</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><ul>
+<li>可以运行<code>node bin/index.js</code>命令</li>
+<li>通过<code>npm link</code>的方式</li>
+<li>还可以通过<code>npm install . -g</code>安装到全局</li>
+</ul>
+<h3 id="cmd命令行工具开发"><a href="#cmd命令行工具开发" class="headerlink" title="cmd命令行工具开发"></a>cmd命令行工具开发</h3><h4 id="commander-js"><a href="#commander-js" class="headerlink" title="commander.js"></a>commander.js</h4><p><a href="https://github.com/tj/commander.js" target="_blank" rel="noopener">Commander</a>是一个轻量级、强大的命令行开发框架，提供了封装好的API，帮助用户快速开发命令行工具。</p>
+<h5 id="安装："><a href="#安装：" class="headerlink" title="安装："></a>安装：</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install commander --save</span><br></pre></td></tr></table></figure>
+<h4 id="option"><a href="#option" class="headerlink" title="option"></a>option</h4><p>option()方法的定义</p>
+<ul>
+<li><p>option(flags, description, fn, defaultValue)</p>
+<ul>
+<li>flags <string> : 自定义参数，格式为”-shortFlag, –longFlag null|<code>&lt;value&gt;</code>|[value]|<code>&lt;value&gt;</code>..<code>&lt;value&gt;</code>“</string></li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>-shortFlag：”-“后面跟的是自定义参数的短标志，一般用longFlag的第一个字母(区分大小写)</li>
+<li>–longFlag ：”–”后面跟的是自定义参数的长标志，shortFlag和longFlag必须同时存在，</li>
+<li>null|<code>&lt;value&gt;</code>|[value]：有3种情况<ul>
+<li>null——可以不带参数</li>
+<li><code>&lt;value&gt;</code>——“&lt;&gt;”修饰，参数必须。</li>
+<li>[value]——”[]“修饰, 参数可选。</li>
+</ul>
+</li>
+<li>description <string> : 对flags参数的描述</string></li>
+<li>fn &lt;Function|Mixed&gt; : 自定义处理参数的方法，如果传入的不是一个方法，会先判断是否为一个正则表达式，如果不是，则视为defaultValue（默认值），</li>
+<li>defaultValue <mixed> ：自定义参数默认值</mixed></li>
+<li>返回值 <object>：commander对象</object></li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">program</span><br><span class="line">    .version(<span class="string">'1.0.1'</span>)</span><br><span class="line">    .option(<span class="string">'-n, --new &lt;filename&gt;'</span>, <span class="string">'创建文件'</span>)</span><br><span class="line">    .parse(process.argv);</span><br><span class="line"><span class="keyword">if</span>(program.new || program.n) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'文件名：'</span> + (program.new || program.n))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过<code>mk -h</code>可以查看帮助文档，-h 和 -V都是commander封装好的命令:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ mk -h</span><br><span class="line"></span><br><span class="line">  Usage: index [options]</span><br><span class="line"></span><br><span class="line">  Options:</span><br><span class="line"></span><br><span class="line">    -V, --version         output the version number</span><br><span class="line">    -n, --new &lt;filename&gt;  创建文件</span><br><span class="line">    -h, --<span class="built_in">help</span>            output usage information</span><br></pre></td></tr></table></figure></p>
+<h4 id="on事件监听"><a href="#on事件监听" class="headerlink" title="on事件监听"></a>on事件监听</h4><p>此外还可以自定义help文档，通过监听–help触发定义的回调方法。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">program.on(<span class="string">'--help'</span>, <span class="function"><span class="title">function</span></span> () &#123;</span><br><span class="line">    console.log(<span class="string">'  自定义的例子:'</span>)</span><br><span class="line">    console.log(<span class="string">''</span>)</span><br><span class="line">    console.log(<span class="string">'    输出命令  mk -n test -k activityList'</span>)</span><br><span class="line">    console.log(<span class="string">'    输出命令  mk --new test'</span>)</span><br><span class="line">    console.log(<span class="string">''</span>)</span><br><span class="line">&#125;)</span><br><span class="line">.parse(process.argv);</span><br></pre></td></tr></table></figure></p>
+<p><code>program.parse</code> 会解析命令行参数以及触发回调方法，因为nodejs的emit会立刻触发事件，所以将该方法放在命令及事件监听的最后面。</p>
+<h4 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h4><p>运行<code>mk -n test -k activityList</code>命令，可以通过program.n和program.k分别获得文件名’test’和模板key值’activityList’。</p>
+<h4 id="主要流程"><a href="#主要流程" class="headerlink" title="主要流程"></a>主要流程</h4><p>运行<code>mk -n test -k activityList</code>，读取<code>mk.json</code>文件中定义的模板,根据key值读取此次创建文件的模板来源：</p>
+<ul>
+<li>dir: 创建文件的目标位置</li>
+<li>suffix: 文件后缀</li>
+<li>tpl: 文件模板，模板内容可以自定义，使用的模板语法是<a href="https://mozilla.github.io/nunjucks/" target="_blank" rel="noopener">nunjucks</a>。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"fileList"</span> : [</span><br><span class="line">        &#123;<span class="attr">"dir"</span>: <span class="string">"test/js"</span>, <span class="attr">"suffix"</span>: <span class="string">"js"</span>, <span class="attr">"tpl"</span>: <span class="string">"tpl/js.tpl"</span>&#125;,</span><br><span class="line">        &#123;<span class="attr">"dir"</span>: <span class="string">"test/css"</span>, <span class="attr">"suffix"</span>: <span class="string">"css"</span>, <span class="attr">"tpl"</span>: <span class="string">"tpl/css.tpl"</span>&#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"activityList"</span> : [</span><br><span class="line">        &#123;<span class="attr">"dir"</span>: <span class="string">"activity/js"</span>, <span class="attr">"suffix"</span>: <span class="string">"js"</span>, <span class="attr">"tpl"</span>: <span class="string">"tpl/js.tpl"</span>&#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="npm包开发"><a href="#npm包开发" class="headerlink" title="npm包开发"></a>npm包开发</h3><p>首先要<code>npm adduser</code>来注册个npm账号，如果已经有账号，可以使用<code>npm login</code>来登录。<br>通过<code>npm version &lt;update_type&gt;</code>对版本进行管理，更新了版本号后发布：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm publish</span><br></pre></td></tr></table></figure></p>
+<p>最终发布的npm包见<a href="https://www.npmjs.com/package/mkfile-cli" target="_blank" rel="noopener">mkfile-cli</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/05/31/cmd小工具开发/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
@@ -1063,11 +1093,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
+                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1075,7 +1101,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
+                <a href="javascript:void(0)" class="js-tag color5">decorators源码简析——debounce</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1087,15 +1117,19 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">下载</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">兼容</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1107,11 +1141,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">font-face</a>
+                <a href="javascript:void(0)" class="js-tag color1">react</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">react</a>
+                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1120,10 +1154,6 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">setState</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1160,10 +1190,6 @@
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">webp</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">天气开发、19年总结</a>
               </li>
             
             <div class="clearfix"></div>
