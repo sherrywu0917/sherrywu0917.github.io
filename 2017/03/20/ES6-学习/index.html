@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="lying fox">
 <meta property="og:description" content="from: http://es6.ruanyifeng.com  let命令 let取代var, let仅在代码块中有效 for循环计数器适合用let let不存在变量提升 暂时性死区 不允许重复声明 块级作用域（全局作用域、函数作用域）  const命令 声明常量  顶层对象，在浏览器中指的是window对象 es6的var命令和function命令声明的全局变量依然是顶层对象的属性 let、">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-01-03T07:08:36.712Z">
+<meta property="og:updated_time" content="2020-07-18T04:46:00.997Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ES6 学习">
 <meta name="twitter:description" content="from: http://es6.ruanyifeng.com  let命令 let取代var, let仅在代码块中有效 for循环计数器适合用let let不存在变量提升 暂时性死区 不允许重复声明 块级作用域（全局作用域、函数作用域）  const命令 声明常量  顶层对象，在浏览器中指的是window对象 es6的var命令和function命令声明的全局变量依然是顶层对象的属性 let、">
@@ -294,6 +294,11 @@
 <p>通过Object的assign方法可以一次向Point添加多个方法。</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(x, y) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  toString() &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Object</span>.keys(Point.prototype)</span><br><span class="line"><span class="comment">// []</span></span><br><span class="line"><span class="built_in">Object</span>.getOwnPropertyNames(Point.prototype)</span><br><span class="line"><span class="comment">// ["constructor","toString"]</span></span><br></pre></td></tr></table></figure>
 <p>上面代码中，toString方法是Point类内部定义的方法，它是不可枚举的。这一点与ES5的行为不一致。Object.keys这儿用来判断是否可枚举。</p>
+<h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><ul>
+<li>类和模块的内部，默认就是严格模式，所以不需要使用use strict指定运行模式。</li>
+<li>不存在变量提升。</li>
+<li>static关键字，就表示该方法不会被实例继承，而是直接通过类来调用，但可以被子类继承。</li>
+</ul>
 <h2 id="Set集合"><a href="#Set集合" class="headerlink" title="Set集合"></a>Set集合</h2><p>用最简洁的代码实现数组去重：<br>ES6实现：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[...new <span class="built_in">Set</span>([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">1</span>,<span class="string">'a'</span>,<span class="number">1</span>,<span class="string">'a'</span>])]</span><br></pre></td></tr></table></figure></p>
 <p>ES5实现：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">1</span>,<span class="string">'a'</span>,<span class="number">1</span>,<span class="string">'a'</span>].filter(<span class="function"><span class="keyword">function</span>(<span class="params">ele,index,array</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> index===array.indexOf(ele)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
 
@@ -519,15 +524,15 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -543,11 +548,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -555,7 +556,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -571,15 +576,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">下载</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">兼容</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -595,15 +600,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">setState</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -635,11 +640,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
               </li>
             
             <div class="clearfix"></div>

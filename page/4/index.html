@@ -158,362 +158,72 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-css效果" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-cmd小工具开发" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/30/css效果/">css效果</a>
+      <a class="article-title" href="/2018/05/31/cmd小工具开发/">cmd小工具开发</a>
     </h1>
   
 
         
-        <a href="/2017/06/30/css效果/" class="archive-article-date">
-  	<time datetime="2017-06-30T11:44:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-30</time>
+        <a href="/2018/05/31/cmd小工具开发/" class="archive-article-date">
+  	<time datetime="2018-05-31T02:02:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-31</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="仿古效果"><a href="#仿古效果" class="headerlink" title="仿古效果"></a>仿古效果</h3><blockquote>
-<p>CSS处理图像效果：仿古效果[<a href="https://www.w3cplus.com/css3/vintage-washout.html]" target="_blank" rel="noopener">https://www.w3cplus.com/css3/vintage-washout.html]</a></p>
-</blockquote>
-<p>冲洗效果: 通过减轻暗色阴影和改变一些阴影的细节（改变暗色的细节），看上去就是在亮度的范围降低颜色对比度。</p>
+        <h3 id="cmd项目初始化"><a href="#cmd项目初始化" class="headerlink" title="cmd项目初始化"></a>cmd项目初始化</h3><p>首先新建一个文件夹，并且初始化package.json，同时在bin文件夹下面创建入口文件index.js。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm init <span class="comment">#初始化'package.json'文件</span></span><br></pre></td></tr></table></figure></p>
+<p>index.js文件头部有<code>#!/usr/bin/env node</code>，叫做<a href="https://en.wikipedia.org/wiki/Shebang_(Unix" target="_blank" rel="noopener">shebang</a>)，指定脚本解释程序为<code>node</code>。<br>package.json文件中bin字段配置了cmd命令将执行的js文件，如下所示：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"mkfile-cli"</span>,</span><br><span class="line">  <span class="string">"version"</span>: <span class="string">"1.0.7"</span>,</span><br><span class="line">  <span class="string">"main"</span>: <span class="string">"index.js"</span>,</span><br><span class="line">  <span class="string">"bin"</span>: &#123;</span><br><span class="line">    <span class="string">"mk"</span>: <span class="string">"bin/index.js"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"repository"</span>: &#123;</span><br><span class="line">    <span class="string">"type"</span> : <span class="string">"git"</span>,</span><br><span class="line">    <span class="string">"url"</span> : <span class="string">"https://xxx"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"author"</span>: <span class="string">"sherrywu"</span>,</span><br><span class="line">  <span class="string">"license"</span>: <span class="string">"ISC"</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><ul>
+<li>可以运行<code>node bin/index.js</code>命令</li>
+<li>通过<code>npm link</code>的方式</li>
+<li>还可以通过<code>npm install . -g</code>安装到全局</li>
+</ul>
+<h3 id="cmd命令行工具开发"><a href="#cmd命令行工具开发" class="headerlink" title="cmd命令行工具开发"></a>cmd命令行工具开发</h3><h4 id="commander-js"><a href="#commander-js" class="headerlink" title="commander.js"></a>commander.js</h4><p><a href="https://github.com/tj/commander.js" target="_blank" rel="noopener">Commander</a>是一个轻量级、强大的命令行开发框架，提供了封装好的API，帮助用户快速开发命令行工具。</p>
+<h5 id="安装："><a href="#安装：" class="headerlink" title="安装："></a>安装：</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install commander --save</span><br></pre></td></tr></table></figure>
+<h4 id="option"><a href="#option" class="headerlink" title="option"></a>option</h4><p>option()方法的定义</p>
 <ul>
-<li><p>混合模式：lighten<br>将lighten混合模式应用于一个重叠元素或者一个伪元素上。你可以在某个元素上使用background-blend-mode:lighten或者使用多个混合模式，也可以在覆盖元素上使用mix-blend-mode:lighten。建议使用多个背景。</p>
-</li>
-<li><p>应用<br>使用@mixin</p>
-<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@<span class="keyword">mixin</span> fade-it(<span class="variable">$img</span>, <span class="variable">$shadow</span>: <span class="number">#536</span>) &#123;</span><br><span class="line">  <span class="attribute">background</span>: url(<span class="string">'#&#123;$img&#125;'</span>), <span class="variable">$shadow</span>;</span><br><span class="line">  <span class="attribute">background-blend-mode</span>: lighten;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.apply-base</span> &#123;</span><br><span class="line">  @<span class="keyword">include</span> fade-it(<span class="string">'1.jpg'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.apply-unique-shade</span> &#123;</span><br><span class="line">  @<span class="keyword">include</span> fade-it(<span class="string">'2.jpg'</span>, <span class="number">#293e78</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<li><p>option(flags, description, fn, defaultValue)</p>
+<ul>
+<li>flags <string> : 自定义参数，格式为”-shortFlag, –longFlag null|<code>&lt;value&gt;</code>|[value]|<code>&lt;value&gt;</code>..<code>&lt;value&gt;</code>“</string></li>
+</ul>
 </li>
 </ul>
-<p>编译后的css<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.apply-base</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(<span class="string">'1.jpg'</span>), <span class="number">#536</span>;</span><br><span class="line">  <span class="attribute">background-blend-mode</span>: lighten;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.apply-unique-shade</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(<span class="string">'2.jpg'</span>), <span class="number">#293e78</span>;</span><br><span class="line">  <span class="attribute">background-blend-mode</span>: lighten;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/06/30/css效果/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-webpack配置" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/27/webpack配置/">webpack配置</a>
-    </h1>
-  
-
-        
-        <a href="/2017/06/27/webpack配置/" class="archive-article-date">
-  	<time datetime="2017-06-27T07:06:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="dll动态链接库优化打包"><a href="#dll动态链接库优化打包" class="headerlink" title="dll动态链接库优化打包"></a>dll动态链接库优化打包</h3><p>为dll单独配置一个webpack.dll.config.js文件，在entry中引入你要打包到vendor的模块，通常是一些通用的不涉及业务的库。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> webpack = <span class="built_in">require</span>(<span class="string">'webpack'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    entry: &#123;<span class="attr">vendor</span>: [<span class="string">'react'</span>, <span class="string">'react-dom'</span>]&#125;,</span><br><span class="line">    output: &#123;</span><br><span class="line">        path: <span class="string">'./dist'</span>,</span><br><span class="line">        filename: <span class="string">'[name].bundle.js'</span>,</span><br><span class="line">        library: <span class="string">'[name]'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    plugins:[</span><br><span class="line">        <span class="keyword">new</span> webpack.DllPlugin(&#123;</span><br><span class="line">            path: <span class="string">'./dist/[name]-manifest.json'</span>,</span><br><span class="line">            name: <span class="string">'[name]'</span>,</span><br><span class="line">            context: __dirname,</span><br><span class="line">        &#125;)</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><strong>webpack.DllPlugin</strong>的选项中，path是manifest文件的输出路径；name是dll暴露的对象名，要跟output.library保持一致。执行<code>webpack --config webpack.dll.config.js</code>后会在dist文件夹下面生成<font color="#F44336">vendor.manifest.json</font>和<font color="#F44336">vendor.bundle.js</font>。其中vendor.manifest.json长这样：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"vendor"</span>,</span><br><span class="line">  <span class="string">"content"</span>: &#123;</span><br><span class="line">    <span class="string">"./node_modules/react/react.js"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="string">"./node_modules/react/lib/React.js"</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="string">"./node_modules/process/browser.js"</span>: <span class="number">3</span>,</span><br><span class="line">    <span class="string">"./node_modules/object-assign/index.js"</span>: <span class="number">4</span>,</span><br><span class="line">    <span class="string">"./node_modules/react/lib/ReactBaseClasses.js"</span>: <span class="number">5</span>,</span><br><span class="line">    <span class="string">"./node_modules/react/lib/reactProdInvariant.js"</span>: <span class="number">6</span>,</span><br><span class="line">    <span class="string">"./node_modules/react/lib/ReactNoopUpdateQueue.js"</span>: <span class="number">7</span>,</span><br><span class="line">    <span class="string">"./node_modules/fbjs/lib/warning.js"</span>: <span class="number">8</span>,</span><br><span class="line">    ......</span><br></pre></td></tr></table></figure>
-<p>webpack将每个库进行了编号，之后dll user可以读取该文件，根据这个索引来引用。</p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">webpack</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">前端打包</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">require</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/06/27/webpack配置/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-web浏览器兼容性问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/15/web浏览器兼容性问题/">web浏览器兼容性问题</a>
-    </h1>
-  
-
-        
-        <a href="/2017/06/15/web浏览器兼容性问题/" class="archive-article-date">
-  	<time datetime="2017-06-15T12:19:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="IE的问题"><a href="#IE的问题" class="headerlink" title="IE的问题"></a>IE的问题</h3><ul>
-<li><p>IE中animate作用在body上会失效，使用$(‘html, body’)</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'html, body'</span>).animate(&#123;</span><br><span class="line">    scrollTop: offsetTop - $(<span class="string">'#J_nav'</span>).height()</span><br><span class="line">&#125;, <span class="number">500</span>)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>$(‘body’).scrollTop()在IE中获得的值始终是0，使用$(document).scrollTop()可以获得正确的值</p>
-</li>
-<li>IE中通过offset获得的top值 = chrome浏览器offset的top值 + 该元素的paddingTop值。要获取元素offset值，需要兼容IE，如下：</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">\\大于等于Ver版本的IE浏览器</span><br><span class="line">isGteIE(ver) &#123;</span><br><span class="line">    <span class="keyword">let</span> b = <span class="built_in">document</span>.createElement(<span class="string">'b'</span>);</span><br><span class="line">    b.innerHTML = <span class="string">'&lt;!--[if lte IE '</span> + ver + <span class="string">']&gt;&lt;i&gt;&lt;/i&gt;&lt;![endif]--&gt;'</span>;</span><br><span class="line">    <span class="keyword">return</span> b.getElementsByTagName(<span class="string">'i'</span>).length === <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> offsetTop = $(target).offset().top;</span><br><span class="line"><span class="comment">//IE8及以上, 修正offset</span></span><br><span class="line"><span class="keyword">if</span>(self.isGteIE(<span class="number">8</span>)) &#123;</span><br><span class="line">    offsetTop -= <span class="built_in">parseInt</span>($(target).css(<span class="string">'paddingTop'</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="浏览器内核"><a href="#浏览器内核" class="headerlink" title="浏览器内核"></a>浏览器内核</h3><table>
-<thead>
-<tr>
-<th>浏览器</th>
-<th style="text-align:center">内核</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>IE</td>
-<td style="text-align:center">Trident</td>
-</tr>
-<tr>
-<td>Safari</td>
-<td style="text-align:center">webkit</td>
-</tr>
-<tr>
-<td>Chrome</td>
-<td style="text-align:center">WebKit的分支—Chromium引擎</td>
-</tr>
-<tr>
-<td>Chrome 28.0.1469.0版本之后</td>
-<td style="text-align:center">基于WebKit2—Blink引擎</td>
-</tr>
-<tr>
-<td>Firefox</td>
-<td style="text-align:center">Gecko内核</td>
-</tr>
-<tr>
-<td>Opera</td>
-<td style="text-align:center">Presto渲染引擎，2013年2月之后紧跟chrome引擎</td>
-</tr>
-</tbody>
-</table>
-<p>浏览器市场份额<br><a href="http://www.netmarketshare.com/" target="_blank" rel="noopener">http://www.netmarketshare.com/</a></p>
-<h3 id="兼容IE8"><a href="#兼容IE8" class="headerlink" title="兼容IE8"></a>兼容IE8</h3><p>IE8不支持本地视频播放，要使用在线的<br>为了让IE8兼容video标签，使用html5media<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> &lt;!–[<span class="keyword">if</span> lt IE <span class="number">9</span>]&gt;</span><br><span class="line">        &lt;script src=<span class="string">"http://api.html5media.info/1.1.8/html5media.min.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">&lt;![endif]–&gt;</span><br></pre></td></tr></table></figure></p>
-<p>兼容IE8的图表库：highcharts<br><a href="http://www.highcharts.com/demo" target="_blank" rel="noopener">http://www.highcharts.com/demo</a><br>需要使用1.x的jQuery版本</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">兼容</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/06/15/web浏览器兼容性问题/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-form表单实现文件的下载" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/15/form表单实现文件的下载/">form表单实现文件的下载</a>
-    </h1>
-  
-
-        
-        <a href="/2017/06/15/form表单实现文件的下载/" class="archive-article-date">
-  	<time datetime="2017-06-15T12:19:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="h5链接a增加download属性"><a href="#h5链接a增加download属性" class="headerlink" title="h5链接a增加download属性"></a>h5链接a增加download属性</h3><ol>
-<li>download属性</li>
-</ol>
-<p>想到最简单的下载文件的方式是<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"large.jpg"</span>&gt;</span>下载<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>但是实际效果是在浏览器直接浏览图片，而不是下载图片。<br>如果我们希望点击“下载”链接下载图片，可以增加一个download属性。<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"large.jpg"</span> <span class="attr">download</span>&gt;</span>下载<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>通过download属性还可以指定下载图片的文件名，如果后缀一样，可以省略。<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"large.jpg"</span> <span class="attr">download</span>=<span class="string">"large_down.jpg"</span>&gt;</span>下载<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">下载</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">兼容</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/06/15/form表单实现文件的下载/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-font-face-引入外部字体" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/15/font-face-引入外部字体/">@font-face 引入外部字体</a>
-    </h1>
-  
-
-        
-        <a href="/2017/06/15/font-face-引入外部字体/" class="archive-article-date">
-  	<time datetime="2017-06-15T12:16:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>字体是在页面中呈现内容不可缺少的重要元素，合适的字体能让内容更能抓住用户的注意力。 我们的追求是在多平台上呈现可预知的一致的文字效果给用户，但限于平台的字体支持，我们在使用一些不常见的字体时畏首畏脚。 长久以来，我们解决这个问题，一般都采用图片替换文字的方法。这个方法虽然简单，但是弊端不少：</p>
 <ol>
-<li>图片体积一般比较大，如需半透明处理，体积会进一步增大</li>
-<li>工作量增加不少</li>
-<li>图片放大后可能会失真</li>
+<li>-shortFlag：”-“后面跟的是自定义参数的短标志，一般用longFlag的第一个字母(区分大小写)</li>
+<li>–longFlag ：”–”后面跟的是自定义参数的长标志，shortFlag和longFlag必须同时存在，</li>
+<li>null|<code>&lt;value&gt;</code>|[value]：有3种情况<ul>
+<li>null——可以不带参数</li>
+<li><code>&lt;value&gt;</code>——“&lt;&gt;”修饰，参数必须。</li>
+<li>[value]——”[]“修饰, 参数可选。</li>
+</ul>
+</li>
+<li>description <string> : 对flags参数的描述</string></li>
+<li>fn &lt;Function|Mixed&gt; : 自定义处理参数的方法，如果传入的不是一个方法，会先判断是否为一个正则表达式，如果不是，则视为defaultValue（默认值），</li>
+<li>defaultValue <mixed> ：自定义参数默认值</mixed></li>
+<li>返回值 <object>：commander对象</object></li>
 </ol>
-<p>随着CSS3的推广，一个通过@font-face自定义字体的技术进入大家的视线中。 这个技术目前正被大量应用于自定义图标的实现。但是很少用来实现自定义字体，尤其是中文字体。</p>
-<p>这是因为中文包含很多汉字，所以字体文件的体积一般都比较大。如果用做自定义字体， 页面会先下载字体文件，然后再呈现页面，这会导致加载缓慢，用户的流量被浪费。</p>
-<p>然而在我们使用字体时，基本上只用来呈现有限的文字，下载整个字体文件是多余的。 那我们是否可以精简字体文件，让它只包含指定文字的字体信息，来解决问题？答案是可以的。</p>
-<p>webfont-pick就是这样一个工具，它使用起来非常简单：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install webfont-pick -g</span><br><span class="line"># 更多选项请执行 webfont-pick --help 查看</span><br><span class="line">webfont-pick --font=/Library/Fonts/YuppySC-Regular.otf --text=&quot;你好，世界！&quot; -o ~/Desktop/webfont</span><br></pre></td></tr></table></figure>
-        
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">program</span><br><span class="line">    .version(<span class="string">'1.0.1'</span>)</span><br><span class="line">    .option(<span class="string">'-n, --new &lt;filename&gt;'</span>, <span class="string">'创建文件'</span>)</span><br><span class="line">    .parse(process.argv);</span><br><span class="line"><span class="keyword">if</span>(program.new || program.n) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'文件名：'</span> + (program.new || program.n))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过<code>mk -h</code>可以查看帮助文档，-h 和 -V都是commander封装好的命令:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ mk -h</span><br><span class="line"></span><br><span class="line">  Usage: index [options]</span><br><span class="line"></span><br><span class="line">  Options:</span><br><span class="line"></span><br><span class="line">    -V, --version         output the version number</span><br><span class="line">    -n, --new &lt;filename&gt;  创建文件</span><br><span class="line">    -h, --<span class="built_in">help</span>            output usage information</span><br></pre></td></tr></table></figure></p>
+<h4 id="on事件监听"><a href="#on事件监听" class="headerlink" title="on事件监听"></a>on事件监听</h4><p>此外还可以自定义help文档，通过监听–help触发定义的回调方法。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">program.on(<span class="string">'--help'</span>, <span class="function"><span class="title">function</span></span> () &#123;</span><br><span class="line">    console.log(<span class="string">'  自定义的例子:'</span>)</span><br><span class="line">    console.log(<span class="string">''</span>)</span><br><span class="line">    console.log(<span class="string">'    输出命令  mk -n test -k activityList'</span>)</span><br><span class="line">    console.log(<span class="string">'    输出命令  mk --new test'</span>)</span><br><span class="line">    console.log(<span class="string">''</span>)</span><br><span class="line">&#125;)</span><br><span class="line">.parse(process.argv);</span><br></pre></td></tr></table></figure></p>
+<p><code>program.parse</code> 会解析命令行参数以及触发回调方法，因为nodejs的emit会立刻触发事件，所以将该方法放在命令及事件监听的最后面。</p>
+<h4 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h4><p>运行<code>mk -n test -k activityList</code>命令，可以通过program.n和program.k分别获得文件名’test’和模板key值’activityList’。</p>
+<h4 id="主要流程"><a href="#主要流程" class="headerlink" title="主要流程"></a>主要流程</h4><p>运行<code>mk -n test -k activityList</code>，读取<code>mk.json</code>文件中定义的模板,根据key值读取此次创建文件的模板来源：</p>
+<ul>
+<li>dir: 创建文件的目标位置</li>
+<li>suffix: 文件后缀</li>
+<li>tpl: 文件模板，模板内容可以自定义，使用的模板语法是<a href="https://mozilla.github.io/nunjucks/" target="_blank" rel="noopener">nunjucks</a>。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"fileList"</span> : [</span><br><span class="line">        &#123;<span class="attr">"dir"</span>: <span class="string">"test/js"</span>, <span class="attr">"suffix"</span>: <span class="string">"js"</span>, <span class="attr">"tpl"</span>: <span class="string">"tpl/js.tpl"</span>&#125;,</span><br><span class="line">        &#123;<span class="attr">"dir"</span>: <span class="string">"test/css"</span>, <span class="attr">"suffix"</span>: <span class="string">"css"</span>, <span class="attr">"tpl"</span>: <span class="string">"tpl/css.tpl"</span>&#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"activityList"</span> : [</span><br><span class="line">        &#123;<span class="attr">"dir"</span>: <span class="string">"activity/js"</span>, <span class="attr">"suffix"</span>: <span class="string">"js"</span>, <span class="attr">"tpl"</span>: <span class="string">"tpl/js.tpl"</span>&#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="npm包开发"><a href="#npm包开发" class="headerlink" title="npm包开发"></a>npm包开发</h3><p>首先要<code>npm adduser</code>来注册个npm账号，如果已经有账号，可以使用<code>npm login</code>来登录。<br>通过<code>npm version &lt;update_type&gt;</code>对版本进行管理，更新了版本号后发布：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm publish</span><br></pre></td></tr></table></figure></p>
+<p>最终发布的npm包见<a href="https://www.npmjs.com/package/mkfile-cli" target="_blank" rel="noopener">mkfile-cli</a></p>
+
       
 
       
@@ -521,26 +231,11 @@
     <div class="article-info article-info-index">
       
       
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">font-face</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
       
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/06/15/font-face-引入外部字体/">展开全文 >></a>
+          <a class="article-more-a" href="/2018/05/31/cmd小工具开发/">展开全文 >></a>
         </p>
       
 
@@ -558,49 +253,33 @@
 
 
   
-    <article id="post-ES6-学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-core-decorators源码简析——readonly" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/20/ES6-学习/">ES6 学习</a>
+      <a class="article-title" href="/2018/04/17/core-decorators源码简析——readonly/">core-decorators源码简析——readonly</a>
     </h1>
   
 
         
-        <a href="/2017/03/20/ES6-学习/" class="archive-article-date">
-  	<time datetime="2017-03-20T11:40:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-20</time>
+        <a href="/2018/04/17/core-decorators源码简析——readonly/" class="archive-article-date">
+  	<time datetime="2018-04-17T07:40:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-17</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p>from: <a href="http://es6.ruanyifeng.com" target="_blank" rel="noopener">http://es6.ruanyifeng.com</a></p>
-</blockquote>
-<h2 id="let命令"><a href="#let命令" class="headerlink" title="let命令"></a>let命令</h2><ul>
-<li>let取代var, let仅在代码块中有效</li>
-<li>for循环计数器适合用let</li>
-<li>let不存在变量提升</li>
-<li>暂时性死区</li>
-<li>不允许重复声明</li>
-<li>块级作用域（全局作用域、函数作用域）</li>
-</ul>
-<h2 id="const命令"><a href="#const命令" class="headerlink" title="const命令"></a>const命令</h2><ul>
-<li>声明常量</li>
-</ul>
-<h2 id="顶层对象，在浏览器中指的是window对象"><a href="#顶层对象，在浏览器中指的是window对象" class="headerlink" title="顶层对象，在浏览器中指的是window对象"></a>顶层对象，在浏览器中指的是window对象</h2><ul>
-<li>es6的var命令和function命令声明的全局变量依然是顶层对象的属性</li>
-<li>let、const、class命令声明的全局变量不属于顶层对象的属性</li>
-</ul>
+        <p>直接看源码，<code>readonly.js</code>代码非常简短，核心函数是<code>handleDescriptor</code>，通过修改描述对象descriptor的writable属性为false，将目标属性置为不可修改。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; decorate &#125; <span class="keyword">from</span> <span class="string">'./private/utils'</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handleDescriptor</span>(<span class="params">target, key, descriptor</span>) </span>&#123;</span><br><span class="line">  descriptor.writable = <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">return</span> descriptor;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">readonly</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> decorate(handleDescriptor, args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中<code>decorate</code>函数定义在utils文件中，具体如下:<br>
         
       
 
       
-    </div>
+    </p></div>
     <div class="article-info article-info-index">
       
       
@@ -608,13 +287,21 @@
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">es6</a>
-        		</li>
-      		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
         		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">core-decorators</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">decorator</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">readonly</a>
+        		</li>
       		
 		</ul>
 	</div>
@@ -623,7 +310,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/03/20/ES6-学习/">展开全文 >></a>
+          <a class="article-more-a" href="/2018/04/17/core-decorators源码简析——readonly/">展开全文 >></a>
         </p>
       
 
@@ -641,33 +328,472 @@
 
 
   
-    <article id="post-H5开发遇到的坑" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-core-decorators源码简析——autobind" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/16/H5开发遇到的坑/">H5开发踩到的坑</a>
+      <a class="article-title" href="/2018/04/12/core-decorators源码简析——autobind/">core-decorators源码简析——autobind</a>
     </h1>
   
 
         
-        <a href="/2017/03/16/H5开发遇到的坑/" class="archive-article-date">
-  	<time datetime="2017-03-16T12:42:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-16</time>
+        <a href="/2018/04/12/core-decorators源码简析——autobind/" class="archive-article-date">
+  	<time datetime="2018-04-12T12:22:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-12</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="某些安卓机上tap事件会触发两次"><a href="#某些安卓机上tap事件会触发两次" class="headerlink" title="某些安卓机上tap事件会触发两次"></a>某些安卓机上tap事件会触发两次</h3><h3 id="某些安卓微信缓存严重，reload事件会失效"><a href="#某些安卓微信缓存严重，reload事件会失效" class="headerlink" title="某些安卓微信缓存严重，reload事件会失效"></a>某些安卓微信缓存严重，reload事件会失效</h3><h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h4><ul>
-<li>location.reload(forcedReload): 当取值为 true 时，将强制浏览器从服务器重新获取当前页面资源，而不是从浏览器的缓存中读取，如果取值为 false 或不传该参数时，浏览器则可能会从缓存中读取当前页面。</li>
-<li>加时间戳</li>
+        <h2 id="入口函数"><a href="#入口函数" class="headerlink" title="入口函数"></a>入口函数</h2><p>先看入口函数，通过<code>export default</code>暴露的autobind函数，通过<code>...args</code>形式的rest参数获取函数的多余参数，这儿是所有参数。通过decorator形式有两种调用方式：</p>
+<ul>
+<li>@autobind()，会返回一个匿名函数<code>function (...argsClass) {return handle(argsClass);}</code>，argsClass为最终decorator传入的参数，函数内部返回了handle函数；在修饰器外面再封装一层函数的方式，可以用于接收额外的参数；</li>
+<li>@autobind，args即为decorator传入的参数，直接调用handle函数</li>
 </ul>
-<h3 id="ios微信内音乐不能自动播放"><a href="#ios微信内音乐不能自动播放" class="headerlink" title="ios微信内音乐不能自动播放"></a>ios微信内音乐不能自动播放</h3><p>微信屏蔽了音乐自动播放，使用微信API：<strong>WeixinJSBridge</strong>，当getNetworkType事件被触发时去播放音乐。<br>解决方法：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>((<span class="regexp">/MicroMessenger/ig</span>).test(<span class="built_in">window</span>.navigator.userAgent) &amp;&amp; (<span class="keyword">typeof</span> WeixinJSBridge != <span class="string">"undefined"</span>)) &#123;</span><br><span class="line">    WeixinJSBridge.invoke(<span class="string">'getNetworkType'</span>, &#123;&#125;, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">        $(<span class="string">'.j-audio'</span>)[<span class="number">0</span>].play();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>此外，在手机chrome和safiri中都不支持音乐自动播放，需要用户操作才能触发，基于节省流量的考虑。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 两种调用方式</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 2. @autobind</span></span><br><span class="line"><span class="comment"> * @param  &#123;...[type]&#125; args [description]</span></span><br><span class="line"><span class="comment"> * @return &#123;[type]&#125;         [description]</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">autobind</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (args.length === <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">...argsClass</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> handle(argsClass);</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> handle(args);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="handle函数"><a href="#handle函数" class="headerlink" title="handle函数"></a>handle函数</h2><p>handle函数根据参数的长度去判断修饰类型，当args参数长度为1时，是对类的修饰，该参数即所要修饰的目标类；当长度为3时，是对方法的修饰，参数和Object.defineProperty的参数相对应<code>target, name, descriptor:{value, configurable, enumerable, writable}</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handle</span>(<span class="params">args</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (args.length === <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> autobindClass(...args);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> autobindMethod(...args);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="对类的修饰"><a href="#对类的修饰" class="headerlink" title="对类的修饰"></a>对类的修饰</h2><ul>
+<li><code>Object.getOwnPropertyDescriptors</code>会以键值对的形式返回某对象属性的描述对象descriptor；</li>
+<li><code>getOwnKeys</code>方法会返回一个数组，包含目标类原型对象上所有的属性的键名，包括不可枚举属性以及Symbol属性<br><code>autobindClass</code>遍历目标类原型上的所有方法，若某个属性对应的value类型是<code>function</code>并且属性不是<code>constructor</code>，则用<code>Object.defineProperty</code>对该属性进行重新赋值，调用<code>autobindMethod</code>实现对该方法的autobind；
         
+      
+
+      
+    </li></ul></div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">core-decorators</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">decorator</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">autobind</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/04/12/core-decorators源码简析——autobind/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-继承-原型链" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/10/继承-原型链/">继承&amp;原型链</a>
+    </h1>
+  
+
+        
+        <a href="/2018/04/10/继承-原型链/" class="archive-article-date">
+  	<time datetime="2018-04-10T09:14:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="基于proto和prototype的原型链"><a href="#基于proto和prototype的原型链" class="headerlink" title="基于proto和prototype的原型链"></a>基于<strong>proto</strong>和prototype的原型链</h1><p>关于<code>__proto__</code>属性，MDN上的解释如下：</p>
+<blockquote>
+<p>The <strong>proto</strong> property of Object.prototype is an accessor property (a getter function and a setter function) that exposes the internal [[Prototype]] (either an object or null) of the object through which it is accessed.</p>
+</blockquote>
+<p>即是说，<code>__proto__</code> 属性指向了实例对象的原型Constructor.prototype。</p>
+<p>首先用一张图来总结<code>__proto__</code>和<code>prototype</code>的关系：<br><img src="/image/jsobj_full.jpg" width="600px"></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">继承</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">原型链</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/04/10/继承-原型链/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-npm转盘组件开发" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/09/npm转盘组件开发/">npm转盘组件开发</a>
+    </h1>
+  
+
+        
+        <a href="/2018/02/09/npm转盘组件开发/" class="archive-article-date">
+  	<time datetime="2018-02-09T06:39:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-02-09</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>在开始开发之前，首先要准备好node环境和npm账户，nodeJS基本都有安装好，要做的就是注册npm：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ npm adduser</span><br><span class="line">Username: your name</span><br><span class="line">Password: your password</span><br><span class="line">Email: (this IS public) your email</span><br></pre></td></tr></table></figure></p>
+<p>查询当前账号或者登陆别的用户：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm whoami</span><br><span class="line">$ npm login</span><br></pre></td></tr></table></figure></p>
+<h3 id="包管理工具lerna"><a href="#包管理工具lerna" class="headerlink" title="包管理工具lerna"></a>包管理工具lerna</h3><p>项目组采用了<a href="https://github.com/lerna/lerna" target="_blank" rel="noopener">lerna</a>包管理工具，可以在一个仓库下管理多个npm包，基于monorepo理念。</p>
+<blockquote>
+<p>Monorepo is a unified source code repository used by an organisation to host as much of its code as possible.<br>Monorepo 它是一种管理 organisation 代码的方式，在这种方式下会摒弃原先一个 module 一个 repo 的方式，取而代之的是把所有的 modules 都放在一个 repo 内来管理。</p>
+</blockquote>
+<p>lerna安装和初始化<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install lerna -g</span><br><span class="line">lerna init</span><br></pre></td></tr></table></figure></p>
+<p>初始化后，目录里面会自动生成/packages、lerna.json和package.json。<br>执行<code>lerna bootstrap</code>会自动为项目进行npm install和npm link操作，npm的作用是边开发边试用，具体使用参考<a href="http://javascript.ruanyifeng.com/nodejs/npm.html#toc18" target="_blank" rel="noopener">npm link</a>。<br>
+        
+      
+
+      
+    </p></div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">npm包</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">组件开发</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/02/09/npm转盘组件开发/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-IOS微信内二维码无法识别问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/06/IOS微信内二维码无法识别问题/">IOS微信内二维码无法识别问题</a>
+    </h1>
+  
+
+        
+        <a href="/2018/02/06/IOS微信内二维码无法识别问题/" class="archive-article-date">
+  	<time datetime="2018-02-06T03:41:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-02-06</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/02/06/IOS微信内二维码无法识别问题/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-decorator" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/01/16/decorator/">decorator</a>
+    </h1>
+  
+
+        
+        <a href="/2018/01/16/decorator/" class="archive-article-date">
+  	<time datetime="2018-01-16T14:02:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>REFS:<br><a href="http://taobaofed.org/blog/2015/11/16/es7-decorator/" target="_blank" rel="noopener">http://taobaofed.org/blog/2015/11/16/es7-decorator/</a><br><a href="http://es6.ruanyifeng.com/#docs/decorator" target="_blank" rel="noopener">http://es6.ruanyifeng.com/#docs/decorator</a><br><a href="http://raganwald.com/2015/06/26/decorators-in-es7.html" target="_blank" rel="noopener">http://raganwald.com/2015/06/26/decorators-in-es7.html</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">decorator</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">es7</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/01/16/decorator/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-react高阶组件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/30/react高阶组件/">react高阶组件</a>
+    </h1>
+  
+
+        
+        <a href="/2017/10/30/react高阶组件/" class="archive-article-date">
+  	<time datetime="2017-10-30T09:39:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="什么是高阶组件？"><a href="#什么是高阶组件？" class="headerlink" title="什么是高阶组件？"></a>什么是高阶组件？</h3><p>官方文档指出，高阶组件（Higher-Order Components，简称HOC）是react中对组件逻辑进行重用的高级技术。但高阶组件本身并不是React API。它只是一种模式，这种模式是由react自身的组合性质必然产生的。<br>具体而言，高阶组件就是一个函数，且该函数接受一个组件作为参数，并返回一个新的组件。<br>先看一个典型的高阶组件：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// It's a function...</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myHOC</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// Which returns a function that takes a component...</span></span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">WrappedComponent</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// It creates a new wrapper component...</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">TheHOC</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">      render() &#123;</span><br><span class="line">        <span class="comment">// And it renders the component it was given</span></span><br><span class="line">        <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">WrappedComponent</span> &#123;<span class="attr">...this.props</span>&#125; /&gt;</span>;</span></span><br><span class="line"><span class="xml">      &#125;</span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    // Remember: it takes a component and returns a new component</span></span><br><span class="line"><span class="xml">    // Gotta return it here.</span></span><br><span class="line"><span class="xml">    return TheHOC;</span></span><br><span class="line"><span class="xml">  &#125;</span></span><br><span class="line"><span class="xml">&#125;</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="使用高阶组件优化代码"><a href="#使用高阶组件优化代码" class="headerlink" title="使用高阶组件优化代码"></a>使用高阶组件优化代码</h3><p>需求是要在网站的每个页面要添加签到请求和签到成功弹窗，显然，一般人都不会想着要在每个页面写一遍。首先，我想到的是引入一个React组件，但是要在每个页面的render方法里面添加该组件，需要改动所有页面对应组件的render方法，感觉比较繁琐且易出错。也可以通过js方法去动态创建签到成功弹窗，然后在每个页面里面引入该方法，不过同样需要改变组件内部方法，且不符合React项目风格。<br>最后，发现高阶组件可以满足我的需求，既实现了功能又不污染原有组件。下面是简化版的签到高阶组件：<br>
+        
+      
+
+      
+    </p></div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">高阶组件</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/10/30/react高阶组件/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-日常经验积累" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/19/日常经验积累/">日常经验积累</a>
+    </h1>
+  
+
+        
+        <a href="/2017/10/19/日常经验积累/" class="archive-article-date">
+  	<time datetime="2017-10-19T03:28:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="禁用复制功能"><a href="#禁用复制功能" class="headerlink" title="禁用复制功能"></a>禁用复制功能</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.oncontextmenu = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="literal">false</span>; &#125;  <span class="comment">//禁用鼠标右键功能</span></span><br><span class="line"><span class="built_in">document</span>.body.oncopy = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="literal">false</span>; &#125;    <span class="comment">//禁用复制功能</span></span><br><span class="line"><span class="built_in">document</span>.onselectstart = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="literal">false</span>; &#125;  <span class="comment">//禁用选择功能</span></span><br></pre></td></tr></table></figure>
+<h3 id="UC浏览器问题"><a href="#UC浏览器问题" class="headerlink" title="UC浏览器问题"></a>UC浏览器问题</h3><p>UC浏览器会过滤掉top、test、ad、download等关键字<br>uc浏览器判断到页面上文字居多时，会自动放大字体优化移动用户体验。<br>添加以下头部可以禁用掉该优化</p>
+<meta name="wap-font-scale" content="no">
+
+<h3 id="Font-Boosting问题"><a href="#Font-Boosting问题" class="headerlink" title="Font Boosting问题"></a>Font Boosting问题</h3><p>问题：字体的显示大小，与在CSS中指定的大小不一致。<br>通过设置max-height: 999999px;或max-height: 100%;可以解决</p>
+<h3 id="ios-lt-10-js无法实现复制"><a href="#ios-lt-10-js无法实现复制" class="headerlink" title="ios&lt;10 js无法实现复制"></a>ios&lt;10 js无法实现复制</h3><p><a href="https://stackoverflow.com/questions/34045777/copy-to-clipboard-using-javascript-in-ios" target="_blank" rel="noopener">copy-to-clipboard-using-javascript-in-ios</a></p>
+<h3 id="移动端无法实现保存图片到本地，除了移动端chrome和pc表现一致，其他都不行"><a href="#移动端无法实现保存图片到本地，除了移动端chrome和pc表现一致，其他都不行" class="headerlink" title="移动端无法实现保存图片到本地，除了移动端chrome和pc表现一致，其他都不行"></a>移动端无法实现保存图片到本地，除了移动端chrome和pc表现一致，其他都不行</h3><h3 id="ios微信缓存问题"><a href="#ios微信缓存问题" class="headerlink" title="ios微信缓存问题"></a>ios微信缓存问题</h3><p>问题：ios9系统下微信内(非必现)，从充值页回到正文页，正文页获取的余额没有刷新，发现get请求没有发出，应该是微信AJAX缓存的问题。可通过给ajax请求加时间戳的方式解决。<br>参考：<a href="https://www.jianshu.com/p/6baa49e26533" target="_blank" rel="noopener">微信自带浏览器物理返回不刷新问题</a></p>
+<p>奇怪现象：其他的ios系统下，请求也没有发出去，但是数据是正确的，可能和缓存快照有关系，正常的可能保存了这个页面上次运行的整个数据栈。</p>
+<h3 id="移动端滚动穿透问题完美解决方案"><a href="#移动端滚动穿透问题完美解决方案" class="headerlink" title="移动端滚动穿透问题完美解决方案"></a>移动端滚动穿透问题完美解决方案</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">body</span><span class="selector-class">.modal-open</span> &#123;</span><br><span class="line">    <span class="attribute">position</span>: fixed;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">100%</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当打开modal的时候给body添加<code>modal-open</code>类，fixed让底部页面无法滚动，同时根据页面滚动位置设置top值。<br>在关闭modal时，再让页面恢复之前的滚动状态。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * ModalHelper helpers resolve the modal scrolling issue on mobile devices</span></span><br><span class="line"><span class="comment">  * https://github.com/twbs/bootstrap/issues/15852</span></span><br><span class="line"><span class="comment">  * requires document.scrollingElement polyfill https://github.com/yangg/scrolling-element</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">var</span> ModalHelper = (<span class="function"><span class="keyword">function</span>(<span class="params">bodyCls</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> scrollTop;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    afterOpen: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      scrollTop = <span class="built_in">document</span>.scrollingElement.scrollTop;</span><br><span class="line">      <span class="built_in">document</span>.body.classList.add(bodyCls);</span><br><span class="line">      <span class="built_in">document</span>.body.style.top = -scrollTop + <span class="string">'px'</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">    beforeClose: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="built_in">document</span>.body.classList.remove(bodyCls);</span><br><span class="line">      <span class="comment">// scrollTop lost after set position:fixed, restore it back.</span></span><br><span class="line">      <span class="built_in">document</span>.scrollingElement.scrollTop = scrollTop;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)(<span class="string">'modal-open'</span>);</span><br></pre></td></tr></table></figure></p>
+<h3 id="不简单的自适应高度输入框"><a href="#不简单的自适应高度输入框" class="headerlink" title="不简单的自适应高度输入框"></a>不简单的自适应高度输入框</h3><p>主要实现代码如下：<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">textarea</span> &#123;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">100%</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">92px</span>;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">20px</span>;</span><br><span class="line">    <span class="attribute">line-height</span>: <span class="number">50px</span>;</span><br><span class="line">    <span class="attribute">resize</span>: none;</span><br><span class="line">    <span class="attribute">outline</span>: none;</span><br><span class="line">    <span class="attribute">border</span>: <span class="number">1px</span> solid <span class="number">#ccc</span>;</span><br><span class="line">    <span class="attribute">background</span>: <span class="number">#eee</span>;</span><br><span class="line">    <span class="attribute">font-size</span>: <span class="number">32px</span>;</span><br><span class="line">    <span class="attribute">box-sizing</span>: border-box;</span><br><span class="line">    overflow: hidden;  //去掉滚动条</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">id</span>=<span class="string">"textarea"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> $textarea = <span class="built_in">document</span>.getElementById(<span class="string">'textarea'</span>);</span><br><span class="line"><span class="keyword">var</span> lastLength = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">var</span> lastHeight = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">$textarea.addEventListener(<span class="string">'input'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> currentLength = $textarea.value.length;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 判断字数如果比之前少了，说明内容正在减少，需要清除高度样式，重新获取</span></span><br><span class="line">    <span class="keyword">if</span> (currentLength &lt; lastLength) &#123;</span><br><span class="line">        $textarea.style.height = <span class="string">''</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> currentHeight = $textarea.scrollHeight;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果内容高度发生了变化，再去设置高度值</span></span><br><span class="line">    <span class="keyword">if</span> (lastHeight !== currentHeight || !$textarea.style.height) &#123;</span><br><span class="line">        $textarea.style.height = currentHeight + <span class="number">2</span> + <span class="string">'px'</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    lastLength = currentLength;</span><br><span class="line">    lastHeight = currentHeight;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>原理是检测textarea.scrollHeight属性变化，并随之设置textarea的高度。</p>
+<p>参考：<a href="https://juejin.im/post/5b7653bde51d454dba70c0b1?utm_source=gold_browser_extension" target="_blank" rel="noopener">https://juejin.im/post/5b7653bde51d454dba70c0b1?utm_source=gold_browser_extension</a></p>
+<h3 id="setTimeout-fun-0"><a href="#setTimeout-fun-0" class="headerlink" title="setTimeout(fun, 0)"></a>setTimeout(fun, 0)</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    func1();</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line">func2();</span><br></pre></td></tr></table></figure>
+<p>func1和func2谁会先执行？很明显func2先执行；<br>setTimeout的作用是将代码推迟到指定时间执行，如果指定时间为0，即setTimeout(f,0)，那么会立刻执行吗？<br>答案是不会。因为setTimeout运行机制说过，<strong>必须要等到当前脚本的同步任务和“任务队列”中已有的事件，全部处理完以后，才会执行setTimeout指定的任务</strong>。也就是说，setTimeout的真正作用是，在“任务队列”的现有事件的后面再添加一个事件，规定在指定时间执行某段代码。setTimeout添加的事件，会在下一次Event Loop执行。<br>setTimeout(f,0)将第二个参数设为0，作用是让f在现有的任务——<strong>脚本的同步任务和“任务队列”中已有的事件</strong>，一结束就立刻执行。也就是说，setTimeout(f,0)的作用是，尽可能早地执行指定的任务。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"Timeout"</span>);</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"a() 开始运行"</span>);</span><br><span class="line">  b(x);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"a() 结束运行"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">b</span>(<span class="params">y</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"b() 开始运行"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"传入的值为"</span> + y);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"b() 结束运行"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"当前任务开始"</span>);</span><br><span class="line">a(<span class="number">42</span>);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"当前任务结束"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当前任务开始</span></span><br><span class="line"><span class="comment">// a() 开始运行</span></span><br><span class="line"><span class="comment">// b() 开始运行</span></span><br><span class="line"><span class="comment">// 传入的值为42</span></span><br><span class="line"><span class="comment">// b() 结束运行</span></span><br><span class="line"><span class="comment">// a() 结束运行</span></span><br><span class="line"><span class="comment">// 当前任务结束</span></span><br><span class="line"><span class="comment">// Timeout</span></span><br></pre></td></tr></table></figure></p>
+<p>上面代码说明，setTimeout(f,0)必须要等到当前脚本的所有同步任务结束后才会执行。<br>0毫秒实际上达不到的。根据HTML5标准，setTimeOut推迟执行的时间，<strong>最少是4毫秒</strong>。如果小于这个值，会被自动增加到4。这是为了防止多个setTimeout(f,0)语句连续执行，造成性能问题。<br>利用<code>setTimeout(func, 0)</code>可以帮助我们：</p>
+<ul>
+<li>调整函数运行顺序</li>
+<li>分割耗时任务</li>
+</ul>
+<h3 id="0-5px边框"><a href="#0-5px边框" class="headerlink" title="0.5px边框"></a>0.5px边框</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> <span class="selector-class">.scale-1px</span> &#123;</span><br><span class="line">    <span class="attribute">position</span>: relative;</span><br><span class="line">    <span class="attribute">margin-bottom</span>: <span class="number">20px</span>;</span><br><span class="line">    <span class="attribute">border</span>:none;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.scale-1px</span><span class="selector-pseudo">:after</span> &#123;</span><br><span class="line">    <span class="attribute">content</span>: <span class="string">''</span>;</span><br><span class="line">    <span class="attribute">position</span>: absolute;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">left</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">border</span>: <span class="number">1px</span> solid <span class="number">#000</span>;</span><br><span class="line">    <span class="attribute">box-sizing</span>: border-box;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">200%</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">200%</span>;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(0.5);</span><br><span class="line">    <span class="attribute">transform-origin</span>: left top;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ios系统上active不生效问题"><a href="#ios系统上active不生效问题" class="headerlink" title="ios系统上active不生效问题"></a>ios系统上active不生效问题</h3><p>在iOS系统的移动设备中，需要在按钮元素或body/html上绑定一个touchstart事件才能激活:active状态。<br>可以采用下面两种方式解决：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.addEventListener(<span class="string">"touchstart"</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;, <span class="literal">false</span>);</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">ontouchstart</span>=<span class="string">""</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="beforeunload事件"><a href="#beforeunload事件" class="headerlink" title="beforeunload事件"></a>beforeunload事件</h3><p>兼容问题：为了优化用户体验，新式浏览器会要求有交互才会触发beforeunload事件，例如新版本的chrome浏览器。<br>PS: 从Firefox 4、 Chrome 51、Opera 38 和Safari 9.1开始，通用确认信息代替事件返回的字符串，即无法通过下面的方式自定义文案。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.onbeforeunload = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">  e = e || <span class="built_in">window</span>.event;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 兼容IE8和Firefox 4之前的版本</span></span><br><span class="line">  <span class="keyword">if</span> (e) &#123;</span><br><span class="line">    e.returnValue = <span class="string">'关闭提示'</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+</span></span><br><span class="line">  <span class="keyword">return</span> <span class="string">'关闭提示'</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>HTML5规范中指出，在该事件中调用window.alert(), window.confirm(), 和 window.prompt()，会被忽略。详细的可参考<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/onbeforeunload" target="_blank" rel="noopener">MDN</a>。</p>
+<h3 id="get请求没有body"><a href="#get请求没有body" class="headerlink" title="get请求没有body"></a>get请求没有body</h3><p>HTTP规范也不推荐这么做：<br>下面来自 rfc7231 ：</p>
+<blockquote>
+<p>A payload within a GET request message has no defined semantics;   sending a payload body on a GET request might cause some existing   implementations to reject the request.</p>
+</blockquote>
+
       
 
       
@@ -690,7 +816,78 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/03/16/H5开发遇到的坑/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/10/19/日常经验积累/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-sass应用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/08/28/sass应用/">SASS使用二三事</a>
+    </h1>
+  
+
+        
+        <a href="/2017/08/28/sass应用/" class="archive-article-date">
+  	<time datetime="2017-08-28T10:15:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="sass管理z-index"><a href="#sass管理z-index" class="headerlink" title="sass管理z-index"></a>sass管理z-index</h3><p>z-index的值和上下文有关系，在复杂布局中要跟踪z-index比较困难，z-index的取值范围很广，很容易出错，所以可以使用sass预处理器去统一管理。</p>
+<h4 id="定义浮层"><a href="#定义浮层" class="headerlink" title="定义浮层"></a>定义浮层</h4><p>首先，我们可以借助sass 3.3引入的Map定义一个数据结构，key代表了不同浮层类型，value即对应的z-index值：<br><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$z-layers</span>: (</span><br><span class="line">    <span class="string">'toast'</span>:          <span class="number">4000</span>,</span><br><span class="line">    <span class="string">'modal'</span>:          <span class="number">3000</span>,</span><br><span class="line">    <span class="string">'dropdown'</span>:       <span class="number">2000</span>,</span><br><span class="line">    <span class="string">'mask'</span>:           <span class="number">1000</span>,</span><br><span class="line">    <span class="string">'default'</span>:         <span class="number">1</span>,</span><br><span class="line">    <span class="string">'below'</span>:          -<span class="number">1</span>,</span><br><span class="line">    <span class="string">'bottomless-pit'</span>: -<span class="number">10000</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<h4 id="定义函数"><a href="#定义函数" class="headerlink" title="定义函数"></a>定义函数</h4><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@function z(<span class="variable">$layer</span>) &#123;</span><br><span class="line">    @return map-get(<span class="variable">$z-layers</span>, <span class="variable">$layer</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用了sass的map-get方法，如果$layer参数存在于$z-layers中，会返回对应的value值，如z(‘toast’)，返回对应的值为4000；若不存在于$z-layers中，则返回null。属性为null时，sass的编译不会输出。<br>也可以借助map-has-key方法检查元素是否存在，对于不存在的元素使用@warn指令输出警告信息，方便我们在开发的时候发现问题。<br><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@function z(<span class="variable">$layer</span>) &#123;</span><br><span class="line">    @<span class="keyword">if</span> not map-has-key(<span class="variable">$z-layers</span>, <span class="variable">$layer</span>) &#123;</span><br><span class="line">        @<span class="keyword">warn</span> <span class="string">"No z-index found in $z-layers map for `#&#123;$layer&#125;`. Property omitted."</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @return map-get(<span class="variable">$z-layers</span>, <span class="variable">$layer</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h4><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//function方式</span></span><br><span class="line"><span class="selector-class">.m-mask</span> &#123;</span><br><span class="line">    <span class="attribute">z-index</span>: z(<span class="string">'mask'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//mixin方式</span></span><br><span class="line"><span class="selector-class">.m-mask</span> &#123;</span><br><span class="line">    @<span class="keyword">include</span> z(<span class="string">'mask'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于单个属性来说，建议采用function的定义方式，比起mixin方式，使用起来更加清晰、简单。<br>
+        
+      
+
+      
+    </p></div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">sass</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/08/28/sass应用/">展开全文 >></a>
         </p>
       
 
@@ -710,7 +907,7 @@
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+      <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
     </nav>
   
 
@@ -801,15 +998,15 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -825,11 +1022,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -837,7 +1030,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -853,15 +1050,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">下载</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">兼容</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -877,15 +1074,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">setState</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -917,11 +1114,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
               </li>
             
             <div class="clearfix"></div>

@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="https://sherrywu0917.github.io">
   <title>react-setState更新机制 | lying fox</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="setState更新机制如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。 V15版本为例step1: setStateReactBaseClassses.js1234567ReactComponent.prototype.setState = function (partialState, callback) &amp;#123;">
+  <meta name="description" content="setState更新机制如果数据的到达速度快于帧速率，我们可以合并和批量更新如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。 V15版本为例step1: setStateReactBaseClassses.js1234567ReactComponent.prototype.setState = function (parti">
 <meta name="keywords" content="react,setState">
 <meta property="og:type" content="article">
 <meta property="og:title" content="react-setState更新机制">
 <meta property="og:url" content="https://sherrywu0917.github.io/2019/04/02/react-setState更新机制/index.html">
 <meta property="og:site_name" content="lying fox">
-<meta property="og:description" content="setState更新机制如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。 V15版本为例step1: setStateReactBaseClassses.js1234567ReactComponent.prototype.setState = function (partialState, callback) &amp;#123;">
+<meta property="og:description" content="setState更新机制如果数据的到达速度快于帧速率，我们可以合并和批量更新如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。 V15版本为例step1: setStateReactBaseClassses.js1234567ReactComponent.prototype.setState = function (parti">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-01-03T07:09:18.302Z">
+<meta property="og:updated_time" content="2020-07-18T04:59:58.819Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="react-setState更新机制">
-<meta name="twitter:description" content="setState更新机制如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。 V15版本为例step1: setStateReactBaseClassses.js1234567ReactComponent.prototype.setState = function (partialState, callback) &amp;#123;">
+<meta name="twitter:description" content="setState更新机制如果数据的到达速度快于帧速率，我们可以合并和批量更新如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。 V15版本为例step1: setStateReactBaseClassses.js1234567ReactComponent.prototype.setState = function (parti">
   
     <link rel="alternative" href="/atom.xml" title="lying fox" type="application/atom+xml">
   
@@ -181,7 +181,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="setState更新机制"><a href="#setState更新机制" class="headerlink" title="setState更新机制"></a>setState更新机制</h2><p>如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。</p>
+        <h2 id="setState更新机制"><a href="#setState更新机制" class="headerlink" title="setState更新机制"></a>setState更新机制</h2><p><strong>如果数据的到达速度快于帧速率，我们可以合并和批量更新</strong><br>如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。</p>
 <h3 id="V15版本为例"><a href="#V15版本为例" class="headerlink" title="V15版本为例"></a>V15版本为例</h3><p><strong>step1: setState</strong><br>ReactBaseClassses.js<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ReactComponent.prototype.setState = <span class="function"><span class="keyword">function</span> (<span class="params">partialState, callback</span>) </span>&#123;</span><br><span class="line">  <span class="comment">//  将setState事务放进队列中</span></span><br><span class="line">  <span class="keyword">this</span>.updater.enqueueSetState(<span class="keyword">this</span>, partialState);</span><br><span class="line">  <span class="keyword">if</span> (callback) &#123;</span><br><span class="line">    <span class="keyword">this</span>.updater.enqueueCallback(<span class="keyword">this</span>, callback, <span class="string">'setState'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 <p>调用enqueueSetState将要更新的部分状态值partialState放入队列中，再将callback放到callback队列中。<br><a id="more"></a></p>
 <p><strong>step2: enqueueSetState</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">enqueueSetState: <span class="function"><span class="keyword">function</span> (<span class="params">publicInstance, partialState</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 获取当前组件的instance，Q: 这边为啥有一个'setState'</span></span><br><span class="line">    <span class="keyword">var</span> internalInstance = getInternalInstanceReadyForUpdate(publicInstance, <span class="string">'setState'</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将要更新的state放入一个数组里</span></span><br><span class="line">    <span class="keyword">var</span> queue = internalInstance._pendingStateQueue || (internalInstance._pendingStateQueue = []);</span><br><span class="line">    queue.push(partialState);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//  将要更新的component instance也放在一个队列里</span></span><br><span class="line">    enqueueUpdate(internalInstance);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -196,7 +196,7 @@
 <p>REFS: <a href="https://imweb.io/topic/5b189d04d4c96b9b1b4c4ed6" target="_blank" rel="noopener">https://imweb.io/topic/5b189d04d4c96b9b1b4c4ed6</a></p>
 <h3 id="react合成事件中的setState"><a href="#react合成事件中的setState" class="headerlink" title="react合成事件中的setState"></a>react合成事件中的setState</h3><p>react的合成事件还是会通过 ReactUpdates.batchedUpdates 去批量更新，ReactUpdate中的batchedUpdates，还是调用了batchingStrategy的batchedUpdates方法。如果在事件中调用setState方法，也会进入dirtyComponent流程，即所谓的异步。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">batchedUpdates</span>(<span class="params">callback, a, b, c, d, e</span>) </span>&#123;</span><br><span class="line">  ensureInjected();</span><br><span class="line">  <span class="keyword">return</span> batchingStrategy.batchedUpdates(callback, a, b, c, d, e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h3 id="原生事件绑定和setTimeout中setState"><a href="#原生事件绑定和setTimeout中setState" class="headerlink" title="原生事件绑定和setTimeout中setState"></a>原生事件绑定和setTimeout中setState</h3><p>原生事件绑定不会通过合成事件的方式处理，自然也不会进入更新事务的处理流程。setTimeout也一样，在setTimeout回调执行时已经完成了原更新组件流程，不会放入dirtyComponent进行异步更新，其结果自然是同步的。</p>
-<p><strong>在组件生命周期中或者react事件绑定中，setState是通过异步更新的。在延时的回调或者原生事件绑定的回调中调用setState不一定是异步的。</strong></p>
+<p><strong>在组件生命周期中或者react事件绑定中，setState是通过异步更新的。在延时的回调(promise.then、setTimeout)或者原生事件绑定的回调中调用setState不一定是异步的。</strong><br><a href="https://blog.logrocket.com/simplifying-state-management-in-react-apps-with-batched-updates/" target="_blank" rel="noopener">https://blog.logrocket.com/simplifying-state-management-in-react-apps-with-batched-updates/</a></p>
 <h3 id="setState为什么设计为异步？"><a href="#setState为什么设计为异步？" class="headerlink" title="setState为什么设计为异步？"></a>setState为什么设计为异步？</h3><h4 id="1-保证内部的一致性"><a href="#1-保证内部的一致性" class="headerlink" title="1.保证内部的一致性"></a>1.保证内部的一致性</h4><p>假设state是同步更新的，下面的代码可以按预期工作。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>.state.value) <span class="comment">// 0</span></span><br><span class="line"><span class="keyword">this</span>.setState(&#123; <span class="attr">value</span>: <span class="keyword">this</span>.state.value + <span class="number">1</span> &#125;);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>.state.value) <span class="comment">// 1</span></span><br><span class="line"><span class="keyword">this</span>.setState(&#123; <span class="attr">value</span>: <span class="keyword">this</span>.state.value + <span class="number">1</span> &#125;);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>.state.value) <span class="comment">// 2</span></span><br></pre></td></tr></table></figure></p>
 <p>然而，这时你需要将状态提升到父组件<code>this.props.onIncrement()</code>，以供多个兄弟组件共享。再重复上述代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>.props.value) <span class="comment">// 0</span></span><br><span class="line"><span class="keyword">this</span>.props.onIncrement();</span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>.props.value) <span class="comment">// 0</span></span><br><span class="line"><span class="keyword">this</span>.props.onIncrement();</span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>.props.value) <span class="comment">// 0</span></span><br></pre></td></tr></table></figure></p>
 <p>输出和预期不一致，state虽然立即更新了，但没有重新渲染父组件的时候，this.props属性并没有立即更新。如果要立即更新this.props，则要放弃批处理(根据情况的不同，性能可能会有显著的下降)。</p>
@@ -434,15 +434,15 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -458,11 +458,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -470,7 +466,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -486,15 +486,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">下载</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">兼容</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -510,15 +510,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">setState</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -550,11 +550,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
               </li>
             
             <div class="clearfix"></div>

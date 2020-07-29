@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="lying fox">
 <meta property="og:description" content="你的Tree-Shaking并没什么卵用 Tree-Shaking的原理  ES6的模块引入是静态分析的，故而可以在编译时正确判断到底加载了什么代码。 分析程序流，判断哪些变量未被使用、引用，进而删除此代码   但现实比较骨感，es6的代码经过babel和webpack编译打包后，产生的副作用(可能会改变外部变量)导致多余的代码并未被删掉。babel6在编译的时候，会调用_createClass方">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-01-03T07:09:18.304Z">
+<meta property="og:updated_time" content="2020-07-22T12:44:38.335Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="reading-record">
 <meta name="twitter:description" content="你的Tree-Shaking并没什么卵用 Tree-Shaking的原理  ES6的模块引入是静态分析的，故而可以在编译时正确判断到底加载了什么代码。 分析程序流，判断哪些变量未被使用、引用，进而删除此代码   但现实比较骨感，es6的代码经过babel和webpack编译打包后，产生的副作用(可能会改变外部变量)导致多余的代码并未被删掉。babel6在编译的时候，会调用_createClass方">
@@ -275,14 +275,37 @@
 </li>
 <li>如果可以缓存，会被存储起来</li>
 <li>客户端渲染</li>
-<li>关闭或继续保持TCP连接，断开连接需要四次挥手(client:fin server: ack server: fin client: ack)<h3 id="内容渲染"><a href="#内容渲染" class="headerlink" title="内容渲染"></a>内容渲染</h3></li>
+<li>关闭或继续保持TCP连接，断开连接需要四次挥手(client:fin server: ack server: fin client: ack)</li>
+</ol>
+<h3 id="渲染树构建、布局及绘制"><a href="#渲染树构建、布局及绘制" class="headerlink" title="渲染树构建、布局及绘制"></a>渲染树构建、布局及绘制</h3><ol>
 <li>处理HTML标记并生成DOM树</li>
 <li>处理CSS标记并生成CSSOM树</li>
-<li>将DOM树和CSSOM树合成渲染树</li>
-<li>根据渲染树来布局，以计算每个节点的几何信息</li>
-<li>将各个节点绘制到屏幕上<br>结论：CSS解析和DOM解析是可以并行的，二者完成后再去执行DOM渲染，但是CSS解析会阻塞JS的执行，JS的执行会阻塞DOM的解析。所以，要将CSS放在头部，JS资源放在尾部。<h3 id="改变阻塞模式：defer-与-async"><a href="#改变阻塞模式：defer-与-async" class="headerlink" title="改变阻塞模式：defer 与 async"></a>改变阻塞模式：defer 与 async</h3>async 与 defer 属性对inline script是无效的。<br>defer文件相比普通 script，有两点区别：载入 JavaScript 文件时不阻塞 HTML 的解析，执行阶段被放到 HTML 标签解析完成之后。此外，不改变script中代码的执行顺序。<br>async文件一旦加载好，就会立即执行——无论此刻是 HTML 解析阶段还是 DOMContentLoaded 触发之后。注意：这种方式加载的 JavaScript 依然会阻塞 load 事件。script中代码的执行顺序不定。<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">document</span>.createElement(<span class="string">"script"</span>).async); <span class="comment">// true 动态创建的script默认是异步的。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> style = <span class="built_in">document</span>.createElement(<span class="string">"link"</span>);</span><br><span class="line">style.rel = <span class="string">"stylesheet"</span>; </span><br><span class="line">style.href = <span class="string">"index.css"</span>;</span><br><span class="line"><span class="built_in">document</span>.head.appendChild(style); <span class="comment">// 阻塞？ 已知的是，Chrome 中已经不会阻塞渲染，Firefox、IE 在以前是阻塞的。</span></span><br></pre></td></tr></table></figure>
+<li>将DOM树和CSSOM树合成渲染树：<ul>
+<li>从 DOM 树的根节点开始遍历每个可见节点（会忽略“display: none”的元素）</li>
+<li>对于每个可见节点，为其找到适配的 CSSOM 规则并应用它们</li>
+<li>发射可见节点，连同其内容和计算的样式</li>
+</ul>
+</li>
+<li>根据渲染树来<strong>布局</strong>，以计算每个节点的几何信息：计算它们在设备视口内的确切位置和大小<ul>
+<li>输出是一个“盒模型”，它会精确地捕获每个元素在视口内的确切位置和尺寸：所有相对测量值都转换为屏幕上的绝对像素</li>
+</ul>
+</li>
+<li><strong>绘制</strong>：将渲染树中的每个节点转换成屏幕上的实际像素<ul>
+<li>绘制这一个过程应该是：RenderLayers渲染层 -&gt; GraphicsLayer图形层（GPU）</li>
+<li>特殊的合成层，例如translate3d、will-change等<ul>
+<li>3D transforms：translate3d、translateZ 等</li>
+<li>video、canvas、iframe 等元素</li>
+<li>通过 Element.animate() 实现的 opacity 动画转换</li>
+<li>通过 СSS 动画实现的 opacity 动画转换</li>
+<li>position: fixed</li>
+<li>具有 will-change 属性</li>
+<li>对 opacity、transform、filter、backdropfilter 应用了 animation 或者 transition<br>结论：CSS解析和DOM解析是可以并行的，二者完成后再去执行DOM渲染，但是CSS解析会阻塞JS的执行，JS的执行会阻塞DOM的解析。所以，要将CSS放在头部，JS资源放在尾部。</li>
+</ul>
+</li>
+</ul>
 </li>
 </ol>
+<h3 id="改变阻塞模式：defer-与-async"><a href="#改变阻塞模式：defer-与-async" class="headerlink" title="改变阻塞模式：defer 与 async"></a>改变阻塞模式：defer 与 async</h3><p> async 与 defer 属性对inline script是无效的。<br> defer文件相比普通 script，有两点区别：载入 JavaScript 文件时不阻塞 HTML 的解析，执行阶段被放到 HTML 标签解析完成之后。此外，不改变script中代码的执行顺序。<br> async文件一旦加载好，就会立即执行——无论此刻是 HTML 解析阶段还是 DOMContentLoaded 触发之后。注意：这种方式加载的 JavaScript 依然会阻塞 load 事件。script中代码的执行顺序不定。<br> <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="built_in">document</span>.createElement(<span class="string">"script"</span>).async); <span class="comment">// true 动态创建的script默认是异步的。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> style = <span class="built_in">document</span>.createElement(<span class="string">"link"</span>);</span><br><span class="line">style.rel = <span class="string">"stylesheet"</span>; </span><br><span class="line">style.href = <span class="string">"index.css"</span>;</span><br><span class="line"><span class="built_in">document</span>.head.appendChild(style); <span class="comment">// 阻塞？ 已知的是，Chrome 中已经不会阻塞渲染，Firefox、IE 在以前是阻塞的。</span></span><br></pre></td></tr></table></figure></p>
 <h3 id="call和apply的作用和区别"><a href="#call和apply的作用和区别" class="headerlink" title="call和apply的作用和区别"></a>call和apply的作用和区别</h3><ul>
 <li>函数</li>
 <li>改变方法执行的上下文</li>
@@ -333,20 +356,32 @@
 <li>对具有复杂动画的元素使用绝对定位，使它脱离文档流，否则会引起父元素及后续元素频繁回流。</li>
 </ul>
 <h3 id="跨域"><a href="#跨域" class="headerlink" title="跨域"></a>跨域</h3><ul>
-<li>JSONP: 利用script标签不受跨域的限制，只支持get请求</li>
-<li>设置CORS: 服务端设置 Access-Control-Allow-Origin：* ，客户端设置是否发送cookie，例如XMLHttpRequest的withCredentials，fetch请求的credentials: ‘same-origin’, mode: ‘cors’；<ul>
+<li><p>JSONP: 利用script标签不受跨域的限制，只支持get请求</p>
+</li>
+<li><p>使用CORS(Cross-origin resource sharing)协议: CORS需要浏览器和服务器同时支持。服务端设置 Access-Control-Allow-Origin：* ，客户端设置是否发送cookie，例如XMLHttpRequest的withCredentials，fetch请求的credentials: ‘same-origin’, mode: ‘cors’；</p>
+<ul>
 <li>浏览器端会在Request Headers中新增一个origin字段</li>
 <li>默认不发送cookie和http认证</li>
-<li>Access-Control-Allow-Credentials：允许前端带认证cookie，启用此项后，上面的域名不能为’*’，必须指定具体的域名，否则浏览器会提示</li>
+<li>服务器端设置Access-Control-Allow-Credentials：允许前端带认证cookie，启用此项后，上面的域名不能为’*’，必须指定具体的域名，否则浏览器会提示</li>
+<li>区分简单请求和复杂请求，复杂请求在正式发出请求之前会有一次预检（预检有效期内只会发出一次预检）<h4 id="跨域资源共享标准（-cross-origin-sharing-standard-）允许在下列场景中使用跨域-HTTP-请求："><a href="#跨域资源共享标准（-cross-origin-sharing-standard-）允许在下列场景中使用跨域-HTTP-请求：" class="headerlink" title="跨域资源共享标准（ cross-origin sharing standard ）允许在下列场景中使用跨域 HTTP 请求："></a>跨域资源共享标准（ cross-origin sharing standard ）允许在下列场景中使用跨域 HTTP 请求：</h4></li>
 </ul>
 </li>
-<li>代理请求方式解决接口跨域问题：node.js代理请求，nginx反向代理接口跨域</li>
-<li>postMessage：允许与其他窗口（或iframe）互相通信</li>
-<li>document.domain和iframe，如果两个页面的主域名相同，则还可以通过设置 document.domain 属性将它们认为是同源的。<ul>
+<li>前文提到的由 XMLHttpRequest 或 Fetch 发起的跨域 HTTP 请求。</li>
+<li>eb 字体 (CSS 中通过 @font-face 使用跨域字体资源), 因此，网站就可以发布 TrueType 字体资源，并只允许已授权网站进行跨站调用。</li>
+<li>WebGL 贴图</li>
+<li><p>使用 drawImage 将 Images/video 画面绘制到 canvas</p>
+</li>
+<li><p>代理请求方式解决接口跨域问题：node.js代理请求，nginx反向代理接口跨域</p>
+</li>
+<li><p>postMessage：允许与其他窗口（或iframe）互相通信</p>
+</li>
+<li><p>document.domain和iframe，如果两个页面的主域名相同，则还可以通过设置 document.domain 属性将它们认为是同源的。</p>
+<ul>
 <li>父页面通过ifr.contentWindow就可以访问子页面的window，子页面通过window.parent或parent访问父页面的window</li>
 </ul>
 </li>
-<li>location.hash + iframe跨域</li>
+<li><p>location.hash + iframe跨域</p>
+</li>
 </ul>
 <h3 id="跨标签页通信"><a href="#跨标签页通信" class="headerlink" title="跨标签页通信"></a>跨标签页通信</h3><ul>
 <li><p>window.open 和 postMessage</p>
@@ -365,7 +400,7 @@
 <h3 id="判断是否是数组"><a href="#判断是否是数组" class="headerlink" title="判断是否是数组"></a>判断是否是数组</h3><ul>
 <li>[] instanceof Array</li>
 <li>[].<strong>proto</strong> == Array.prototype</li>
-<li>[].constructor == Array</li>
+<li>[].constructor == Array // constructor可以修改</li>
 <li>Object.prototype.toString.call([]) == ‘[object Array]’</li>
 <li>Array.isArray([])</li>
 </ul>
@@ -529,15 +564,18 @@
 <h3 id="promise"><a href="#promise" class="headerlink" title="promise"></a>promise</h3><h4 id="错误catch问题"><a href="#错误catch问题" class="headerlink" title="错误catch问题"></a>错误catch问题</h4><ol>
 <li>将原本的callback形式的函数Promise化，然后通过promise.then(xxx).catch()去捕获异步操作中抛出的错误。</li>
 <li>在使用try/catch的时候，要配合async/await去使用，因为这样能保证异步函数的同步执行，这样能在try/catch方法中捕获异步函数中抛出的错误。</li>
+<li>跟传统的try/catch代码块不同的是，如果没有使用catch()方法指定错误处理的回调函数，Promise 对象抛出的错误不会传递到外层代码，即不会有任何反应。</li>
 </ol>
 <h4 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h4><ul>
 <li>实例方法： then, catch, finally</li>
-<li>静态方法： all, race, resolve, reject<ul>
-<li>Promise.resolve([xxx]) 接收的参数可以是Promise实例、thenable对象、原始值、空，可以用来实现async函数<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">spawn</span>(<span class="params">genF</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> gen = genF();</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">step</span>(<span class="params">nextF</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">let</span> next;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        next = nextF();</span><br><span class="line">      &#125; <span class="keyword">catch</span>(e) &#123;</span><br><span class="line">        <span class="keyword">return</span> reject(e);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span>(next.done) &#123;</span><br><span class="line">        <span class="keyword">return</span> resolve(next.value);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">Promise</span>.resolve(next.value).then(<span class="function"><span class="keyword">function</span>(<span class="params">v</span>) </span>&#123;</span><br><span class="line">        step(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> gen.next(v); &#125;);</span><br><span class="line">      &#125;, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">        step(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> gen.throw(e); &#125;);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    step(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> gen.next(<span class="literal">undefined</span>); &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<li>静态方法： all, race, resolve, reject, allSettled<ul>
+<li>Promise.resolve([xxx]) 接收的参数可以是Promise实例、thenable对象、原始值、空，可以用来实现async函数</li>
+<li>allSettled是ES2020新增的，返回值状态始终是fulfilled<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> resolved = <span class="built_in">Promise</span>.resolve(<span class="number">42</span>);</span><br><span class="line"><span class="keyword">const</span> rejected = <span class="built_in">Promise</span>.reject(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> allSettledPromise = <span class="built_in">Promise</span>.allSettled([resolved, rejected]);</span><br><span class="line"></span><br><span class="line">allSettledPromise.then(<span class="function"><span class="keyword">function</span> (<span class="params">results</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(results);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 只有allSettled会返回对应promises对象的status</span></span><br><span class="line"><span class="comment">// [</span></span><br><span class="line"><span class="comment">//    &#123; status: 'fulfilled', value: 42 &#125;,</span></span><br><span class="line"><span class="comment">//    &#123; status: 'rejected', reason: -1 &#125;</span></span><br><span class="line"><span class="comment">// ]</span></span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 </li>
 </ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">spawn</span>(<span class="params">genF</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> gen = genF();</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">step</span>(<span class="params">nextF</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">let</span> next;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        next = nextF();</span><br><span class="line">      &#125; <span class="keyword">catch</span>(e) &#123;</span><br><span class="line">        <span class="keyword">return</span> reject(e);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span>(next.done) &#123;</span><br><span class="line">        <span class="keyword">return</span> resolve(next.value);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">Promise</span>.resolve(next.value).then(<span class="function"><span class="keyword">function</span>(<span class="params">v</span>) </span>&#123;</span><br><span class="line">        step(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> gen.next(v); &#125;);</span><br><span class="line">      &#125;, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">        step(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> gen.throw(e); &#125;);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    step(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> gen.next(<span class="literal">undefined</span>); &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="JSbridge原理"><a href="#JSbridge原理" class="headerlink" title="JSbridge原理"></a>JSbridge原理</h2><h3 id="JavaScript-调用-Native"><a href="#JavaScript-调用-Native" class="headerlink" title="JavaScript 调用 Native"></a>JavaScript 调用 Native</h3><ul>
 <li>注入API: 客户端通过webview提供的API，向JavaScript的Context（window）中注入对象和方法，让JavaScript调用时，直接执行相应的 Native 代码逻辑，达到 JavaScript 调用 Native 的目的</li>
 <li>拦截 URL SCHEME: Web 端通过某种方式（例如 iframe.src）发送 URL Scheme 请求，之后 Native 拦截到请求并根据 URL SCHEME（包括所带的参数）进行相关操作。（需要创建请求、耗时、url长度限制、参数不够直观）<h3 id="Native-调用-JavaScript"><a href="#Native-调用-JavaScript" class="headerlink" title="Native 调用 JavaScript"></a>Native 调用 JavaScript</h3></li>
@@ -557,7 +595,7 @@
 <h2 id="对象的遍历"><a href="#对象的遍历" class="headerlink" title="对象的遍历"></a>对象的遍历</h2><ul>
 <li>for…in循环：只遍历对象自身的和继承的可枚举的属性。</li>
 <li>Object.keys()：返回对象自身的所有可枚举的属性的键名。</li>
-<li>JSON.stringify()：只串行化对象自身的可枚举的属性。</li>
+<li>JSON.stringify()：只串行化对象自身的可枚举的属性。，</li>
 <li><p>Object.assign()： 忽略enumerable为false的属性，只拷贝对象自身的可枚举的属性。</p>
 </li>
 <li><p>Object.getOwnPropertyNames(obj)：返回对象自身的所有可枚举+不可枚举的属性（但不包括Symbol属性）的键名。</p>
@@ -568,7 +606,10 @@
 <li><p>for of / for in可以中断</p>
 </li>
 <li>forEach 不能中断</li>
-<li>map不能中断</li>
+<li>map不能中断<h3 id="自身可枚举属性"><a href="#自身可枚举属性" class="headerlink" title="自身可枚举属性"></a>自身可枚举属性</h3></li>
+<li>用class A extends B创建的对象实例，可以返回A和B的所有属性attr，因为继承是父类先创建了this实例，然后子类修改this实例</li>
+<li>getter在class中是不可枚举的，class的方法都是不可枚举的</li>
+<li>getter在普通对象中是可枚举的，如var a = {get a(){ return 1;}}; 这个时候序列化也是可以拿到值的”{“a”:1}”<br><strong><code>JSON.stringify</code>首先会调用toJSON方法，然后undefined、方法、Symbol等会被忽略，仅序列化自身可枚举的属性</strong></li>
 </ul>
 <h2 id="具备Iterator接口的数据结构"><a href="#具备Iterator接口的数据结构" class="headerlink" title="具备Iterator接口的数据结构"></a>具备Iterator接口的数据结构</h2><ul>
 <li>Map</li>
@@ -624,8 +665,8 @@
 <li>检查执行栈，如果执行栈为空，则跳回第 1 步；如不为空，则继续检查；</li>
 </ol>
 <h4 id="宏任务和微任务"><a href="#宏任务和微任务" class="headerlink" title="宏任务和微任务"></a>宏任务和微任务</h4><ul>
-<li>MacroTask: setTimeout, setInterval, setImmediate, I/O, UI rendering, requestAnimationFrame, 网络请求</li>
-<li>MicroTask: process.nextTick, promise的then和catch, Object.observe, MutationObserver</li>
+<li>MacroTask: setTimeout, setInterval, setImmediate, I/O, 网络请求</li>
+<li>MicroTask: process.nextTick, promise的then和catch, Object.observe, MutationObserver<br>requestAnimationFrame<br>UI rendering</li>
 </ul>
 <p>在某一个macrotask执行完后，在重新渲染与开始下一个宏任务之前，就会将在它执行期间产生的所有microtask都执行完毕（在渲染前）。<strong>微任务会在执行栈执行完后立即执行，而宏任务要等到下一次的event loop才会被执行</strong>。</p>
 <blockquote>
@@ -645,8 +686,6 @@
 </ul>
 <p>REF:<br><a href="https://www.jianshu.com/p/12b9f73c5a4f" target="_blank" rel="noopener">前端基础进阶（十二）：深入核心，详解事件循环机制</a><br><a href="https://juejin.im/post/59e85eebf265da430d571f89#heading-4" target="_blank" rel="noopener">这一次，彻底弄懂 JavaScript 执行机制</a></p>
 <h2 id="js实现new"><a href="#js实现new" class="headerlink" title="js实现new"></a>js实现new</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">instance</span>(<span class="params">Cls, ...params</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> obj = &#123;&#125;;</span><br><span class="line">    obj.__proto__ = Cls.prototype;</span><br><span class="line">    <span class="comment">// obj = Object.create(Cls.prototype);</span></span><br><span class="line">    <span class="keyword">let</span> res = Cls.apply(obj, params);</span><br><span class="line">    <span class="comment">//如果是非primitive类型的返回值，会return这个对象</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span>(res) == <span class="string">"object"</span> || <span class="keyword">typeof</span>(res) == <span class="string">"function"</span>) &#123; </span><br><span class="line">    	<span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> obj</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>类型    typeof结果<br>Undefined    “undefined”<br>Null    “object”（见下文）<br>Boolean    “boolean”<br>Number    “number”<br>String    “string”<br>Symbol （ECMAScript 6 新增）    “symbol”<br>宿主对象（由JS环境提供）    Implementation-dependent<br>函数对象（[[Call]] 在ECMA-262条款中实现了）    “function”<br>任何其他对象    “object”</p>
-<p>对象的类型标签是 0。由于 null 代表的是空指针（大多数平台下值为 0x00），因此，null的类型标签也成为了 0，typeof null就错误的返回了”object”。</p>
 <h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>按值传递<br><a href="https://juejin.im/post/58cf180b0ce4630057d6727c#heading-1" target="_blank" rel="noopener">https://juejin.im/post/58cf180b0ce4630057d6727c#heading-1</a></p>
 <h2 id="相等操作符"><a href="#相等操作符" class="headerlink" title="相等操作符(==)"></a>相等操作符(==)</h2><p>相等操作符会对操作值进行隐式转换后进行比较：</p>
 <ul>
@@ -658,24 +697,31 @@
 <li>如果两个操作值都是对象，则比较它们是不是指向同一个对象 //var a = {a: 1}; var b = {a: 1}; a == b; false</li>
 </ul>
 <p>Object.valueof()返回值为该对象的原始值,不同类型对象的valueOf()方法的返回值不同。</p>
-<h3 id="commonjs-vs-es6-modules"><a href="#commonjs-vs-es6-modules" class="headerlink" title="commonjs vs es6 modules"></a>commonjs vs es6 modules</h3><p>两个重大差异：</p>
+<h3 id="XMLHttpRequest-readyState和status的状态"><a href="#XMLHttpRequest-readyState和status的状态" class="headerlink" title="XMLHttpRequest readyState和status的状态"></a>XMLHttpRequest readyState和status的状态</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ReadyState = &#123;</span><br><span class="line">  UNSENT: <span class="number">0</span>, <span class="comment">// Client has been created. open() not called yet.</span></span><br><span class="line">  OPENED: <span class="number">1</span>, <span class="comment">// open() has been called.	</span></span><br><span class="line">  HEADERS_RECEIVED: <span class="number">2</span>,	<span class="comment">// send() has been called, and headers and status are available.</span></span><br><span class="line">  LOADING: <span class="number">3</span>, <span class="comment">//	Downloading; responseText holds partial data.</span></span><br><span class="line">  DONE: <span class="number">4</span>, <span class="comment">// The operation is complete.</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> oReq = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'UNSENT'</span>, xhr.readyState); <span class="comment">// readyState will be 0</span></span><br><span class="line">oReq.onprogress = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'LOADING'</span>, xhr.readyState); <span class="comment">// readyState will be 3</span></span><br><span class="line">&#125;;</span><br><span class="line">oReq.onload = <span class="function"><span class="keyword">function</span> <span class="title">reqListener</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">this</span>.status === <span class="number">200</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> data = <span class="built_in">JSON</span>.parse(<span class="keyword">this</span>.responseText);</span><br><span class="line">    <span class="built_in">console</span>.log(data);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'DONE'</span>, xhr.readyState); <span class="comment">// readyState will be 4</span></span><br><span class="line">&#125;</span><br><span class="line">oReq.open(<span class="string">'get'</span>, <span class="string">'./api/some.json'</span>, <span class="literal">true</span>);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'OPENED'</span>, xhr.readyState); <span class="comment">// readyState will be 1</span></span><br><span class="line">oReq.send();</span><br></pre></td></tr></table></figure>
+<h4 id="application-json-charset-utf-8和application-x-www-form-urlencoded-charset-utf-8的区别："><a href="#application-json-charset-utf-8和application-x-www-form-urlencoded-charset-utf-8的区别：" class="headerlink" title="application/json; charset=utf-8和application/x-www-form-urlencoded; charset=utf-8的区别："></a><code>application/json; charset=utf-8</code>和<code>application/x-www-form-urlencoded; charset=utf-8</code>的区别：</h4><ol>
+<li><p><code>application/json</code>告诉webServer post请求传递的是JSON数据类型:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">Name</span> : <span class="string">'John Smith'</span>, <span class="attr">Age</span>: <span class="number">23</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>application/x-www-form-urlencoded</code>告诉webServer post请求传递的数据会被拼接到url上</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Name=John+Smith&amp;Age=<span class="number">23</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="「前端进阶」高性能渲染十万条数据-时间分片"><a href="#「前端进阶」高性能渲染十万条数据-时间分片" class="headerlink" title="「前端进阶」高性能渲染十万条数据(时间分片)"></a><a href="https://juejin.im/post/5d76f469f265da039a28aff7#heading-1" target="_blank" rel="noopener">「前端进阶」高性能渲染十万条数据(时间分片)</a></h3><blockquote>
+<p>性能关键：渲染耗时</p>
 <ul>
-<li>CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用。</li>
-<li>CommonJS 模块是运行时加载，ES6 模块是编译时输出接口。<ul>
-<li>第二个差异是因为 CommonJS 加载的是一个对象（即module.exports属性），该对象只有在脚本运行完才会生成。而 ES6 模块不是对象，它的对外接口只是一种静态定义，在代码静态解析阶段就会生成。</li>
+<li>分片渲染，一次渲染20条，在setTimeout或requestAnimationFrame回调中触发，requestAnimationFrame性能好于setTimeout</li>
+<li>先append到documentFragment，直接append到document每次都会触发回流，并且会计算样式表（当然现在浏览器的优化已经做的很好了， 当append元素到document中后，没有访问 getComputedStyle 之类的方法时，现代浏览器也可以把样式表的计算推迟到脚本执行之后）。<br><strong>setTimeout 和闪屏现象</strong></li>
+<li>setTimeout的执行时间可能比设定的要晚。每次timeout后会将callback放到事件队列中，需要在当前主线程执行完成后才会去检查事件队列。</li>
+<li>刷新频率受屏幕分辨率和屏幕尺寸的影响，因此不同设备的刷新频率可能会不同，而setTimeout只能设置一个固定时间间隔，这个时间不一定和屏幕的刷新时间相同。<br>以上两种情况都会导致setTimeout的执行步调和屏幕的刷新步调不一致。<br>在setTimeout中对dom进行操作，必须要等到屏幕下次绘制时才能更新到屏幕上，如果两者步调不一致，就可能导致中间某一帧的操作被跨越过去，而直接更新下一帧的元素，从而导致丢帧现象。</li>
 </ul>
-</li>
-<li>是否缓存数据<ul>
-<li>JS 引擎对脚本静态分析的时候，遇到模块加载命令import，就会生成一个只读引用。等到脚本真正执行时，再根据这个只读引用，到被加载的那个模块里面去取值。原始值变了，import加载的值也会跟着变。因此ES6模块不会缓存运行结果，而是动态地去被加载的模块取值，并且变量总是绑定其所在的模块。</li>
-</ul>
-</li>
-<li>export通过接口，输出的是同一个值。不同的脚本加载这个接口，得到的都是同样的实例。<ul>
-<li>如果多次重复执行同一句import语句，那么只会执行一次，而不会执行多次。</li>
-<li>下面代码中，虽然foo和bar在两个语句中加载，但是它们对应的是同一个my_module实例。也就是说，import语句是 Singleton 模式<a href="https://k94n.com/es6-modules-single-instance-pattern" target="_blank" rel="noopener">es6-modules-single-instance-pattern</a>。<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; foo &#125; <span class="keyword">from</span> <span class="string">'my_module'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; bar &#125; <span class="keyword">from</span> <span class="string">'my_module'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等同于</span></span><br><span class="line"><span class="keyword">import</span> &#123; foo, bar &#125; <span class="keyword">from</span> <span class="string">'my_module'</span>;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="performance-timing"><a href="#performance-timing" class="headerlink" title="performance.timing"></a>performance.timing</h3><p>在 Navigation Timing Level 2 草案中，已经废弃了 PerformanceTiming 接口，并且提供了新的接口 PerformanceNavigationTiming 代替其功能。<br>为什么被废弃？因为 W3C 给我们提供了更全面、更强大的一个性能分析矩阵，比单一的 performance.timing 更加强大，能帮助我们从各个方面分析前端页面性能。</p>
+<h3 id="pushstate-和-popstate应用"><a href="#pushstate-和-popstate应用" class="headerlink" title="pushstate 和 popstate应用"></a>pushstate 和 popstate应用</h3><ul>
+<li>回退缓存</li>
+<li>回退挽留弹窗<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * onpopstate是在history.back之后调用的，这个时候event.state是返回后的history的状态，之前的state已经被pop出去了。</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="built_in">window</span>.onpopstate = <span class="function"><span class="keyword">function</span>(<span class="params">event</span>) </span>&#123;</span><br><span class="line">  alert(<span class="string">"location: "</span> + <span class="built_in">document</span>.location + <span class="string">", state: "</span> + <span class="built_in">JSON</span>.stringify(event.state));</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">history.pushState(&#123;<span class="attr">page</span>: <span class="number">1</span>&#125;, <span class="string">"title 1"</span>, <span class="string">"?page=1"</span>);</span><br><span class="line">history.pushState(&#123;<span class="attr">page</span>: <span class="number">2</span>&#125;, <span class="string">"title 2"</span>, <span class="string">"?page=2"</span>);</span><br><span class="line">history.replaceState(&#123;<span class="attr">page</span>: <span class="number">3</span>&#125;, <span class="string">"title 3"</span>, <span class="string">"?page=3"</span>);</span><br><span class="line">history.back(); <span class="comment">// alerts "location: http://example.com/example.html?page=1, state: &#123;"page":1&#125;"</span></span><br><span class="line">history.back(); <span class="comment">// alerts "location: http://example.com/example.html, state: null</span></span><br><span class="line">history.go(<span class="number">2</span>);  <span class="comment">// alerts "location: http://example.com/example.html?page=3, state: &#123;"page":3&#125;</span></span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-</li>
-</ul>
+<h3 id="preload-vs-Prefetch"><a href="#preload-vs-Prefetch" class="headerlink" title="preload vs Prefetch"></a>preload vs Prefetch</h3><p>preload 是一个声明式 fetch，可以强制浏览器在不阻塞 document 的 onload 事件的情况下请求资源。<br>Prefetch 告诉浏览器这个资源将来可能需要，会在浏览器空闲的时候请求资源。</p>
 
       
 
@@ -884,15 +930,15 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -908,11 +954,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -920,7 +962,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -936,15 +982,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">下载</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">兼容</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -960,15 +1006,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">setState</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1000,11 +1046,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
               </li>
             
             <div class="clearfix"></div>

@@ -22,10 +22,7 @@
 <meta property="og:image" content="https://sherrywu0917.github.io/image/codesplit_before1.png">
 <meta property="og:image" content="https://sherrywu0917.github.io/image/codesplit_after.png">
 <meta property="og:image" content="https://sherrywu0917.github.io/image/codesplit_after1.png">
-<meta property="og:image" content="https://sherrywu0917.github.io/image/memory_0.png">
-<meta property="og:image" content="https://sherrywu0917.github.io/image/heap_1.png">
-<meta property="og:image" content="https://sherrywu0917.github.io/image/heap_2_content.png">
-<meta property="og:updated_time" content="2020-01-03T07:08:36.719Z">
+<meta property="og:updated_time" content="2020-07-24T03:54:06.148Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="菜鸟优化之路">
 <meta name="twitter:description" content="DeviceTiming工具最近了解到DeviceTiming工具，可以帮助我们监测js在不同设备上的解析和执行时间，运行环境是在开发环境下。搬运下git上的安装、运行命令：1234567//安装git clone https://github.com/etsy/DeviceTiming.gitcd DeviceTimingnpm install//运行./devicetiming server">
@@ -234,27 +231,6 @@
 </li>
 </ul>
 <p>REFS:<br><a href="https://github.com/pigcan/blog/issues/9" target="_blank" rel="noopener">https://github.com/pigcan/blog/issues/9</a><br><a href="https://www.imooc.com/article/21538" target="_blank" rel="noopener">https://www.imooc.com/article/21538</a><br><a href="https://juejin.im/post/5a23b130f265da432003101a" target="_blank" rel="noopener">https://juejin.im/post/5a23b130f265da432003101a</a><br><a href="https://github.com/happylindz/blog/issues/6" target="_blank" rel="noopener">https://github.com/happylindz/blog/issues/6</a></p>
-<h2 id="内存泄露排查"><a href="#内存泄露排查" class="headerlink" title="内存泄露排查"></a>内存泄露排查</h2><blockquote>
-<p>内存泄露：应用程序不再需要占用内存的时候，由于某些原因，内存没有被操作系统或可用内存池回收。一些编程语言提供了语言特性，可以帮助开发者做此类事情。另一些则寄希望于开发者对内存是否需要清晰明了。<br>JavaScript 是一种垃圾回收语言。垃圾回收语言通过周期性地检查先前分配的内存是否可达，帮助开发者管理内存。</p>
-</blockquote>
-<h3 id="JavaScript内存泄露"><a href="#JavaScript内存泄露" class="headerlink" title="JavaScript内存泄露"></a>JavaScript内存泄露</h3><p>垃圾回收语言的内存泄漏主因是不需要的引用。大部分垃圾回收语言用的算法称之为 Mark-and-sweep 。算法由以下几步组成：</p>
-<ul>
-<li>垃圾回收器创建了一个“roots”列表。Roots 通常是代码中全局变量的引用。JavaScript 中，“window” 对象是一个全局变量，被当作 root 。window 对象总是存在，因此垃圾回收器可以检查它和它的所有子对象是否存在（即不是垃圾）；</li>
-<li>所有的 roots 被检查和标记为激活（即不是垃圾）。所有的子对象也被递归地检查。从 root 开始的所有对象如果是可达的，它就不被当作垃圾。</li>
-<li>所有未被标记的内存会被当做垃圾，收集器现在可以释放内存，归还给操作系统了。<br>现代的垃圾回收器改良了算法，但是本质是相同的：可达内存被标记，其余的被当作垃圾回收。</li>
-</ul>
-<h3 id="四种常见的JavaScript内存泄漏类型："><a href="#四种常见的JavaScript内存泄漏类型：" class="headerlink" title="四种常见的JavaScript内存泄漏类型："></a>四种常见的JavaScript内存泄漏类型：</h3><ul>
-<li>意外的window全局变量</li>
-<li>被遗忘的计时器或回调函数</li>
-<li>脱离 DOM 的引用</li>
-<li>闭包</li>
-</ul>
-<h3 id="实例分析"><a href="#实例分析" class="headerlink" title="实例分析"></a>实例分析</h3><h4 id="浏览器performance"><a href="#浏览器performance" class="headerlink" title="浏览器performance"></a>浏览器performance</h4><p>切换到该tab下，勾选memory，并点击记录按钮，不断点击阅读下一章，持续一段时间。<br><img src="/image/memory_0.png" width="900px"><br>三种迹象显示出现了内存泄漏，图中的 Nodes（绿线）、Listeners（黄线）和 JS heap（蓝线）。Nodes、Listeners稳定增长，并未下降，这是个显著的信号。</p>
-<h4 id="浏览器-heap-profile"><a href="#浏览器-heap-profile" class="headerlink" title="浏览器 heap profile"></a>浏览器 heap profile</h4><p>切换到memory tab下，等待页面刷新完成，点击take heap snapshot保存当前快照。切换到下一章节，重复之前操作，保存快照。<br>选择Comparison，将快照与之前的进行对比，可以发现有的对象如content只增不减。<br><img src="/image/heap_1.png" width="800px"><br>仔细分析代码，发现Content组件中有注册事件代理，监听<code>fontChange</code>事件变化，作为一个SPA，<code>EventProxy</code>一直存在于内存中，每次创建新的content时候，都会给<code>fontChange</code>事件新注册一个回调方法，之前的回调方法一直保存在回调数组中，没有被回收，导致content组件也不能被正确回收：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> eventProxy = &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  off: <span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.onObj[key] = [];</span><br><span class="line">    <span class="keyword">this</span>.oneObj[key] = [];</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">componentDidMount() &#123;</span><br><span class="line">    EventProxy.on(<span class="string">'fontChange'</span>, diff =&gt; <span class="keyword">this</span>.handleFontChange(diff));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">componentWillUnmount() &#123;</span><br><span class="line">    EventProxy.off(<span class="string">'fontChange'</span>); <span class="comment">//Release memory</span></span><br><span class="line">    <span class="keyword">this</span>.listener &amp;&amp; <span class="built_in">window</span>.removeEventListener(<span class="string">'scroll'</span>, <span class="keyword">this</span>.listener, <span class="literal">false</span>); <span class="comment">//Release memory</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>调用<code>EventProxy.off(&#39;fontChange&#39;)</code>解除eventProxy对象对<code>this.handleFontChange</code>的引用，这样this对应的content的对象才能被正确回收；和<code>removeEventListener</code>一样的原理。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.listener = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">this</span>.contentWrap &amp;&amp; (<span class="built_in">window</span>.pageYOffset &gt; <span class="keyword">this</span>.contentWrap.offsetHeight / <span class="number">2</span>)) &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        <span class="built_in">window</span>.removeEventListener(<span class="string">'scroll'</span>, <span class="keyword">this</span>.listener, <span class="literal">false</span>); <span class="comment">//Release memory(事件不一定被触发)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">'scroll'</span>, <span class="keyword">this</span>.listener, <span class="literal">false</span>)</span><br></pre></td></tr></table></figure></p>
-<p>虽然在<code>this.listener</code>内部有解除scroll事件监听的代码，但是要满足一定条件才会触发，所以在<code>componentWillUnmount</code>方法中也添加了<code>removeEventListener</code>，实现对scroll事件的解绑。</p>
-<p>经过上面的优化后，再次对比，发现content对象可以被正常回收。<br><img src="/image/heap_2_content.png" width="800px"></p>
-<p>REFs: <a href="https://jinlong.github.io/2016/05/01/4-Types-of-Memory-Leaks-in-JavaScript-and-How-to-Get-Rid-Of-Them/" target="_blank" rel="noopener">https://jinlong.github.io/2016/05/01/4-Types-of-Memory-Leaks-in-JavaScript-and-How-to-Get-Rid-Of-Them/</a></p>
 <h2 id="cpu占比探测"><a href="#cpu占比探测" class="headerlink" title="cpu占比探测"></a>cpu占比探测</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> data = []</span><br><span class="line"><span class="keyword">var</span> t</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">pulse</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  t &amp;&amp; data.push(<span class="built_in">Date</span>.now() - t)</span><br><span class="line">  t = <span class="built_in">Date</span>.now()</span><br><span class="line">  setTimeout(pulse, <span class="number">50</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pulse()</span><br></pre></td></tr></table></figure>
 <p>就是每隔 50ms 打一下点。理想情况下，data 的值应该是<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data = [<span class="number">50</span>, <span class="number">50</span>, <span class="number">50</span>, <span class="number">50</span>, ...]</span><br></pre></td></tr></table></figure></p>
 <p>但实际情况，data会是<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data = [<span class="number">51</span>, <span class="number">52</span>, <span class="number">50</span>, <span class="number">52</span>, ...]</span><br></pre></td></tr></table></figure></p>
@@ -479,15 +455,15 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -503,11 +479,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -515,7 +487,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -531,15 +507,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">下载</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">兼容</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -555,15 +531,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">setState</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -595,11 +571,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
               </li>
             
             <div class="clearfix"></div>

@@ -158,170 +158,157 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-animejs动画" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-test" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/12/27/animejs动画/">animejs动画入门</a>
-    </h1>
-  
-
-        
-        <a href="/2019/12/27/animejs动画/" class="archive-article-date">
-  	<time datetime="2019-12-27T03:26:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-12-27</time>
-</a>
-        
-      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>anime.js是一个灵活的轻量JavaScript动画库，支持CSS属性、JS对象、DOM属性和SVG。压缩后仅6.2K，且不依赖任何第三方库，加载迅速。在<a href="https://github.com/juliangarnier/anime" target="_blank" rel="noopener">git</a>上Usedby数量8.5k, Star数量为33.5k。此外，anime遵从MIT开源协议,可应用于各种商业网站或app而无需付费。</p>
-<h3 id="简单的浮动动画"><a href="#简单的浮动动画" class="headerlink" title="简单的浮动动画"></a>简单的浮动动画</h3><p>首先看一个简单的示例，实现了气泡的上下浮动动画，效果详见<a href="https://codepen.io/sherrywu0917/pen/yLyoNQj" target="_blank" rel="noopener">浮动动画</a>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> floatAnimation = anime(&#123;</span><br><span class="line">    targets: <span class="string">'.bubble'</span>,</span><br><span class="line">    translateY: <span class="number">20</span>, <span class="comment">// --&gt; '20px'</span></span><br><span class="line">    duration: <span class="number">600</span>,</span><br><span class="line">    loop: <span class="literal">true</span>,</span><br><span class="line">    direction: <span class="string">'alternate'</span>,</span><br><span class="line">    easing: <span class="string">'easeInOutSine'</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>其中各个属性代表的含义如下：</p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/07/29/test/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-JS栈内存堆内存" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>栈存放简单变量，堆存放复杂对象，池存放常量(常量池，一般也归为栈)。</p>
+<h2 id="变量类型与内存的关系"><a href="#变量类型与内存的关系" class="headerlink" title="变量类型与内存的关系"></a>变量类型与内存的关系</h2><h3 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h3><p>基本数据类型共有6种：</p>
 <ul>
-<li><code>targets</code>代表动画的目标对象，这边的值是css选择器，也可以是dom元素、数组，或是JS对象；</li>
-<li><code>translateY</code>代表将要发生动画的属性，不带单位的时候，默认单位为px，此外还支持其他多种赋值方式：<ol>
-<li>百分比：<code>translateY: &#39;100%&#39;</code></li>
-<li>相对数值：<code>translateY: { value: &#39;*=2.5&#39;,duration: 1000}</code>，相对于translateY的初始值去计算</li>
-<li>设置初始值：<code>translateY: [100, 250]</code>，设置数组的形式，会将translateY的初始值设置为100px，并且从100px移动到250px</li>
-<li>函数：<code>translateY: function(el, i, l) {return (l - i) * 50;}</code></li>
-</ol>
-</li>
-<li><code>duration</code>代表动画的持续时间，单位为毫秒；</li>
-<li><code>loop</code>定义了动画是否需要循环，默认值为false；</li>
-<li><code>direction</code>的意义和animation-direction属性一致，定义是否应该轮流反向播放动画，可选的值有正向动画<code>normal</code>、反向动画<code>reverse</code>和往返动画<code>alternate</code>；</li>
-<li><code>easing</code>定义了动画缓动函数，和css3中的animation-timing-function意义一致，设置该参数时可以参考该网站<a href="https://easings.net/en" target="_blank" rel="noopener">Easing Functions Cheat Sheet</a>去选择合适的缓动函数。</li>
+<li>Sting</li>
+<li>Number</li>
+<li>Boolean</li>
+<li>null</li>
+<li>undefined</li>
+<li>Symbol</li>
+<li>BigInt<br>基本数据类型保存在<strong>栈内存</strong>中，因为基本数据类型占用空间小、大小固定，通过按值来访问，属于被频繁使用的数据。<br><strong>PS: 需要注意的是闭包中的基本数据类型变量不保存在栈内存中，而是保存在堆内存中。这个问题，我们后文再说。</strong></li>
 </ul>
-<h3 id="点击触发抖动动画，结束后恢复浮动"><a href="#点击触发抖动动画，结束后恢复浮动" class="headerlink" title="点击触发抖动动画，结束后恢复浮动"></a>点击触发抖动动画，结束后恢复浮动</h3><p>基于上面的漂浮动画，新增一个小功能：点击小球的时候，小球左右抖动，抖动结束后，恢复浮动动画。具体效果参见<a href="https://codepen.io/sherrywu0917/pen/yLyoNQj" target="_blank" rel="noopener">抖动动画</a>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> shakeAnimation = anime(&#123;</span><br><span class="line">    targets: <span class="string">'.bubble'</span>,</span><br><span class="line">    keyframes: [</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="string">'25px'</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="number">0</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="string">'-25px'</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="number">0</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="string">'15px'</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="number">0</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="string">'-15px'</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="number">0</span> &#125;</span><br><span class="line">    ],</span><br><span class="line">    duration: <span class="number">600</span>,</span><br><span class="line">    delay: <span class="number">300</span>,</span><br><span class="line">    endDelay: <span class="number">500</span>,</span><br><span class="line">    easing: <span class="string">'linear'</span>,</span><br><span class="line">    begin: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        floatAnimation.pause();</span><br><span class="line">    &#125;,</span><br><span class="line">    complete: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        floatAnimation.play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>这组动画的实现有几个关键点，<strong>关键帧</strong>-<code>keyframes</code>、<strong>延迟设置</strong>-<code>delay</code>、<code>endDelay</code>，<strong>事件函数</strong><code>begin</code>、<code>complete</code>以及<strong>动画控制方法</strong><code>play</code>和<code>pause</code>。<br>其中，<code>keyframes</code>是用数组定义的关键帧，和animation中用@keyframes实现动画的方式基本一致，如果关键帧内没有指定duration，则每个关键帧的持续时间将等于动画总持续时间除以关键帧数。<br><code>delay</code>和<code>endDelay</code>用来设置动画的延迟时间，完整的动画过程是：</p>
-<ol>
-<li>先触发begin事件，暂停floatAnimation；</li>
-<li>过了delay设置的300ms后，开始执行keyframes定义的抖动动画，持续时间是600ms；</li>
-<li>抖动动画结束后500ms，会触发complete事件，floatAnimation会恢复执行。<br>从start事件被触发到complete事件被触发，整个动画持续的时间为300 + 600 + 500 = 1400ms。<br><code>play</code>和<code>pause</code>方法用来控制动画的执行和暂停，animejs还提供了<code>restart</code>和<code>reverse</code>方法去控制动画的重新开始和反转，如果期望动画跳转到某个特定时间，可以使用<code>seek</code>方法去设置跳转时间。</li>
-</ol>
-<h3 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h3><p>animejs从3.x版本开始不兼容webkitTransform属性，默认只支持transform属性，在一些低版本的手机上使用，例如ios8手机上，会遇到一些动画不生效的问题。如果需要兼容这些机型，可以给animejs库增加对webkitTrannsform属性的支持，手动修改源码，重新publish一个支持webkitTransform属性的npm包。<br>首先使用了animejs源码提供的<code>getCSSValue</code>方法去检测浏览器是否支持transform属性，对于不支持的，使用webkitTransform属性去替换，具体的修改可以参考下图。<br><img src="/image/webkit-anime.png" width="800px"><br><code>getCSSValue</code>方法的实现如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getCSSValue</span>(<span class="params">el, prop, unit</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (prop <span class="keyword">in</span> el.style) &#123;</span><br><span class="line">    <span class="keyword">var</span> uppercasePropName = prop.replace(<span class="regexp">/([a-z])([A-Z])/g</span>, <span class="string">'$1-$2'</span>).toLowerCase();</span><br><span class="line">    <span class="keyword">var</span> value = el.style[prop] || getComputedStyle(el).getPropertyValue(uppercasePropName) || <span class="string">'0'</span>;</span><br><span class="line">    <span class="keyword">return</span> unit ? convertPxToUnit(el, value, unit) : value;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>关键是<code>prop in el.style</code>的判断，对于不支持transform属性的值，会直接返回undefined，支持该属性的会返回属性值，没有设置过transform值的默认会返回一个字符串’none’或者’0’。<br>修改后重新发布了<a href="https://www.npmjs.com/package/webkit-animejs" target="_blank" rel="noopener">webkit-animejs</a>，有需要的可以直接使用。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/12/27/animejs动画/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-代码实现Record" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/03/代码实现Record/">代码实现Record</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/03/代码实现Record/" class="archive-article-date">
-  	<time datetime="2019-04-03T01:38:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">instance</span>(<span class="params">Cls, ...params</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> obj = &#123;&#125;;</span><br><span class="line">    Cls.apply(obj, params);</span><br><span class="line">    <span class="comment">// for(var key in Cls.prototype) &#123;</span></span><br><span class="line">    <span class="comment">//     obj[key] = Cls.prototype[key];</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    obj[<span class="string">'__proto__'</span>] = Cls.prototype;</span><br><span class="line">    <span class="keyword">return</span> obj</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filterStr</span>(<span class="params">str</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> stack = [];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> char <span class="keyword">of</span> str) &#123;</span><br><span class="line">        <span class="keyword">if</span>(char !== <span class="string">'b'</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>(char === <span class="string">'c'</span>) &#123;</span><br><span class="line">                <span class="keyword">let</span> len = stack.length;</span><br><span class="line">                <span class="keyword">if</span>(stack[len <span class="number">-1</span>] === <span class="string">'a'</span>) &#123;</span><br><span class="line">                    stack.splice(len<span class="number">-2</span>)</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    stack.push(char)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                stack.push(char)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stack.join(<span class="string">''</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//输出0 1 2 3 4 5</span></span><br><span class="line"><span class="comment">//https://juejin.im/post/58cf180b0ce4630057d6727c#heading-1</span></span><br><span class="line"><span class="keyword">var</span> tasks = [];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    (<span class="function"><span class="keyword">function</span>(<span class="params">j</span>) </span>&#123;</span><br><span class="line">        tasks.push(<span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">                setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">                    <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, j);</span><br><span class="line">                    resolve();</span><br><span class="line">                &#125;, <span class="number">1000</span> * j);  <span class="comment">// 这里修改 0~4 的定时器时间</span></span><br><span class="line">            &#125;)</span><br><span class="line">        )</span><br><span class="line">    &#125;)(i);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.all(tasks).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, i);</span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出0 1 2 3 4 5</span></span><br><span class="line"><span class="keyword">var</span> tasks = [];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">    tasks.push(<span class="function">(<span class="params">(j</span>) =&gt;</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">            setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, j);</span><br><span class="line">                resolve();</span><br><span class="line">            &#125;, <span class="number">1000</span> * j);  <span class="comment">// 这里修改 0~4 的定时器时间</span></span><br><span class="line">        &#125;))(i)</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Promise</span>.all(tasks).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, i);</span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出0 1 2 3 4 5</span></span><br><span class="line"><span class="keyword">const</span> sleep = <span class="function">(<span class="params">timeountMS</span>) =&gt;</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">    setTimeout(resolve, timeountMS);</span><br><span class="line">&#125;);</span><br><span class="line">(<span class="keyword">async</span>() =&gt; &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">await</span> sleep(<span class="number">1000</span>);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, i);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">await</span> sleep(<span class="number">1000</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>, i);</span><br><span class="line">&#125;)()</span><br><span class="line"></span><br><span class="line"><span class="comment">//编写一个程序将数组扁平化去并除其中重复部分数据，最终得到一个升序且不重复的数组</span></span><br><span class="line"><span class="keyword">var</span> arr = [ [<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>], [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>], [<span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, [<span class="number">11</span>, <span class="number">12</span>, [<span class="number">12</span>, <span class="number">13</span>, [<span class="number">14</span>] ] ] ], <span class="number">10</span>];</span><br><span class="line"><span class="built_in">Array</span>.from(<span class="keyword">new</span> <span class="built_in">Set</span>(arr.flat(<span class="literal">Infinity</span>))).sort(<span class="function">(<span class="params">a, b</span>) =&gt;</span> (a - b))</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/03/代码实现Record/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-优化之路" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/03/优化之路/">前端优化-蹒跚学步</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/03/优化之路/" class="archive-article-date">
-  	<time datetime="2019-04-03T01:38:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="项目背景"><a href="#项目背景" class="headerlink" title="项目背景"></a>项目背景</h1><p>项目是基于React开发，webpack打包的多页面h5应用，其中部分页面又是基于React-router的SPA。开发的过程中，也一直在尝试对项目进行优化，这儿主要记录了对<code>代码分片</code>、<code>持久化缓存</code>和<code>图片优化</code>的处理。</p>
-<p>优化之路漫漫，蹒跚而来。</p>
-<hr>
-<h1 id="动态加载组件"><a href="#动态加载组件" class="headerlink" title="动态加载组件"></a>动态加载组件</h1><h2 id="Code-splitting-代码分片"><a href="#Code-splitting-代码分片" class="headerlink" title="Code splitting(代码分片)"></a>Code splitting(代码分片)</h2><p>当前端代码越来越复杂，代码体积越来越大时，需要考虑对加载的资源进行细粒度的分割，按需加载。<br>webpack支持两种语法实现动态地加载模块：</p>
+<h3 id="引用数据类型"><a href="#引用数据类型" class="headerlink" title="引用数据类型"></a>引用数据类型</h3><p>Array,Function,Object…可以认为除了上文提到的基本数据类型以外，所有类型都是引用数据类型。<br>引用数据类型存储在<strong>堆内存</strong>中，因为引用数据类型占据空间大、大小不固定。如果存储在栈中，将会影响程序运行的性能；引用数据类型在栈中存储了指针，该指针指向堆中该实体的起始地址。当解释器寻找引用值时，会首先检索其在栈中的地址，取得地址后从堆中获得实体。</p>
+<h2 id="栈内存和堆内存的优缺点"><a href="#栈内存和堆内存的优缺点" class="headerlink" title="栈内存和堆内存的优缺点"></a>栈内存和堆内存的优缺点</h2><ul>
+<li>基本数据类型变量大小固定，并且操作简单容易，所以把它们放入栈中存储。 </li>
+<li>引用类型变量大小不固定，所以把它们分配给堆中，让他们申请空间的时候自己确定大小，这样把它们分开存储能够使得程序运行起来占用的内存最小。</li>
+<li>栈内存由于它的特点，所以它的系统效率较高。</li>
+<li>堆内存需要分配空间和地址，还要把地址存到栈中，所以效率低于栈。</li>
+</ul>
+<h2 id="栈内存和堆内存的垃圾回收"><a href="#栈内存和堆内存的垃圾回收" class="headerlink" title="栈内存和堆内存的垃圾回收"></a>栈内存和堆内存的垃圾回收</h2><ul>
+<li>栈内存中变量一般在它的当前执行环境结束就会被销毁被垃圾回收制回收</li>
+<li>堆内存中的变量只有在所有对它的引用都结束的时候才会被回收</li>
+</ul>
+<h2 id="闭包和堆内存"><a href="#闭包和堆内存" class="headerlink" title="闭包和堆内存"></a>闭包和堆内存</h2><p>闭包中的变量并不保存中栈内存中，而是保存在堆内存中。 这也就解释了函数调用之后之后为什么闭包还能引用到函数内的变量。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> a = <span class="number">1</span>;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(a);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> B;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> res = A();</span><br></pre></td></tr></table></figure></p>
+<p>函数 A 返回了一个函数 B，并且函数 B 中使用了函数 A 的变量，函数 B 就被称为闭包。函数 A 弹出调用栈后，函数 A 中的变量这时候是存储在堆上的，所以函数B依旧能引用到函数A中的变量。<br>现在的 JS 引擎可以通过<strong>逃逸分析</strong>辨别出哪些变量需要存储在堆上，哪些需要存储在栈上。</p>
+<h2 id="内存回收"><a href="#内存回收" class="headerlink" title="内存回收"></a>内存回收</h2><h3 id="标记清除算法"><a href="#标记清除算法" class="headerlink" title="标记清除算法"></a>标记清除算法</h3><p>标记清除算法将“不再使用的对象”定义为“无法达到的对象”。 简单来说，就是从根部（在JS中就是全局对象）出发定时扫描内存中的对象。凡是能从根部到达的对象，都是还需要使用的。那些无法由根部出发触及到的对象被标记为不再使用，稍后进行回收。<br>工作流程：</p>
 <ul>
-<li><p><a href="https://webpack.js.org/api/module-methods/#require-ensure" target="_blank" rel="noopener">require.ensure</a><br>给定 dependencies 参数，将其对应的文件拆分到一个单独的 bundle 中，此 bundle 会被异步加载。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>.ensure(dependencies: <span class="built_in">String</span>[], <span class="attr">callback</span>: <span class="function"><span class="keyword">function</span>(<span class="params">require</span>), <span class="title">chunkName</span>: <span class="title">String</span>)</span></span><br></pre></td></tr></table></figure>
+<li>垃圾收集器会在运行的时候会给存储在内存中的所有变量都加上标记。</li>
+<li>从根部出发将能触及到的对象的标记清除。</li>
+<li>那些还存在标记的变量被视为准备删除的变量。</li>
+<li>最后垃圾收集器会执行最后一步内存清除的工作，销毁那些带标记的值并回收它们所占用的内存空间。</li>
+</ul>
+<h2 id="内存泄露排查"><a href="#内存泄露排查" class="headerlink" title="内存泄露排查"></a>内存泄露排查</h2><blockquote>
+<p>内存泄露：应用程序不再需要占用内存的时候，由于某些原因，内存没有被操作系统或可用内存池回收。一些编程语言提供了语言特性，可以帮助开发者做此类事情。另一些则寄希望于开发者对内存是否需要清晰明了。<br>JavaScript 是一种垃圾回收语言。垃圾回收语言通过周期性地检查先前分配的内存是否可达，帮助开发者管理内存。</p>
+</blockquote>
+<h3 id="JavaScript内存泄露"><a href="#JavaScript内存泄露" class="headerlink" title="JavaScript内存泄露"></a>JavaScript内存泄露</h3><p>垃圾回收语言的内存泄漏主因是不需要的引用。大部分垃圾回收语言用的算法称之为 Mark-and-sweep 。算法由以下几步组成：</p>
+<ul>
+<li>垃圾回收器创建了一个“roots”列表。Roots 通常是代码中全局变量的引用。JavaScript 中，“window” 对象是一个全局变量，被当作 root 。window 对象总是存在，因此垃圾回收器可以检查它和它的所有子对象是否存在（即不是垃圾）；</li>
+<li>所有的 roots 被检查和标记为激活（即不是垃圾）。所有的子对象也被递归地检查。从 root 开始的所有对象如果是可达的，它就不被当作垃圾。</li>
+<li>所有未被标记的内存会被当做垃圾，收集器现在可以释放内存，归还给操作系统了。<br>现代的垃圾回收器改良了算法，但是本质是相同的：可达内存被标记，其余的被当作垃圾回收。</li>
+</ul>
+<h3 id="四种常见的JavaScript内存泄漏类型："><a href="#四种常见的JavaScript内存泄漏类型：" class="headerlink" title="四种常见的JavaScript内存泄漏类型："></a>四种常见的JavaScript内存泄漏类型：</h3><ul>
+<li>意外的window全局变量</li>
+<li>被遗忘的计时器或回调函数</li>
+<li>脱离 DOM 的引用<br><img src="/image/memory_leak_dom.png" width="900px"><br>id为main的DOM节点虽然已经从文档中删除，但elements仍持有对该节点的引用，导致这块内存无法被回收。</li>
+<li>闭包</li>
+</ul>
+<h3 id="实例分析"><a href="#实例分析" class="headerlink" title="实例分析"></a>实例分析</h3><h4 id="浏览器performance"><a href="#浏览器performance" class="headerlink" title="浏览器performance"></a>浏览器performance</h4><p>切换到该tab下，勾选memory，并点击记录按钮，不断点击阅读下一章，持续一段时间。<br><img src="/image/memory_0.png" width="900px"><br>三种迹象显示出现了内存泄漏，图中的 Nodes（绿线）、Listeners（黄线）和 JS heap（蓝线）。Nodes、Listeners稳定增长，并未下降，这是个显著的信号。</p>
+<h4 id="浏览器-heap-profile"><a href="#浏览器-heap-profile" class="headerlink" title="浏览器 heap profile"></a>浏览器 heap profile</h4><p>切换到memory tab下，等待页面刷新完成，点击take heap snapshot保存当前快照。切换到下一章节，重复之前操作，保存快照。<br>选择Comparison，将快照与之前的进行对比，可以发现有的对象如content只增不减。<br><img src="/image/heap_1.png" width="800px"><br>仔细分析代码，发现Content组件中有注册事件代理，监听<code>fontChange</code>事件变化，作为一个SPA，<code>EventProxy</code>一直存在于内存中，每次创建新的content时候，都会给<code>fontChange</code>事件新注册一个回调方法，之前的回调方法一直保存在回调数组中，没有被回收，导致content组件也不能被正确回收：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> eventProxy = &#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  off: <span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.onObj[key] = [];</span><br><span class="line">    <span class="keyword">this</span>.oneObj[key] = [];</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">componentDidMount() &#123;</span><br><span class="line">    EventProxy.on(<span class="string">'fontChange'</span>, diff =&gt; <span class="keyword">this</span>.handleFontChange(diff));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">componentWillUnmount() &#123;</span><br><span class="line">    EventProxy.off(<span class="string">'fontChange'</span>); <span class="comment">//Release memory</span></span><br><span class="line">    <span class="keyword">this</span>.listener &amp;&amp; <span class="built_in">window</span>.removeEventListener(<span class="string">'scroll'</span>, <span class="keyword">this</span>.listener, <span class="literal">false</span>); <span class="comment">//Release memory</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>调用<code>EventProxy.off(&#39;fontChange&#39;)</code>解除eventProxy对象对<code>this.handleFontChange</code>的引用，这样this对应的content的对象才能被正确回收；和<code>removeEventListener</code>一样的原理。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.listener = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">this</span>.contentWrap &amp;&amp; (<span class="built_in">window</span>.pageYOffset &gt; <span class="keyword">this</span>.contentWrap.offsetHeight / <span class="number">2</span>)) &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">        <span class="built_in">window</span>.removeEventListener(<span class="string">'scroll'</span>, <span class="keyword">this</span>.listener, <span class="literal">false</span>); <span class="comment">//Release memory(事件不一定被触发)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">'scroll'</span>, <span class="keyword">this</span>.listener, <span class="literal">false</span>)</span><br></pre></td></tr></table></figure></p>
+<p>虽然在<code>this.listener</code>内部有解除scroll事件监听的代码，但是要满足一定条件才会触发，所以在<code>componentWillUnmount</code>方法中也添加了<code>removeEventListener</code>，实现对scroll事件的解绑。</p>
+<p>经过上面的优化后，再次对比，发现content对象可以被正常回收。<br><img src="/image/heap_2_content.png" width="800px"></p>
+<p>REFs: <a href="https://jinlong.github.io/2016/05/01/4-Types-of-Memory-Leaks-in-JavaScript-and-How-to-Get-Rid-Of-Them/" target="_blank" rel="noopener">https://jinlong.github.io/2016/05/01/4-Types-of-Memory-Leaks-in-JavaScript-and-How-to-Get-Rid-Of-Them/</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/07/24/JS栈内存堆内存/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-js_roadmap" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="js基本类型"><a href="#js基本类型" class="headerlink" title="js基本类型"></a>js基本类型</h3><p>js是一种弱类型或者说是动态语言，有7种基本数据类型，1种引用数据类型object。<br>类型    typeof结果<br>Undefined    “undefined”<br>Null    “object”（见下文）<br>Boolean    “boolean”<br>Number    “number”<br>String    “string”<br>Symbol （ECMAScript 6 新增）”symbol” // Symbol是一种特殊的、不可变的数据类型，可以作为对象的标识符使用。<br>BigInt “bigint”</p>
+<p>宿主对象（由JS环境提供）    Implementation-dependent<br>函数对象（[[Call]] 在ECMA-262条款中实现了）    “function”<br>任何其他对象 “object”</p>
+<h4 id="typeof-null的值不是null，而是object"><a href="#typeof-null的值不是null，而是object" class="headerlink" title="typeof null的值不是null，而是object"></a><code>typeof null</code>的值不是null，而是object</h4><p>因为在 JS 的最初版本中，使用的是 32 位系统，为了性能考虑使用低位存储了变量的类型信息，000 开头代表是对象，然而 null 表示为全零，所以将它错误的判断为 object 。</p>
+<h4 id="基础类型的特性是值本身不能被改变"><a href="#基础类型的特性是值本身不能被改变" class="headerlink" title="基础类型的特性是值本身不能被改变"></a>基础类型的特性是值本身不能被改变</h4><p>js中的参数传递都是按值传递：</p>
+<ul>
+<li>基础类型传递的是值的拷贝，不会改变传入的值</li>
+<li>引用类型传递的是内存地址，指向同一块内存区域</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基本类型</span></span><br><span class="line"><span class="keyword">let</span> foo = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个貌似可以改变基本类型值的函数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addTwo</span>(<span class="params">num</span>) </span>&#123;</span><br><span class="line">   num += <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 和前面的函数一样</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addTwo_v2</span>(<span class="params">foo</span>) </span>&#123;</span><br><span class="line">   foo += <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用第一个函数，并传入基本类型值作为参数</span></span><br><span class="line">addTwo(foo);</span><br><span class="line"><span class="comment">// Getting the current Primitive value</span></span><br><span class="line"><span class="built_in">console</span>.log(foo);   <span class="comment">// 5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 尝试调用第二个函数...</span></span><br><span class="line">addTwo_v2(foo);</span><br><span class="line"><span class="built_in">console</span>.log(foo);   <span class="comment">// 5</span></span><br></pre></td></tr></table></figure>
+<h2 id="debounce-vs-throttle"><a href="#debounce-vs-throttle" class="headerlink" title="debounce vs throttle"></a>debounce vs throttle</h2><ul>
+<li>debounce 防抖，会在事件停止后100ms后再触发，‘execute this function only if 100 milliseconds have passed without it being called.’<ul>
+<li>场景: resize、drag、kaypress等事件</li>
+</ul>
 </li>
-<li><p><a href="https://webpack.js.org/api/module-methods/#import-" target="_blank" rel="noopener">import</a><br>调用 import() 之处，被作为分离的模块起点，意思是，被请求的模块和它引用的所有子模块，会分离到一个单独的 chunk 中。会返回一个Promise对象。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span>(</span><br><span class="line">  <span class="comment">/* webpackChunkName: "my-chunk-name" */</span></span><br><span class="line">  <span class="comment">/* webpackMode: "lazy" (default)*/</span></span><br><span class="line">  <span class="string">'path/to/module'</span>) -&gt; <span class="built_in">Promise</span></span><br></pre></td></tr></table></figure>
+<li>throttle 节流，在每100ms内最多触发一次，‘execute this function at most once every 100 milliseconds.’<ul>
+<li>场景: scroll、click等事件</li>
+</ul>
 </li>
 </ul>
-<p><code>webpackChunkName</code>用来设置chunk的名字；<code>webpackMode</code>默认值是<code>lazy</code>，还有<code>lazy-once</code>、<code>eager</code>、<code>weak</code>。按需加载的默认加载形式是async。<br>
-        
+
       
 
       
-    </p></div>
+    </div>
     <div class="article-info article-info-index">
       
       
@@ -329,7 +316,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/03/优化之路/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/07/14/js_roadmap/">展开全文 >></a>
         </p>
       
 
@@ -347,57 +334,45 @@
 
 
   
-    <article id="post-react-setState更新机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-webpack-loader总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/02/react-setState更新机制/">react-setState更新机制</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/02/react-setState更新机制/" class="archive-article-date">
-  	<time datetime="2019-04-02T02:08:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-02</time>
-</a>
-        
-      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="setState更新机制"><a href="#setState更新机制" class="headerlink" title="setState更新机制"></a>setState更新机制</h2><p>如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。</p>
-<h3 id="V15版本为例"><a href="#V15版本为例" class="headerlink" title="V15版本为例"></a>V15版本为例</h3><p><strong>step1: setState</strong><br>ReactBaseClassses.js<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ReactComponent.prototype.setState = <span class="function"><span class="keyword">function</span> (<span class="params">partialState, callback</span>) </span>&#123;</span><br><span class="line">  <span class="comment">//  将setState事务放进队列中</span></span><br><span class="line">  <span class="keyword">this</span>.updater.enqueueSetState(<span class="keyword">this</span>, partialState);</span><br><span class="line">  <span class="keyword">if</span> (callback) &#123;</span><br><span class="line">    <span class="keyword">this</span>.updater.enqueueCallback(<span class="keyword">this</span>, callback, <span class="string">'setState'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>调用enqueueSetState将要更新的部分状态值partialState放入队列中，再将callback放到callback队列中。<br>
-        
+        <h3 id="css处理loader"><a href="#css处理loader" class="headerlink" title="css处理loader"></a>css处理loader</h3><h4 id="module-css处理"><a href="#module-css处理" class="headerlink" title="module css处理"></a>module css处理</h4><ul>
+<li>style-loader: 处理css插入方式：inline或者extract，SSR模式下使用isomorphic-style-loader</li>
+<li>css-loader: 处理sass中资源引用</li>
+<li>resolve-url-loader: 处理sass中import和url()相对路径</li>
+<li>post-loader: 添加浏览器前缀autoprefixer｜生产模式中压缩cssnano | rem转换postcss-px2rem</li>
+<li>sass-loader: 将sass/scss编译为css</li>
+</ul>
+<h4 id="jsx-css处理"><a href="#jsx-css处理" class="headerlink" title="jsx css处理"></a>jsx css处理</h4><ul>
+<li>babel-loader: 结合babel的presets和plugins配置处理js</li>
+<li><p>styled-jsx: 处理jsx格式写的style</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> () =&gt; (</span><br><span class="line">  &lt;div className=<span class="string">"root"</span>&gt;</span><br><span class="line">    &lt;style jsx&gt;&#123;<span class="string">`</span></span><br><span class="line"><span class="string">      .root &#123;</span></span><br><span class="line"><span class="string">        color: green;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    `</span>&#125;&lt;<span class="regexp">/style&gt;</span></span><br><span class="line"><span class="regexp">  &lt;/</span>div&gt;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>post-loader: 添加浏览器前缀autoprefixer｜生产模式中压缩cssnano</p>
+</li>
+<li>sass-loader: 将sass/scss编译为css</li>
+</ul>
+<h4 id="MiniCssExtractPlugin"><a href="#MiniCssExtractPlugin" class="headerlink" title="MiniCssExtractPlugin"></a>MiniCssExtractPlugin</h4><p>和<code>style-loader</code>功能相似：This plugin should be used only on production builds without style-loader in the loaders chain, especially if you want to have HMR in development.<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> MiniCssExtractPlugin = <span class="built_in">require</span>(<span class="string">'mini-css-extract-plugin'</span>);</span><br><span class="line"><span class="keyword">const</span> devMode = process.env.NODE_ENV !== <span class="string">'production'</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> MiniCssExtractPlugin(&#123;</span><br><span class="line">      <span class="comment">// Options similar to the same options in webpackOptions.output</span></span><br><span class="line">      <span class="comment">// both options are optional</span></span><br><span class="line">      filename: devMode ? <span class="string">'[name].css'</span> : <span class="string">'[name].[hash].css'</span>,</span><br><span class="line">      chunkFilename: devMode ? <span class="string">'[id].css'</span> : <span class="string">'[id].[hash].css'</span>,</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">  <span class="built_in">module</span>: &#123;</span><br><span class="line">    rules: [</span><br><span class="line">      &#123;</span><br><span class="line">        test: <span class="regexp">/\.(sa|sc|c)ss$/</span>,</span><br><span class="line">        use: [</span><br><span class="line">          &#123;</span><br><span class="line">            loader: MiniCssExtractPlugin.loader,</span><br><span class="line">            options: &#123;</span><br><span class="line">              hmr: process.env.NODE_ENV === <span class="string">'development'</span>,</span><br><span class="line">            &#125;,</span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="string">'css-loader'</span>,</span><br><span class="line">          <span class="string">'postcss-loader'</span>,</span><br><span class="line">          <span class="string">'sass-loader'</span>,</span><br><span class="line">        ],</span><br><span class="line">      &#125;,</span><br><span class="line">    ],</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h3 id="babel配置"><a href="#babel配置" class="headerlink" title="babel配置"></a>babel配置</h3><ul>
+<li>presets预设配置<br><code>@babel/env</code>和<code>@babel/preset-env</code>的写法一致，babel已经知道它是一个preset，会自动加上<code>preset-</code><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">presets: [</span><br><span class="line">    [<span class="string">'@babel/env'</span>, &#123;</span><br><span class="line">        modules: <span class="string">'commonjs'</span>,</span><br><span class="line">        <span class="comment">// todo 取消注释编译报错，参考：https://github.com/babel/babel/issues/8559</span></span><br><span class="line">        targets: &#123;</span><br><span class="line">            node: <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;],</span><br><span class="line">    <span class="string">'@babel/react'</span>,</span><br><span class="line">    <span class="string">'@babel/preset-typescript'</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
       
 
       
-    </p></div>
+    </div>
     <div class="article-info article-info-index">
       
       
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">setState</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
       
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/02/react-setState更新机制/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/07/12/webpack-loader总结/">展开全文 >></a>
         </p>
       
 
@@ -415,172 +390,419 @@
 
 
   
-    <article id="post-表单和post参数总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-继承" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/26/表单和post参数总结/">表单和post参数总结</a>
-    </h1>
-  
-
-        
-        <a href="/2019/03/26/表单和post参数总结/" class="archive-article-date">
-  	<time datetime="2019-03-26T08:50:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-26</time>
-</a>
-        
-      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>post请求下的content-type类型:</p>
-<h3 id="application-json"><a href="#application-json" class="headerlink" title="application/json"></a>application/json</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Request Payload:</span><br><span class="line">&#123;layouts: [&quot;1&quot;, &quot;2&quot;, &quot;5&quot;]&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="application-x-www-form-urlencoded"><a href="#application-x-www-form-urlencoded" class="headerlink" title="application/x-www-form-urlencoded"></a>application/x-www-form-urlencoded</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Query String Parameters</span><br><span class="line">sourceUuid:np_c3sEKMgU3Xau_Tl0fmsqyReIdKH9OXQpby_FSNhz__ppcy0EKQ</span><br><span class="line">articleUuid:np_eXoyZJwfsX-q8j5OLm0pyEbYGK0</span><br><span class="line">forceFollow:0</span><br><span class="line">isContinue:0</span><br><span class="line">forceAutoPurchase:1</span><br></pre></td></tr></table></figure>
-<h3 id="multipart-form-data"><a href="#multipart-form-data" class="headerlink" title="multipart/form-data"></a>multipart/form-data</h3><p>使用表单上传文件时，必须让 form 的 enctype 等于这个值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryBJIFBCE2CA2Fwbyl</span><br></pre></td></tr></table></figure></p>
-<h3 id="text-xml"><a href="#text-xml" class="headerlink" title="text/xml"></a>text/xml</h3><p>例如XML-RPC请求。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">methodCall</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">methodName</span>&gt;</span>examples.getStateName<span class="tag">&lt;/<span class="name">methodName</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">params</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span><span class="tag">&lt;<span class="name">i4</span>&gt;</span>41<span class="tag">&lt;/<span class="name">i4</span>&gt;</span><span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">params</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">methodCall</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>get请求的content-type只有application/x-www-form-urlencoded这一种。</p>
-<p>form表单中action带有参数</p>
-<ol>
-<li>get表单请求<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">"get"</span> <span class="attr">action</span>=<span class="string">"/somePage.html?param1=foo&amp;param2=foo"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"param2"</span>&gt;</span>bar<span class="tag">&lt;/<span class="name">input</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"param3"</span>&gt;</span>bar<span class="tag">&lt;/<span class="name">input</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+        <h2 id="组合式继承"><a href="#组合式继承" class="headerlink" title="组合式继承"></a>组合式继承</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">SuperType</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.name = name;</span><br><span class="line">    <span class="keyword">this</span>.colors = [<span class="string">'pink'</span>, <span class="string">'blue'</span>, <span class="string">'green'</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">SuberType</span>(<span class="params">name, age</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 借用父类构造函数</span></span><br><span class="line">    SuperType.call(<span class="keyword">this</span>, name); </span><br><span class="line">    <span class="keyword">this</span>.age = age;</span><br><span class="line">&#125;</span><br><span class="line">SuberType.prototype = <span class="keyword">new</span> SuperType();</span><br><span class="line">SuberType.prototype.constructor = SuberType;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj = <span class="keyword">new</span> SuberType();</span><br></pre></td></tr></table></figure>
+<p>缺点：</p>
+<ul>
+<li>调用了两次父类构造函数</li>
+<li>所有子类对象的原型共用一个父类实例</li>
+</ul>
+<h2 id="寄生组合式继承"><a href="#寄生组合式继承" class="headerlink" title="寄生组合式继承"></a>寄生组合式继承</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">inheritPrototype</span>(<span class="params">subType, superType</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 创建一个对象的__proto__指向superType.prototype</span></span><br><span class="line">    <span class="keyword">var</span> objProto = <span class="built_in">Object</span>.create(superType.prototype);</span><br><span class="line">    <span class="comment">// var prototype = &#123;&#125;;</span></span><br><span class="line">    <span class="comment">// Object.setPrototypeOf(prototype, superType.prototype);</span></span><br><span class="line">    <span class="comment">// subType.prototype = prototype;</span></span><br><span class="line">    objProto.constructor = subType <span class="comment">// constructor是在原型上的</span></span><br><span class="line">    subType.prototype = objProto;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">SuperType</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.name = name;</span><br><span class="line">    <span class="keyword">this</span>.colors = [<span class="string">'pink'</span>, <span class="string">'blue'</span>, <span class="string">'green'</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">SuberType</span>(<span class="params">name, age</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 借用父类构造函数</span></span><br><span class="line">    SuperType.call(<span class="keyword">this</span>, name); </span><br><span class="line">    <span class="keyword">this</span>.age = age;</span><br><span class="line">&#125;</span><br><span class="line">inheritPrototype(SuberType, SuperType);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj = <span class="keyword">new</span> SuberType();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>父类原型上属性的变化还是会影响子类，因为子类prototype对象的<strong>proto</strong>指向父类的prototype对象</li>
+</ul>
+<h3 id="Object-create-polyfill"><a href="#Object-create-polyfill" class="headerlink" title="Object.create polyfill"></a>Object.create polyfill</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="built_in">Object</span>.create !== <span class="string">"function"</span>) &#123;</span><br><span class="line">    <span class="built_in">Object</span>.create = <span class="function"><span class="keyword">function</span> (<span class="params">proto, propertiesObject</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> proto !== <span class="string">'object'</span> &amp;&amp; <span class="keyword">typeof</span> proto !== <span class="string">'function'</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'Object prototype may only be an Object: '</span> + proto);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (proto === <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">"This browser's implementation of Object.create is a shim and doesn't support 'null' as the first argument."</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> propertiesObject !== <span class="string">'undefined'</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">"This browser's implementation of Object.create is a shim and doesn't support a second argument."</span>);</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">F</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">        F.prototype = proto;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> F();</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/07/12/继承/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-module引入方式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="UMD模式"><a href="#UMD模式" class="headerlink" title="UMD模式"></a>UMD模式</h3><p>UMD (Universal Module Definition), 希望提供一个前后端跨平台的解决方案(支持AMD与CommonJS模块方式)。</p>
+<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><ol>
+<li>先判断是否支持Node.js模块格式（exports是否存在），存在则使用Node.js模块格式。</li>
+<li>再判断是否支持AMD（define是否存在），存在则使用AMD方式加载模块。</li>
+<li>前两个都不存在，则将模块公开到全局（window或global）。<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// if the module has no dependencies, the above pattern can be simplified to</span></span><br><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">root, factory</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> exports===<span class="string">"object"</span>&amp;&amp;<span class="keyword">typeof</span> <span class="built_in">module</span>!==<span class="string">"undefined"</span>) &#123;</span><br><span class="line">        <span class="comment">// Node CommonJS. Does not work with strict CommonJS, but</span></span><br><span class="line">        <span class="comment">// only CommonJS-like environments that support module.exports,</span></span><br><span class="line">        <span class="comment">// like Node.</span></span><br><span class="line">        <span class="built_in">module</span>.exports = factory();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> define === <span class="string">'function'</span> &amp;&amp; define.amd) &#123;</span><br><span class="line">        <span class="comment">// AMD. Register as an anonymous module.</span></span><br><span class="line">        define([], factory);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// Browser globals (root is window)</span></span><br><span class="line">        root.returnExports = factory();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;(<span class="keyword">this</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Just return a value to define the module export.</span></span><br><span class="line">    <span class="comment">// This example returns an object, but the module</span></span><br><span class="line">    <span class="comment">// can return a function as the exported value.</span></span><br><span class="line">    <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">&#125;));</span><br><span class="line"><span class="string">``</span><span class="string">` </span></span><br><span class="line"><span class="string">如果没有定义root参数，也可以通过下面的方式去赋值给全局变量：</span></span><br><span class="line"><span class="string">`</span><span class="string">``</span> js</span><br><span class="line">    <span class="keyword">var</span> g;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">typeof</span> <span class="built_in">window</span>!==<span class="string">"undefined"</span>)&#123;</span><br><span class="line">        g=<span class="built_in">window</span></span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> global!==<span class="string">"undefined"</span>)&#123;</span><br><span class="line">        g=global</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> self!==<span class="string">"undefined"</span>)&#123;</span><br><span class="line">        g=self</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        g=<span class="keyword">this</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
-<p>最终得到的参数是：<br>Query String Parameters<br>param2: bar<br>param3: bar<br>get请求的表单在拼接参数的时候，会丢掉action指定的URL中带上的参数。</p>
+<h4 id="ES-Module与CommonJS"><a href="#ES-Module与CommonJS" class="headerlink" title="ES Module与CommonJS"></a>ES Module与CommonJS</h4><ol>
+<li>语法差异：<ul>
+<li>ES Module使用import、export</li>
+<li>CommonJS使用require、module.exports（exports）</li>
+</ul>
+</li>
+<li>依赖关系的确认：<ul>
+<li>CommonJS模块是对象，是运行时加载，运行时才把模块挂载在exports之上（加载整个模块的所有），加载模块其实就是查找对象属性；</li>
+<li>ES Module是在编译时确定依赖关系（设计思想：尽量的静态化）。</li>
+</ul>
+</li>
+<li>CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用。<ul>
+<li>CommonJS模式中，exports的一个参数，即使该参数发生了变化，引入的地方拿到的值始终不变</li>
+<li>在ES Module中，export的参数如果发生了变化，在引入的地方也会同步更新；引用的参数是read-only的（因为是引用，约定是不能在外部修改）。</li>
+</ul>
+</li>
+<li>只执行一次<ul>
+<li>多次require，CommonJS返回的是module的缓存</li>
+<li>ES6 module多次import，只会在首次import中执行</li>
+</ul>
+</li>
+<li>加载方式：<ul>
+<li>commonJS模块就是对象，整体加载模块（即加载的所有方法）</li>
+<li>ES6 模块不是对象，而是通过export命令显式指定输出的代码，再通过import命令输入。</li>
+</ul>
+</li>
+<li>运行环境：AMD/CMD是CommonJS在浏览器端的解决方案。<ul>
+<li>CommonJS是同步加载（代码在本地，加载时间基本等于硬盘读取时间）。</li>
+<li>AMD/CMD是异步加载（浏览器必须这么做，代码在服务端）</li>
+</ul>
+</li>
+</ol>
+<h4 id="CommonJs中exports和module-exports的差别"><a href="#CommonJs中exports和module-exports的差别" class="headerlink" title="CommonJs中exports和module.exports的差别"></a>CommonJs中exports和module.exports的差别</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="built_in">module</span> = &#123; <span class="attr">exports</span>: &#123;&#125; &#125;;</span><br><span class="line"><span class="keyword">var</span> exports = <span class="built_in">module</span>.exports;</span><br><span class="line"></span><br><span class="line"><span class="comment">// your code</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="built_in">module</span>.exports;</span><br></pre></td></tr></table></figure>
+<p>这意味着exports的正确使用方法, 只有exports.A = B这种挂变量的形式。<br>modules.exports一旦被直接赋值, 如modules.exports = 1, 也会断开它和exports之间的联系, 导致exports失去意义.<br>参考<a href="https://www.jianshu.com/p/434c247759bc" target="_blank" rel="noopener">https://www.jianshu.com/p/434c247759bc</a></p>
+<h4 id="AMD-vs-CMD"><a href="#AMD-vs-CMD" class="headerlink" title="AMD vs CMD"></a>AMD vs CMD</h4><p>AMD规范采用异步方式加载模块，模块的加载不影响它后面语句的运行。所有依赖这个模块的语句，都定义在一个回调函数中，等到加载完成之后，这个回调函数才会运行。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** 网页中引入require.js及main.js **/</span></span><br><span class="line">&lt;script src=<span class="string">"js/require.js"</span> data-main=<span class="string">"js/main"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/** main.js 入口文件/主模块 **/</span></span><br><span class="line"><span class="comment">// 首先用config()指定各模块路径和引用名</span></span><br><span class="line"><span class="built_in">require</span>.config(&#123;</span><br><span class="line">  baseUrl: <span class="string">"js/lib"</span>,</span><br><span class="line">  paths: &#123;</span><br><span class="line">    <span class="string">"jquery"</span>: <span class="string">"jquery.min"</span>,  <span class="comment">//实际路径为js/lib/jquery.min.js</span></span><br><span class="line">    <span class="string">"underscore"</span>: <span class="string">"underscore.min"</span>,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 执行基本操作</span></span><br><span class="line"><span class="built_in">require</span>([<span class="string">"jquery"</span>,<span class="string">"underscore"</span>],<span class="function"><span class="keyword">function</span>(<span class="params">$,_</span>)</span>&#123;</span><br><span class="line">  <span class="comment">// some code here</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义模块</span></span><br><span class="line">define(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// some code here</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义的模块本身也依赖其他模块</span></span><br><span class="line">define([<span class="string">"jquery"</span>], <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// some code here</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** AMD写法 **/</span></span><br><span class="line">define([<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>, <span class="string">"d"</span>, <span class="string">"e"</span>, <span class="string">"f"</span>], <span class="function"><span class="keyword">function</span>(<span class="params">a, b, c, d, e, f</span>) </span>&#123; </span><br><span class="line">     <span class="comment">// 等于在最前面声明并初始化了要用到的所有模块</span></span><br><span class="line">    a.doSomething();</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">false</span>) &#123;</span><br><span class="line">        <span class="comment">// 即便没用到某个模块 b，但 b 还是提前执行了</span></span><br><span class="line">        b.doSomething()</span><br><span class="line">    &#125; </span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">/** CMD写法 **/</span></span><br><span class="line">define(<span class="function"><span class="keyword">function</span>(<span class="params">require, exports, module</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> a = <span class="built_in">require</span>(<span class="string">'./a'</span>); <span class="comment">//在需要时申明</span></span><br><span class="line">    a.doSomething();</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">false</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> b = <span class="built_in">require</span>(<span class="string">'./b'</span>);</span><br><span class="line">        b.doSomething();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">/** sea.js **/</span></span><br><span class="line"><span class="comment">// 定义模块 math.js</span></span><br><span class="line">define(<span class="function"><span class="keyword">function</span>(<span class="params">require, exports, module</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> $ = <span class="built_in">require</span>(<span class="string">'jquery.js'</span>);</span><br><span class="line">    <span class="keyword">var</span> add = <span class="function"><span class="keyword">function</span>(<span class="params">a,b</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> a+b;</span><br><span class="line">    &#125;</span><br><span class="line">    exports.add = add;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 加载模块</span></span><br><span class="line">seajs.use([<span class="string">'math.js'</span>], <span class="function"><span class="keyword">function</span>(<span class="params">math</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> sum = math.add(<span class="number">1</span>+<span class="number">2</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><strong>AMD 推崇依赖前置、提前执行，CMD推崇依赖就近、延迟执行</strong></p>
+<h3 id="commonjs-vs-es6-modules"><a href="#commonjs-vs-es6-modules" class="headerlink" title="commonjs vs es6 modules"></a>commonjs vs es6 modules</h3><p>两个重大差异：</p>
+<ul>
+<li>CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用。</li>
+<li>CommonJS 模块是运行时加载，ES6 模块是编译时输出接口。<ul>
+<li>第二个差异是因为 CommonJS 加载的是一个对象（即module.exports属性），该对象只有在脚本运行完才会生成。而 ES6 模块不是对象，它的对外接口只是一种静态定义，在代码静态解析阶段就会生成。</li>
+</ul>
+</li>
+<li>是否缓存数据<ul>
+<li>JS 引擎对脚本静态分析的时候，遇到模块加载命令import，就会生成一个只读引用。等到脚本真正执行时，再根据这个只读引用，到被加载的那个模块里面去取值。原始值变了，import加载的值也会跟着变。因此ES6模块不会缓存运行结果，而是动态地去被加载的模块取值，并且变量总是绑定其所在的模块。</li>
+</ul>
+</li>
+<li>export通过接口，输出的是同一个值。不同的脚本加载这个接口，得到的都是同样的实例。<ul>
+<li>如果多次重复执行同一句import语句，那么只会执行一次，而不会执行多次。</li>
+<li>下面代码中，虽然foo和bar在两个语句中加载，但是它们对应的是同一个my_module实例。也就是说，import语句是 Singleton 模式<a href="https://k94n.com/es6-modules-single-instance-pattern" target="_blank" rel="noopener">es6-modules-single-instance-pattern</a>。<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; foo &#125; <span class="keyword">from</span> <span class="string">'my_module'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; bar &#125; <span class="keyword">from</span> <span class="string">'my_module'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等同于</span></span><br><span class="line"><span class="keyword">import</span> &#123; foo, bar &#125; <span class="keyword">from</span> <span class="string">'my_module'</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/07/05/module引入方式/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-react-mobx使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="核心"><a href="#核心" class="headerlink" title="核心"></a>核心</h3><ol>
+<li><p>封装可观察对象——observable</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> store = observable(&#123; <span class="attr">a</span>: <span class="number">1</span> &#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>依赖收集——derivation：</p>
+<ol>
+<li>computed表达式</li>
+<li>when、autorun、reaction的第一个入参函数</li>
+<li>observer组件的render方法<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">autorun(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(store.a);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>推导——Action触发 derivation 的重新执行</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">store.a = <span class="number">2</span>; <span class="comment">// console 2</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="核心原理"><a href="#核心原理" class="headerlink" title="核心原理"></a>核心原理</h3><h4 id="利用Object-defineProperty方法，劫持了Observable对象的get-和set-方法。"><a href="#利用Object-defineProperty方法，劫持了Observable对象的get-和set-方法。" class="headerlink" title="利用Object.defineProperty方法，劫持了Observable对象的get()和set()方法。"></a>利用Object.defineProperty方法，劫持了Observable对象的get()和set()方法。</h4><ul>
+<li>在访问Observable对象的时候，会调用get()方法，注册监听。如何绑定依赖：<ul>
+<li>Observable对象调用<code>reportObserved(this)</code>，先将其添加到derivation监听者的可观察对象数组中observing[]</li>
+<li>derivation对象调用<code>bindDependencies</code>，遍历<code>observing[]</code>，将自身实例添加到observable对象的监听者数组中observers_</li>
+<li>至此，建立了双向依赖</li>
+</ul>
+</li>
+<li>在修改Observable对象的时候，会调用set()方法，这个时候会触发监听<ul>
+<li>Observable对象发生变化，会遍历监听者数组observers_，触发更新<h4 id="observe方法"><a href="#observe方法" class="headerlink" title="observe方法"></a>observe方法</h4></li>
+</ul>
+</li>
+<li>显示调用addListener绑定依赖，在set()中调用notifyListeners触发更新</li>
+</ul>
+<h3 id="useStaticRendering"><a href="#useStaticRendering" class="headerlink" title="useStaticRendering"></a>useStaticRendering</h3><p>我们知道可以通过使用@observer，将react组件转换成一个监听者(Reactions)，这样在被监听的应用状态变量(Observable)有更新时，react组件就会重新渲染。而对于服务端的React组件，我们只需要它被渲染一次，而不需要组件监听模型的状态。事实上，如果服务端React组件像客户端组件一样监听模型的状态变化，就会造成严重的内存泄漏问题。官方提供了useStaticRendering方法，用于避免mobx服务端渲染的内存泄漏问题; 该方法只需要在server启动时设置一次。</p>
+<h3 id="与Redux的区别"><a href="#与Redux的区别" class="headerlink" title="与Redux的区别"></a>与Redux的区别</h3><p>REDUX的好处</p>
+<ul>
+<li>通过action,reducer来完成应用的数据流管理，逻辑简单清晰</li>
+<li>reducer函数式的设计，让我们代码变得可观测，可回溯</li>
+<li>action的设计，特别适用于多数据联动的场景<br>REDUX的弊端</li>
+<li>啰嗦代码太多</li>
+<li>reducer无复用性</li>
+<li>性能优化太繁琐(当然可以引入immutable来解决，但是是不是又增加了学习成本,应用的复杂度和代码量呢)</li>
+<li>app state和store state的划分</li>
+<li>脏检查，参考<a href="https://tech.youzan.com/mobx_vs_redux/" target="_blank" rel="noopener">https://tech.youzan.com/mobx_vs_redux/</a></li>
+</ul>
+<ol>
+<li>redux将数据保存在单一的store中，mobx将数据保存在分散的多个store中</li>
+<li>redux使用plain object保存数据，需要手动处理变化后的操作；mobx适用observable保存数据，数据变化后自动处理响应的操作</li>
+<li>redux使用不可变状态，这意味着状态是只读的，不能直接去修改它，而是应该返回一个新的状态，同时使用纯函数；mobx中的状态是可变的，可以直接对其进行修改</li>
+<li>mobx相对来说比较简单，在其中有很多的抽象，mobx更多的使用面向对象的编程思维；redux会比较复杂，因为其中的函数式编程思想掌握起来不是那么容易，同时需要借助一系列的中间件来处理异步和副作用</li>
+<li>mobx中有更多的抽象和封装，调试会比较困难，同时结果也难以预测；而redux提供能够进行时间回溯的开发工具，同时其纯函数以及更少的抽象，让调试变得更加的容易<br>场景辨析:<br>基于以上区别,我们可以简单得分析一下两者的不同使用场景.<br>mobx更适合数据不复杂的应用: mobx难以调试,很多状态无法回溯,面对复杂度高的应用时,往往力不从心.<br>redux适合有回溯需求的应用: 比如一个画板应用、一个表格应用，很多时候需要撤销、重做等操作，由于redux不可变的特性，天然支持这些操作.<br>mobx适合短平快的项目: mobx上手简单,样板代码少,可以很大程度上提高开发效率.<br>当然mobx和redux也并不一定是非此即彼的关系,你也可以在项目中用redux作为全局状态管理,用mobx作为组件局部状态管理器来用.</li>
+</ol>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/07/05/react-mobx使用/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-webpack常用插件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="webpack运行机制"><a href="#webpack运行机制" class="headerlink" title="webpack运行机制"></a>webpack运行机制</h2><ul>
+<li>初始化配置参数 -&gt; 绑定事件钩子回调 -&gt; 确定Entry逐一遍历 -&gt; 使用loader编译文件 -&gt; 输出文件</li>
+</ul>
+<h2 id="html-webpack-plugin-和-script-ext-html-webpack-plugin"><a href="#html-webpack-plugin-和-script-ext-html-webpack-plugin" class="headerlink" title="html-webpack-plugin 和 script-ext-html-webpack-plugin"></a>html-webpack-plugin 和 script-ext-html-webpack-plugin</h2><ul>
+<li>html-webpack-plugin生成的html文件，其中<script>都是默认同步类型的</li>
+<li>需要使用script-ext-html-webpack-plugin，可以定义<script>的引入类型或者inline script</li>
+</ul>
+<h2 id="自定义插件"><a href="#自定义插件" class="headerlink" title="自定义插件"></a>自定义插件</h2><ul>
+<li><p>Compiler暴露了和webpack整个生命周期相关的钩子：负责文件监听和启动编译。Compiler 实例中包含了完整的 webpack 配置，全局只有一个 Compiler 实例。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//基本写法</span></span><br><span class="line">compiler.hooks.someHook.tap(...)</span><br><span class="line"><span class="comment">//如果希望在entry配置完毕后执行某个功能</span></span><br><span class="line">compiler.hooks.entryOption.tap(...)</span><br><span class="line"><span class="comment">//如果希望在生成的资源输出到output指定目录之前执行某个功能</span></span><br><span class="line">compiler.hooks.emit.tap(...)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Compilation暴露了与模块和依赖有关的粒度更小的事件钩子<br>模块会经历加载(loaded),封存(sealed),优化(optimized),分块(chunked),哈希(hashed)和重新创建(restored);compilation是Compiler生命周期中的一个步骤，使用compilation相关钩子的通用写法为:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">compiler.hooks.compilation.tap(<span class="string">'SomePlugin'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">compilation, callback</span>)</span>&#123;</span><br><span class="line">    compilation.hooks.someOtherHook.tap(<span class="string">'SomeOtherPlugin'</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        ....</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="HtmlWebpackPlugin提供的事件钩子"><a href="#HtmlWebpackPlugin提供的事件钩子" class="headerlink" title="HtmlWebpackPlugin提供的事件钩子"></a>HtmlWebpackPlugin提供的事件钩子</h3><ul>
+<li><p>开始生成HTML之前勾子(HtmlWebpackPlugin BeforeHtmlGeneration)<br>这一阶做一些资源归类工作，主要产出物为asset资源原始对象，该对象为插入HTML头尾部的JS,CSS资源列表及其路径。</p>
+</li>
+<li><p>在HTML开始处理之前勾子(HtmlWebpackPlugin BeforeHtmlProcessing)<br>生成不包括JS和CSS的纯HTML结果，产出物为html字符串。</p>
+</li>
+<li><p>添加资源处理HTML勾子(HtmlWebpackPluginAlterAssetTags)<br>组装要插入HTML页面中的JS，CSS等资源结构，<br>如果要在生成HTML页面中加入自定义或者WEBPACK不支持的<script>标签等，可操作该对象。</p>
+</li>
+<li><p>HTML处理完毕勾子(HtmlWebpackPluginAfterHtmlProcessing)<br>HTML页处理完成阶段，JS,CSS完成插入，已生成可直接打包用的文本结构，一般要输出自定义内容在此处实现。</p>
+</li>
+<li><p>勾子任务处理完毕发送事件时(HtmlWebpackPluginAfterEmit)<br>处理任务最后阶段，可通过返回的html属性访问source和size属性。</p>
+</li>
+</ul>
+<h2 id="webpack-dev-server-vs-webpack-dev-middleware"><a href="#webpack-dev-server-vs-webpack-dev-middleware" class="headerlink" title="webpack-dev-server vs webpack-dev-middleware"></a>webpack-dev-server vs webpack-dev-middleware</h2><p><code>webpack-dev-server</code>结合了<code>express</code>、<code>webpack-dev-middleware</code>和<code>webpack-hot-middleware</code>的功能，其中</p>
+<ul>
+<li>express负责启动node服务</li>
+<li>webpack-dev-middleware通过webpack提供的<code>watch</code>API监听代码变化，重新编译打包，写到内存中</li>
+<li>webpack-hot-middleware客户端使用<a href="https://developer.mozilla.org/zh-CN/docs/Server-sent_events/Using_server-sent_events">EventSource</a>长轮询(<code>webpack-dev-server</code>在服务端和客户端建立websocket长连接)<ul>
+<li>服务端监听<code>compiler</code>钩子的<code>done</code>事件，在文件打包完成后，调用监听函数</li>
+<li>监听函数中调用<code>eventStream.publish</code>，将事件类型、文件hash等打包信息，通过事件流的形式通知客户端。（有趣的事，如果一直没有更新，服务端会间隔(默认)10s发生消息给客户端，是一个心形字符，代表心跳）</li>
+<li>客户端监听<code>onmessage</code>事件，根据接收到的消息，去进行不同的处理</li>
+<li>客户端调用check方法坚持是否有更新，如果配置了模块热更新，HMR runtime根据新模块代码决定是热更新还是重刷页面；如果没配置模块热更新，则直接重刷页面(<strong>HMR 是可选功能，只会影响包含 HMR 代码的模块。</strong>例如<code>style-loader</code>实现了HMR的module.hot接口，当它通过 HMR 接收到更新，它会使用新的样式替换旧的样式。)<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">compiler.hooks.done.tap(<span class="string">'webpack-hot-middleware'</span>, onDone);</span><br><span class="line"></span><br><span class="line"><span class="comment">// init方法</span></span><br><span class="line">source = <span class="keyword">new</span> <span class="built_in">window</span>.EventSource(options.path);</span><br><span class="line">source.onopen = handleOnline;</span><br><span class="line">source.onerror = handleDisconnect;</span><br><span class="line">source.onmessage = handleMessage;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="WebSockets-or-Server-Sent-Events"><a href="#WebSockets-or-Server-Sent-Events" class="headerlink" title="WebSockets or Server-Sent Events"></a>WebSockets or Server-Sent Events</h3><ul>
+<li>明显的区别是：WebSockets是双向通信，Server-Sent Events是单向通信</li>
+</ul>
+</script></li></ul>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/07/02/webpack常用插件/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-react-Fiber" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/02/react-Fiber/">react fiber纤程</a>
+    </h1>
+  
+
+        
+        <a href="/2020/07/02/react-Fiber/" class="archive-article-date">
+  	<time datetime="2020-07-02T04:12:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="react-v16的diff算法"><a href="#react-v16的diff算法" class="headerlink" title="react v16的diff算法"></a>react v16的diff算法</h2><blockquote>
+<p>React Fiber 是对React核心算法的重新实现，是React团队花费了2年的研究成果。<br>核心特性<strong>增量式渲染</strong>：the ability to split rendering work into chunks and spread it out over multiple frames.</p>
+</blockquote>
+<h3 id="0-react-element结构"><a href="#0-react-element结构" class="headerlink" title="0. react element结构"></a>0. react element结构</h3><p>React 元素（elements）是设计好的 plain object：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  $$<span class="keyword">typeof</span>:  <span class="built_in">Symbol</span>(react.element), <span class="comment">// React会检测该属性，避免xss攻击 </span></span><br><span class="line">  key: <span class="literal">null</span>,</span><br><span class="line">  props: &#123;&#125;,</span><br><span class="line">  ref: <span class="literal">null</span>,</span><br><span class="line">  type: <span class="built_in">String</span> | <span class="built_in">Object</span> | <span class="built_in">Function</span>, <span class="comment">// 元素类型，string，function</span></span><br><span class="line">  _owner: FiberNode, <span class="comment">// 所属React Component</span></span><br><span class="line">  _store: &#123; <span class="attr">validated</span>: <span class="literal">false</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>为了避免用户模拟JSON注入xss攻击，React 0.14 修复手段是用 Symbol 标记每个 React 元素（element）：因为服务器返回的序列化JSON不支持 Symbol 类型（<strong>JSON.stringify后，symbol属性和方法会被抛弃</strong>）。所以即使服务器存在用JSON作为文本返回安全漏洞，JSON 里也不包含 Symbol.for(‘react.element’)。React 会检测 element.$$typeof，如果元素丢失或者无效，会拒绝处理该元素。<br>特意用 Symbol.for() 的好处是 Symbols 通用于 iframes 和 workers 等环境中。<br>一个很有趣的点：如果浏览器不支持 Symbols 怎么办？React仍然会加上 $$typeof 字段以保证一致性，但只是设置一个数字而已 —— 0xeac7。为什么？因为 0xeac7 看起来有点像 「React」</p>
+<h3 id="1-react-fiber纤程"><a href="#1-react-fiber纤程" class="headerlink" title="1. react fiber纤程"></a>1. react fiber纤程</h3><p>React Fiber 是一种基于浏览器的<strong>单线程调度算法</strong>。</p>
+<ul>
+<li>一种将 recocilation （递归 diff），拆分成无数个小任务的算法；</li>
+<li>它随时能够停止，恢复。停止恢复的时机取决于当前的一帧（16ms）内，还有没有足够的时间允许计算。</li>
+<li>划分任务的优先级<br>fiber是纤程颗粒化的概念，一个线程可以包含多个Fiber，主要是对react更新机制的优化。React16之前的版本，更新组件会一直占用主线程，如果组件树过大，则可能会导致浏览器失去响应。在React16中加入的fiber可以将同步任务拆解，每次执行完一小片后，都会把控制权交还给react负责任务调度的模块，如果有优先级更高的任务，就先执行高优先级的任务。</li>
+</ul>
+<h4 id="1-1-解决问题"><a href="#1-1-解决问题" class="headerlink" title="1.1 解决问题"></a>1.1 解决问题</h4><p>JavaScript 是单线程运行的，，同时只能做一件事情，这个和 DOS 的单任务操作系统一样的，事情只能一件一件的干。要是前面有一个傻叉任务长期霸占CPU，后面什么事情都干不了，浏览器会呈现卡死的状态，这样的用户体验就会非常差。</p>
+<h5 id="对于’前端框架‘来说，解决这种问题有三个方向"><a href="#对于’前端框架‘来说，解决这种问题有三个方向" class="headerlink" title="对于’前端框架‘来说，解决这种问题有三个方向:"></a>对于’前端框架‘来说，解决这种问题有三个方向:</h5><p>1️⃣ 优化每个任务，让它有多快就多快。挤压CPU运算量 （Vue）<br>2️⃣ 快速响应用户，让用户觉得够快，不能阻塞用户的交互 (React FiberNode)<br>3️⃣ 尝试 Worker 多线程<br>React 会递归比对VirtualDOM树，找出需要变动的节点，然后同步更新它们, 一气呵成。这个过程 React 称为 Reconcilation(协调)。在 Reconcilation 期间，React 会霸占着浏览器资源，一则会导致用户触发的事件得不到响应, 二则会导致掉帧，用户可以感知到这些卡顿。<br>协调是CPU密集型的操作，浏览器的渲染树构建、布局、绘制、资源加载(例如HTML解析)、事件响应、脚本执行都可以看作是进程，我们需要通过某些调度策略合理地分配CPU资源，从而提高浏览器的用户响应速率, 同时兼顾任务执行效率。<br><strong>所以 React 通过Fiber 架构，让自己的Reconcilation 过程变成可被中断。 ‘适时’地让出CPU执行权，除了可以让浏览器及时地响应用户的交互，还有其他好处:</strong></p>
+<ul>
+<li>与其一次性操作大量 DOM 节点相比, 分批延时对DOM进行操作，可以得到更好的用户体验。</li>
+<li>给浏览器一点喘息的机会，他会对代码进行编译优化（JIT）及进行热代码优化，或者对reflow进行修正</li>
+</ul>
+<h4 id="1-2-requestIdleCallback"><a href="#1-2-requestIdleCallback" class="headerlink" title="1.2 requestIdleCallback"></a>1.2 requestIdleCallback</h4><p>requestIdleCallback：让浏览器在’有空’的时候就执行我们的回调，这个回调会传入一个期限，表示浏览器有多少时间供我们执行, 为了不耽误事，我们最好在这个时间范围内执行完毕。<br>浏览器在一帧内可能会做执行下列任务，而且它们的执行顺序基本是固定的:</p>
+<ul>
+<li>处理用户输入事件</li>
+<li>Javascript执行</li>
+<li>requestAnimationFrame 调用 (会在下一次渲染之前调用)</li>
+<li>render Tree构建</li>
+<li>布局 Layout</li>
+<li>绘制 Paint<br>理想的一帧时间是 16ms (1000ms / 60)，如果浏览器处理完上述的任务(布局和绘制之后)，还有盈余时间，浏览器就会调用 requestIdleCallback 的回调。<br>但是在浏览器繁忙的时候，可能不会有盈余时间，这时候requestIdleCallback回调可能就不会被执行。 为了避免饿死，可以通过requestIdleCallback的第二个参数指定一个超时时间。<br><strong>所以setState触发的diff会在浏览器空闲的时候执行，即setState是批量触发的机制</strong></li>
+</ul>
+<h5 id="任务优先级"><a href="#任务优先级" class="headerlink" title="任务优先级"></a>任务优先级</h5><ul>
+<li>Immediate(-1) - 这个优先级的任务会同步执行, 或者说要马上执行且不能中断</li>
+<li>UserBlocking(250ms) 这些任务一般是用户交互的结果, 需要即时得到反馈</li>
+<li>Normal (5s) 应对哪些不需要立即感受到的任务，例如网络请求</li>
+<li>Low (10s) 这些任务可以放后，但是最终应该得到执行. 例如分析通知</li>
+<li>Idle (没有超时时间) 一些没有必要做的任务 (e.g. 比如隐藏的内容), 可能会被饿死</li>
+</ul>
+<h4 id="1-3-一个执行单元"><a href="#1-3-一个执行单元" class="headerlink" title="1.3 一个执行单元"></a>1.3 一个执行单元</h4><p><strong>将它视作一个执行单元，每次执行完一个’执行单元’, React 就会检查现在还剩多少时间，如果没有时间就将控制权让出去.</strong><br>执行过程是：</p>
+<ol>
+<li><p>假设用户调用 setState 更新组件, 这个待更新的任务会先放入队列中, 然后通过 requestIdleCallback 请求浏览器调度：   </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// setState的时候可以将要更新的component instance放到一个队列里，即Fiber节点，Fiber执行单元里面也有state变更相关信息</span></span><br><span class="line">updateQueue.push(updateTask);</span><br><span class="line">requestIdleCallback(performWork, &#123;timeout&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>现在浏览器有空闲或者超时了就会调用performWork来执行任务：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1️⃣ performWork 会拿到一个Deadline，表示剩余时间</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">performWork</span>(<span class="params">deadline</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 2️⃣ 循环取出updateQueue中的任务</span></span><br><span class="line">  <span class="keyword">while</span> (updateQueue.length &gt; <span class="number">0</span> &amp;&amp; deadline.timeRemaining() &gt; ENOUGH_TIME) &#123;</span><br><span class="line">    workLoop(deadline);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 3️⃣ 如果在本次执行中，未能将所有任务执行完毕，那就再请求浏览器调度</span></span><br><span class="line">  <span class="keyword">if</span> (updateQueue.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    requestIdleCallback(performWork);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>workLoop 的工作大概猜到了，它会从更新队列(updateQueue)中弹出更新任务来执行，每执行完一个‘执行单元‘，就检查一下剩余时间是否充足，如果充足就进行执行下一个执行单元，反之则停止执行，保存现场，等下一次有执行权时恢复。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 保存当前的处理现场</span></span><br><span class="line"><span class="keyword">let</span> nextUnitOfWork: Fiber | <span class="literal">undefined</span> <span class="comment">// 保存下一个需要处理的工作单元</span></span><br><span class="line"><span class="keyword">let</span> topWork: Fiber | <span class="literal">undefined</span>        <span class="comment">// 保存第一个工作单元</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">workLoop</span>(<span class="params">deadline: IdleDeadline</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// updateQueue中获取下一个或者恢复上一次中断的执行单元</span></span><br><span class="line">  <span class="keyword">if</span> (nextUnitOfWork == <span class="literal">null</span>) &#123;</span><br><span class="line">    nextUnitOfWork = topWork = getNextUnitOfWork();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 🔴 每执行完一个执行单元，检查一次剩余时间</span></span><br><span class="line">  <span class="comment">// 如果被中断，下一次执行还是从 nextUnitOfWork 开始处理</span></span><br><span class="line">  <span class="keyword">while</span> (nextUnitOfWork &amp;&amp; deadline.timeRemaining() &gt; ENOUGH_TIME) &#123;</span><br><span class="line">    <span class="comment">// 下文我们再看performUnitOfWork，DFS遍历：子节点-&gt;兄弟节点-&gt;父节点 </span></span><br><span class="line">    nextUnitOfWork = performUnitOfWork(nextUnitOfWork, topWork);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 提交工作，下文会介绍</span></span><br><span class="line">  <span class="keyword">if</span> (pendingCommit) &#123;</span><br><span class="line">    commitAllWork(pendingCommit);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="1-4-Fiber节点"><a href="#1-4-Fiber节点" class="headerlink" title="1.4 Fiber节点"></a>1.4 Fiber节点</h4><p>每个 VirtualDOM 节点内部现在使用 Fiber表示，Fiber的部分结构如下所示，<strong>将简单的树结构，变成了基于单链表的树结构</strong>。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    alternate: FiberNode|null, // 替身：指向旧树中的节点</span><br><span class="line">    effectTag: SideEffectTag, // 标识当前节点的副作用类型，例如节点更新、删除、移动</span><br><span class="line">    nextEffect: FiberNode | null, // 和节点关系一样，React 同样使用链表来将所有有副作用的Fiber连接起来</span><br><span class="line">    pendingWorkPriority: PriorityLevel, // 一个数字，标记子树上待更新任务的优先级</span><br><span class="line"></span><br><span class="line">    type: any, // Fiber 类型信息</span><br><span class="line">    stateNode: any, // 管理 instance 自身的特性，function组件值为null</span><br><span class="line">    return: FiberNode|null, // 指向 Fiber Tree 中的父节点</span><br><span class="line">    child: FiberNode|null, // 指向第一个子节点</span><br><span class="line">    sibling: FiberNode|null, // 指向兄弟节点</span><br><span class="line"></span><br><span class="line">    pendingProps: &#123;&#125;, // pendingProps在执行开始时设置，并在结束时设置memoizedProps。</span><br><span class="line">    memoizedProps: &#123;&#125;, // 当输入的pendingProps等于memoizedProps时，它表示fiber的先前输出可以重复使用，从而防止不必要的工作。</span><br><span class="line">    memoizedState: &#123;&#125;, // 将要更新的component instance也放在一个队列里</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="1-5-执行顺序"><a href="#1-5-执行顺序" class="headerlink" title="1.5 执行顺序"></a>1.5 执行顺序</h4><p>来看看 performUnitOfWork 的实现, 它其实就是一个深度优先的遍历：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @params fiber 当前需要处理的节点</span></span><br><span class="line"><span class="comment"> * @params topWork 本次更新的根节点</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">performUnitOfWork</span>(<span class="params">fiber: Fiber, topWork: Fiber</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 对该节点进行处理</span></span><br><span class="line">  beginWork(fiber);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 如果存在子节点，那么下一个待处理的就是子节点</span></span><br><span class="line">  <span class="keyword">if</span> (fiber.child) &#123;</span><br><span class="line">    <span class="keyword">return</span> fiber.child;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 没有子节点了，上溯查找兄弟节点</span></span><br><span class="line">  <span class="keyword">let</span> temp = fiber;</span><br><span class="line">  <span class="keyword">while</span> (temp) &#123;</span><br><span class="line">    completeWork(temp);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 到顶层节点了, 退出</span></span><br><span class="line">    <span class="keyword">if</span> (temp === topWork) &#123;</span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找到，下一个要处理的就是兄弟节点</span></span><br><span class="line">    <span class="keyword">if</span> (temp.sibling) &#123;</span><br><span class="line">      <span class="keyword">return</span> temp.sibling;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 没有, 继续上溯</span></span><br><span class="line">    temp = temp.return;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>因为是单链表(A → B → C)的结构，所以在每次执行到某个节点(A → B)被中断后，下次可以从该节点(B → C)接着执行。<br>requestIdleCallback会让一个低优先级的任务在空闲期被调用，而requestAnimationFrame会让一个高优先级的任务在下一个栈帧被调用，从而保证了主线程按照优先级执行 fiber 单元。</p>
+<blockquote>
+<p>优先级顺序为：文本框输入 &gt; 本次调度结束需完成的任务 &gt; 动画过渡 &gt; 交互反馈 &gt; 数据更新 &gt; 不会显示但以防将来会显示的任务。</p>
+</blockquote>
+<p>因为react fiber机制，一个任务很可能执行到一半就被其他优先级更高的任务所替代，或者因为时间原因而被终止。当再次执行这个任务时，是从头开始执行一遍，就会导致组件的某些 will 生命周期可能被多次调用而影响性能。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">beginWork</span>(<span class="params">fiber: Fiber</span>): <span class="title">Fiber</span> | <span class="title">undefined</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (fiber.tag === WorkTag.HostComponent) &#123;</span><br><span class="line">    <span class="comment">// 宿主节点diff</span></span><br><span class="line">    diffHostComponent(fiber)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (fiber.tag === WorkTag.ClassComponent) &#123;</span><br><span class="line">    <span class="comment">// 类组件节点diff</span></span><br><span class="line">    diffClassComponent(fiber)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (fiber.tag === WorkTag.FunctionComponent) &#123;</span><br><span class="line">    <span class="comment">// 函数组件节点diff</span></span><br><span class="line">    diffFunctionalComponent(fiber)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// ... 其他类型节点，省略</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="1-6-两个阶段的拆分"><a href="#1-6-两个阶段的拆分" class="headerlink" title="1.6 两个阶段的拆分"></a>1.6 两个阶段的拆分</h4><p>首先，看React的渲染，包括两个阶段：协调阶段(reconciliation)和提交(渲染)阶段(commit)。</p>
+<ol>
+<li>调度阶段react根据数据更新virtual DOM，再运用diff算法找到需要VDOM change。这一部分的工作是可以拆分的。</li>
+</ol>
+<ul>
+<li>constructor</li>
+<li>componentWillMount 废弃</li>
+<li>componentWillReceiveProps 废弃</li>
+<li>static getDerivedStateFromProps</li>
+<li>shouldComponentUpdate</li>
+<li>componentWillUpdate 废弃</li>
+<li>render</li>
+</ul>
 <ol start="2">
-<li>post表单请求：<br>enctype属性默认值是’application/x-www-form-urlencoded’，还支持’multipart/form-data’和’text/plain’<h4 id="application-x-www-form-urlencoded-1"><a href="#application-x-www-form-urlencoded-1" class="headerlink" title="application/x-www-form-urlencoded"></a>application/x-www-form-urlencoded</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">action</span>=<span class="string">"/somePage.html?param1=foo&amp;param2=foo"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"param2"</span> <span class="attr">value</span>=<span class="string">"bar"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"param3"</span> <span class="attr">value</span>=<span class="string">"baz"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
+<li>提交阶段根据计算出的所有diff去一次性更新真实的DOM。</li>
 </ol>
-<p>最终得到的参数是：<br>Query String Parameters<br>param1: foo<br>param2: foo</p>
-<p>Form Data<br>param2: bar<br>param3: baz</p>
-<h4 id="text-plain"><a href="#text-plain" class="headerlink" title="text/plain"></a>text/plain</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">action</span>=<span class="string">"/somePage.html?param1=foo&amp;param2=foo"</span> <span class="attr">enctype</span>=<span class="string">"text/plain"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"param2"</span> <span class="attr">value</span>=<span class="string">"bar"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"param3"</span> <span class="attr">value</span>=<span class="string">"baz"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>最终得到的参数是：<br>Query String Parameters<br>param1: foo<br>param2: foo</p>
-<p>Request Payload<br>param2=bar<br>param3=baz</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/26/表单和post参数总结/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-打点实践总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/07/打点实践总结/">打点实践总结</a>
-    </h1>
-  
-
-        
-        <a href="/2019/03/07/打点实践总结/" class="archive-article-date">
-  	<time datetime="2019-03-07T03:02:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>beacon 请求方法均为POST，且不支持修改<br>兼容性 <a href="https://caniuse.com/#search=beacon" target="_blank" rel="noopener">https://caniuse.com/#search=beacon</a></p>
 <ul>
-<li>polyfill <a href="https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js" target="_blank" rel="noopener">https://github.com/kronicker/sendbeacon-polyfill/blob/master/sendbeacon.js</a></li>
-<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon</a></li>
-<li><a href="https://juejin.im/post/5c7e541b6fb9a049e06415a5?utm_source=gold_browser_extension" target="_blank" rel="noopener">如何在 Web 关闭页面时发送 Ajax 请求</a></li>
-<li><a href="https://juejin.im/post/5b694b5de51d4519700fa56a" target="_blank" rel="noopener">[译] 使用 Web Beacon API 记录活动</a></li>
+<li>getSnapshotBeforeUpdate() 严格来说，这个是在进入 commit 阶段前调用</li>
+<li>componentDidMount</li>
+<li>componentDidUpdate</li>
+<li>componentWillUnmount<br>也就是说，在协调阶段如果时间片用完，React就会选择让出控制权。因为协调阶段执行的工作不会导致任何用户可见的变更，所以在这个阶段让出控制权不会有什么问题。<br>需要注意的是：因为协调阶段可能被中断、恢复，甚至重做，⚠️React 协调阶段的生命周期钩子可能会被调用多次!, 例如 componentWillMount 可能会被调用两次。<br>因此建议 协调阶段的生命周期钩子不要包含副作用. 索性 React 就废弃了这部分可能包含副作用的生命周期方法，例如componentWillMount、componentWillUpdate. v17后我们就不能再用它们了, 所以现有的应用应该尽快迁移.</li>
 </ul>
-<p>post请求<br>content-type:</p>
-<h3 id="application-json"><a href="#application-json" class="headerlink" title="application/json"></a>application/json</h3><p>Request Payload:<br>{layouts: [“1”, “2”, “5”]}</p>
-<h3 id="application-x-www-form-urlencoded"><a href="#application-x-www-form-urlencoded" class="headerlink" title="application/x-www-form-urlencoded"></a>application/x-www-form-urlencoded</h3><p>Query String Parameters<br>sourceUuid:np_c3sEKMgU3Xau_Tl0fmsqyReIdKH9OXQpby_FSNhz__ppcy0EKQ<br>articleUuid:np_eXoyZJwfsX-q8j5OLm0pyEbYGK0<br>forceFollow:0<br>isContinue:0<br>forceAutoPurchase:1</p>
-<h3 id="multipart-form-data"><a href="#multipart-form-data" class="headerlink" title="multipart/form-data"></a>multipart/form-data</h3><p>使用表单上传文件时，必须让 form 的 enctype 等于这个值。<br>Content-Type: multipart/form-data; boundary=—-WebKitFormBoundaryBJIFBCE2CA2Fwbyl</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/07/打点实践总结/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-react-diff算法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/02/react-diff算法/">react-diff算法</a>
-    </h1>
-  
-
-        
-        <a href="/2019/03/02/react-diff算法/" class="archive-article-date">
-  	<time datetime="2019-03-02T02:19:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-02</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="react-diff算法"><a href="#react-diff算法" class="headerlink" title="react diff算法"></a>react diff算法</h2><p>React diff 会帮助我们计算出<strong>Virtual DOM</strong>中真正变化的部分，并只针对该部分进行实际 DOM 操作，而非重新渲染整个页面，从而保证了每次操作更新后页面的高效渲染，因此 Virtual DOM 与 diff 是保证 React 性能口碑的幕后推手。</p>
-<h3 id="React-diff-前提"><a href="#React-diff-前提" class="headerlink" title="React diff 前提"></a>React diff 前提</h3><ul>
-<li>Web UI中DOM节点跨层级的移动操作特别少，可以忽略不计。-&gt; 所以，只比较同一层级的。tree diff</li>
-<li>拥有相同类的两个组件会生成相似的树结构，反之生成不同的树结构。-&gt; component diff</li>
-<li>对于同一层级的子节点，添加唯一key值区分。-&gt; element diff<br>React基于上述三大策略，将O(n^3) 复杂度的问题转换成 O(n) 。</li>
+<p>Reconciliation完成后，会有一个旧树和一个WIP树，对于需要变更的节点，都打上了’标签’。在提交阶段，React 就会将这些打上标签的节点应用变更。</p>
+<h4 id="1-7-双缓冲技术"><a href="#1-7-双缓冲技术" class="headerlink" title="1.7 双缓冲技术"></a>1.7 双缓冲技术</h4><p>WIP树就是一个缓冲，它在Reconciliation 完毕后一次性提交给浏览器进行渲染。它可以减少内存分配和垃圾回收，WIP 的节点不完全是新的，比如某颗子树不需要变动，React会克隆复用旧树中的子树。另外一个重要的场景就是异常的处理。<br><strong>你可以将 WIP 树想象成从旧树中 Fork 出来的功能分支，你在这新分支中添加或移除特性，即使是操作失误也不会影响旧的分支。当你这个分支经过了测试和完善，就可以合并到旧分支，将其替换掉. 这或许就是’提交(commit)阶段‘的提交一词的来源吧？</strong></p>
+<h4 id="1-8-副作用的收集和提交"><a href="#1-8-副作用的收集和提交" class="headerlink" title="1.8 副作用的收集和提交"></a>1.8 副作用的收集和提交</h4><p>将所有打了 Effect 标记的节点串联起来，收集完成后再提交。</p>
+<h3 id="中断和恢复"><a href="#中断和恢复" class="headerlink" title="中断和恢复"></a>中断和恢复</h3><p><strong>到目前为止：⚠️更新任务还是串行执行的，我们只是将整个过程碎片化了. 对于那些需要优先处理的更新任务还是会被阻塞</strong><br><strong>但React Fiber已经实现了分片执行</strong><br><strong>实际情况是，在 React 得到控制权后，应该优先处理高优先级的任务。</strong>也就是说中断时正在处理的任务，在恢复时会让位给高优先级任务，原本中断的任务可能会被放弃或者重做。 =》 下一步是<strong>启用 Concurrent 模式（实验版本）</strong>: 开启Concurrent 模式后，之前 deprecated 的生命周期方法就彻底不能用了。<br><strong>Concurrent 模式通过使渲染可中断来修复此基本限制。</strong><br>(React Fiber 实际上非常复杂，不管执行的过程怎样拆分、以什么顺序执行，最重要的是保证状态的一致性和视图的一致性，这给了 React 团队很大的考验，以致于现在都没有正式release出来。?)</p>
+<h4 id="Concurrent-Mode"><a href="#Concurrent-Mode" class="headerlink" title="Concurrent Mode"></a>Concurrent Mode</h4><ul>
+<li>快速响应用户操作和输入，提升用户交互体验</li>
+<li>让动画更加流畅，通过调度，可以让应用保持高帧率</li>
+<li>利用好I/O 操作空闲期或者CPU空闲期，进行一些预渲染。比如离屏(offscreen)不可见的内容，优先级最低，可以让 React 等到CPU空闲时才去渲染这部分内容。这和浏览器的preload等预加载技术差不多。?</li>
+<li>用Suspense 降低加载状态(load state)的优先级，减少闪屏。 比如数据很快返回时，可以不必显示加载状态，而是直接显示出来，避免闪屏；如果超时没有返回才显式加载状态。?</li>
 </ul>
-<h3 id="tree-diff"><a href="#tree-diff" class="headerlink" title="tree diff"></a>tree diff</h3><p>通过updateDepth对Virtual DOM 树进行层级控制，只会对<strong>同一层级</strong>下的同一父节点的子节点进行比较。<br>当出现跨层级的DOM移动操作时，会新建节点，不会去移动，所以React建议不进行DOM节点跨层级的操作。</p>
-<h3 id="component-diff"><a href="#component-diff" class="headerlink" title="component diff"></a>component diff</h3><ul>
-<li>如果是同一类型的组件，按照原策略继续比较 virtual DOM tree。</li>
-<li>如果不是，则将该组件判断为 dirty component，从而替换整个组件下的所有子节点。</li>
-<li>对于同一类型的组件，允许用户通过shouldComponentUpdate()来判断组件是否diff，以及PureComponent的shouldComponentUpdate的shallowEqual</li>
+<p>REFs:</p>
+<ul>
+<li><a href="https://juejin.im/post/5dadc6045188255a270a0f85#heading-5" target="_blank" rel="noopener">这可能是最通俗的 React Fiber(时间分片) 打开方式</a></li>
+<li><a href="https://juejin.im/post/5bca74cfe51d450e9163351b" target="_blank" rel="noopener">[译]以面试官的角度来看React工作面试</a></li>
+<li><a href="https://juejin.im/post/5be969656fb9a049ad76931f" target="_blank" rel="noopener">浅析 React Fiber</a></li>
+<li><a href="https://tech.youzan.com/react-fiber/" target="_blank" rel="noopener">浅谈React 16中的Fiber机制</a></li>
+<li><a href="https://github.com/acdlite/react-fiber-architecture" target="_blank" rel="noopener">React Fiber Architecture</a></li>
 </ul>
-<h3 id="element-diff"><a href="#element-diff" class="headerlink" title="element diff"></a>element diff</h3><p>对于同一层级的节点，React diff提供了三种节点操作：INSERT_MARKUP（插入）、MOVE_EXISTING（移动）和 REMOVE_NODE（删除）。<br>使用<strong>设置唯一key</strong>的方式进行优化，首先对新集合的点进行遍历，对于已经存在的点，判断当前节点在老集合中的位置child._mountIndex是否小于lastIndex(表示访问过的节点在老集合中最右的位置)，若小于，说明该节点在新集合中的位置靠后，则移动该节点；反之，则不动。<br>对于不存在的点，则创建该节点。<br>新集合的点diff遍历完成后，需要再遍历老集合，删去老集合中存在但新集合中不存在的点。<br>PS: 在遍历之前，会先更新节点的子元素和创建新元素，最终返回的就是待遍历的新集合</p>
-<p>##REFs:<br><a href="https://zhuanlan.zhihu.com/p/20346379" target="_blank" rel="noopener">React 源码剖析系列 － 不可思议的 react diff</a></p>
 
       
 
@@ -608,7 +830,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2019/03/02/react-diff算法/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/07/02/react-Fiber/">展开全文 >></a>
         </p>
       
 
@@ -626,213 +848,40 @@
 
 
   
-    <article id="post-react相关问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-SSR渲染" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/29/react相关问题/">react相关问题</a>
-    </h1>
-  
-
-        
-        <a href="/2019/01/29/react相关问题/" class="archive-article-date">
-  	<time datetime="2019-01-29T07:38:28.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-29</time>
-</a>
-        
-      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="什么是JSX-——浏览器是如何识别它的？"><a href="#什么是JSX-——浏览器是如何识别它的？" class="headerlink" title="什么是JSX?——浏览器是如何识别它的？"></a>什么是JSX?——浏览器是如何识别它的？</h3><p>JSX是facebook普及的一种标记语言，通过babel/TSC等工具会编译为<code>React.createElement</code>function。所以在React每个组件中，虽然没有显式用到React，但都需要<code>import React from &#39;react&#39;</code>。</p>
-<h4 id="JSX是如何区分React-Component和HTML元素的？"><a href="#JSX是如何区分React-Component和HTML元素的？" class="headerlink" title="JSX是如何区分React Component和HTML元素的？"></a>JSX是如何区分React Component和HTML元素的？</h4><p>通过元素首字母的大小写，如果首字母大写，则认为是React组件，小写的话则会被认为是HTML元素。可以在<a href="https://babeljs.io/repl/#?presets=react&amp;code_lz=GYVwdgxgLglg9mABACwKYBt1wBQEpEDeAUIogE6pQhlIA8AJjAG4B8AEhlogO5xnr0AhLQD0jVgG4iAXyJA" target="_blank" rel="noopener">online Babel compiler</a>中试一下。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>Hello world!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// after babel compiler</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> React.createElement(</span><br><span class="line">    <span class="string">"div"</span>,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    <span class="string">"Hello world!"</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>Hello world!<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// after babel compiler</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hello</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> React.createElement(</span><br><span class="line">    Div,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    <span class="string">"Hello world!"</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>此外，把一个组件赋给<code>this.component</code>并且写<code>&lt;this.component /&gt;</code>也会起作用。<br>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/01/29/react相关问题/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-lottie实践" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/28/lottie实践/">lottie实践</a>
-    </h1>
-  
-
-        
-        <a href="/2019/01/28/lottie实践/" class="archive-article-date">
-  	<time datetime="2019-01-28T02:27:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="lottie简介"><a href="#lottie简介" class="headerlink" title="lottie简介"></a>lottie简介</h2><blockquote>
-<p><a href="http://airbnb.io/lottie/" target="_blank" rel="noopener">Lottie</a> is a mobile library for Android and iOS that parses Adobe After Effects animations exported as json with Bodymovin and renders them natively on mobile and on the web!</p>
-</blockquote>
-<p>Lottie是一个库，可以解析使用AE制作的动画（需要用bodymovin导出为json格式），支持web、ios、android和react native。<br>在web侧，lottie-web库可以解析导出的动画json文件，并将其以svg或者canvas的方式将动画绘制到我们页面中。关于lottie-web的详细信息，也可以参见<a href="https://github.com/airbnb/lottie-web" target="_blank" rel="noopener">https://github.com/airbnb/lottie-web</a>。<br><img src="http://imweb-io-1251594266.file.myqcloud.com/FvWDhZoyPK5wVQecu5qFYEDdGuJe"></p>
-<h2 id="lottie-web引用方式"><a href="#lottie-web引用方式" class="headerlink" title="lottie-web引用方式"></a>lottie-web引用方式</h2><h3 id="npm包"><a href="#npm包" class="headerlink" title="npm包"></a>npm包</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> lottie <span class="keyword">from</span> <span class="string">'lottie-web'</span></span><br><span class="line">lottie.loadAnimation(&#123;</span><br><span class="line">  container: element, <span class="comment">// the dom element that will contain the animation</span></span><br><span class="line">  renderer: <span class="string">'svg'</span>,</span><br><span class="line">  loop: <span class="literal">true</span>,</span><br><span class="line">  autoplay: <span class="literal">true</span>,</span><br><span class="line">  path: <span class="string">'data.json'</span> <span class="comment">// the path to the animation json</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<h3 id="js外链"><a href="#js外链" class="headerlink" title="js外链"></a>js外链</h3><p>多个版本的lottie库都可以从<a href="https://cdnjs.com/libraries/bodymovin" target="_blank" rel="noopener">cdnjs-bodymovin</a>找到<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://cdnjs.com/libraries/bodymovin"</span> /&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span></span><br><span class="line"><span class="undefined">    bodymovin.loadAnimation(&#123;</span></span><br><span class="line"><span class="javascript">      container: element, <span class="comment">// the dom element that will contain the animation</span></span></span><br><span class="line"><span class="javascript">      renderer: <span class="string">'svg'</span>,</span></span><br><span class="line"><span class="javascript">      loop: <span class="literal">true</span>,</span></span><br><span class="line"><span class="javascript">      autoplay: <span class="literal">true</span>,</span></span><br><span class="line"><span class="javascript">      path: <span class="string">'data.json'</span> <span class="comment">// the path to the animation json</span></span></span><br><span class="line"><span class="undefined">    &#125;);</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>通过外链引入的方式，既可以通过<code>bodymovin</code>去调用，也可以使用<code>lottie</code>变量，二者等价，都是js库提供的全局变量。</p>
-<h2 id="lottie-web实践"><a href="#lottie-web实践" class="headerlink" title="lottie-web实践"></a>lottie-web实践</h2><p>lottie库文件比较大，gzip压缩后也有60k，再加上动画对应的json文件，直接引入会给项目代码增大不少体积，影响页面加载速度。</p>
-<table>
-<thead>
-<tr>
-<th>文件</th>
-<th style="text-align:center">大小</th>
-<th style="text-align:center">gzip后</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>lottie.js</td>
-<td style="text-align:center">513k</td>
-<td style="text-align:center">92k</td>
-</tr>
-<tr>
-<td>lottie.min.js</td>
-<td style="text-align:center">237k</td>
-<td style="text-align:center">60k</td>
-</tr>
-<tr>
-<td>lottie_light.js (lottie_web轻量版，仅支持svg渲染)</td>
-<td style="text-align:center">345k</td>
-<td style="text-align:center">60k</td>
-</tr>
-<tr>
-<td>lottie_lignt.min.js</td>
-<td style="text-align:center">144k</td>
-<td style="text-align:center">39k</td>
-</tr>
-</tbody>
-</table>
-<p>所以，如果动画只需要支持svg渲染，则可以引入light版本的库文件，gzip压缩后缩减到39k。<br>为了进一步降低影响，可以使用code splitting的方式，以async的方式异步加载js，这样就不会阻塞浏览器解析html、执行js脚本以及展示css布局。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span>(<span class="comment">/* webpackChunkName: "lottie-light" */</span> <span class="string">'../lib/lottie_light.min.js'</span>).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">window</span>.lottie &amp;&amp; <span class="built_in">window</span>.lottie.loadAnimation(&#123;</span><br><span class="line">        container: <span class="keyword">this</span>.headerDom,</span><br><span class="line">        renderer: <span class="string">'svg'</span>,</span><br><span class="line">        loop: <span class="literal">true</span>,</span><br><span class="line">        autoplay: <span class="literal">true</span>,</span><br><span class="line">        animationData: <span class="built_in">require</span>(<span class="string">'../data/ribbon.json'</span>)</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
-<p>示例demo可以参见codepen上的<a href="https://codepen.io/sherrywu0917/pen/XPNavE" target="_blank" rel="noopener">ribbon-lottie</a>，测试数据<code>ribbon.json</code>可以下载<a href="https://easyreadfs.nosdn.127.net/1548645419902/ribbon.json" target="_blank" rel="noopener">彩带json数据</a>。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">lottie</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/01/28/lottie实践/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-reading-record" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/18/reading-record/">reading-record</a>
-    </h1>
-  
-
-        
-        <a href="/2018/11/18/reading-record/" class="archive-article-date">
-  	<time datetime="2018-11-18T02:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="你的Tree-Shaking并没什么卵用"><a href="#你的Tree-Shaking并没什么卵用" class="headerlink" title="你的Tree-Shaking并没什么卵用"></a><a href="https://juejin.im/post/5a5652d8f265da3e497ff3de#comment" target="_blank" rel="noopener">你的Tree-Shaking并没什么卵用</a></h2><blockquote>
-<p>Tree-Shaking的原理</p>
+        <h1 id="webpack打包"><a href="#webpack打包" class="headerlink" title="webpack打包"></a>webpack打包</h1><p>nodejs遵循 commonjs规范，文件的导入导出如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 导出</span></span><br><span class="line"><span class="built_in">module</span>.exports = someModule</span><br><span class="line"><span class="comment">// 导入</span></span><br><span class="line"><span class="keyword">const</span> <span class="built_in">module</span> = <span class="built_in">require</span>(<span class="string">'./someModule'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>而我们通常所写的 react代码是遵循 esModule规范的，文件的导入导出如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 导出</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> someModule</span><br><span class="line"><span class="comment">// 导入</span></span><br><span class="line"><span class="keyword">import</span> <span class="built_in">module</span> <span class="keyword">from</span> <span class="string">'./someModule'</span></span><br></pre></td></tr></table></figure></p>
+<p>所以想要让 react代码兼容于服务器端，就必须先解决这两种规范的兼容问题，实际上 react是可以直接以 commonjs规范来书写的，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> React = <span class="built_in">require</span>(<span class="string">'react'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>使用webpack编译的作用是：</p>
 <ul>
-<li>ES6的模块引入是静态分析的，故而可以在编译时正确判断到底加载了什么代码。</li>
-<li>分析程序流，判断哪些变量未被使用、引用，进而删除此代码</li>
+<li>将 jsx编译为 node认识的原生 js代码</li>
+<li>将 esModule代码编译成 commonjs的</li>
 </ul>
-</blockquote>
-<p>但现实比较骨感，es6的代码经过babel和webpack编译打包后，产生的副作用(可能会改变外部变量)导致多余的代码并未被删掉。<br>babel6在编译的时候，会调用_createClass方法，使用Object.defineProperty去定义类里面的方法，原因是因为在es6的特性中，类里面声明的方法是不可枚举的。所以设置<code>{ &quot;loose&quot;: false }</code>宽松模式，让babel编译的时候不必去严格遵循es6的特性。<br>此外，UglifyJS不会进行程序流分析，所以在压缩的时候无法排除掉可能有副作用的代码，所以这部分代码还是会被打包进去。<br>使用babel6/webpack打包可以考虑结合使用<code>BabelMinifyWebpackPlugin</code>，思路是先进行uglifyJS代码压缩，再去编译。</p>
-<blockquote>
-<p>评论中指出：关于Person和Apple阐述Babel副作用的例子在Babel升级到Babel7之后确实已经不存在了，使用Babel7的正式版和Webpack4亲测。</p>
-</blockquote>
-<h2 id="http2-0-相比-1-0有哪些重大改进？"><a href="#http2-0-相比-1-0有哪些重大改进？" class="headerlink" title="http2.0 相比 1.0有哪些重大改进？"></a><a href="https://www.zhihu.com/question/34074946" target="_blank" rel="noopener">http2.0 相比 1.0有哪些重大改进？</a></h2><ol>
-<li><p>多路复用<br>多路复用允许同时通过单一的 HTTP/2 连接发起多重的请求-响应消息。<br>在http1.0和1.1协议下，浏览器在同一时间针对同一域名下的请求有一定数量的限制。不同浏览器限制的数量不一样。</p>
-</li>
-<li><p>二进制分帧<br>http2.0在应用层和传输层之间增加了一个二进制分帧层，在该层中，会将传输信息分割成更小的消息和帧。将http1.x的头部信息封装在到了HEADER frame，相应的Request Body封装到DATA frame中。<br>http2.0让所有数据流共用一个连接，有效地使用TCP连接，减少服务端的链接压力，内存占用更少，实现高带宽。<br>此外，减少了TCP慢启动的时间。</p>
-        
+<h1 id="流式渲染"><a href="#流式渲染" class="headerlink" title="流式渲染"></a>流式渲染</h1><h2 id="客户端识别"><a href="#客户端识别" class="headerlink" title="客户端识别"></a>客户端识别</h2><h3 id="Transfer-Encoding"><a href="#Transfer-Encoding" class="headerlink" title="Transfer-Encoding"></a>Transfer-Encoding</h3><p>Transfer-Encoding 消息首部指明了将 entity 安全传递给用户所采用的编码形式。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding: chunked</span><br></pre></td></tr></table></figure></p>
+<p>数据以一系列分块的形式进行发送。 Content-Length 首部在这种情况下不被发送。。在每一个分块的开头需要添加当前分块的长度，以十六进制的形式表示，后面紧跟着 ‘\r\n’ ，之后是分块本身，后面也是’\r\n’ 。终止块是一个常规的分块，不同之处在于其长度为0。终止块后面是一个挂载（trailer），由一系列（或者为空）的实体消息首部构成。</p>
+<h3 id="ngnix配置"><a href="#ngnix配置" class="headerlink" title="ngnix配置"></a>ngnix配置</h3><p>开启流式渲染，首先在response的头部需要加一个X-Accel-Buffering字段，告诉浏览器我要采用流式传输；然后就可以分块输出了。<br>首先nginx.conf需要加如下代码，让X-Accel-Buffering透传<br>location / { proxy_pass_header X-Accel-Buffering; proxy_pass <a href="http://node;}" target="_blank" rel="noopener">http://node;}</a><br>然后在返回的时候，在response的头部设置：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">res.set(&#123;</span><br><span class="line">   <span class="string">'X-Accel-Buffering'</span>: <span class="string">'no'</span>,</span><br><span class="line">   <span class="string">'Content-Type'</span>: <span class="string">'text/html; charset=UTF-8'</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p><code>x-accel-buffering: no</code>设置此连接的代理缓存，将此设置为no将允许适用于Comet和HTTP流式应用程序的无缓冲响应。将此设置为yes将允许响应被缓存。默认yes。设置为no可以关闭缓存，让浏览器以chunk的形式解析。</p>
+<h2 id="服务端返回"><a href="#服务端返回" class="headerlink" title="服务端返回"></a>服务端返回</h2><h3 id="response-write"><a href="#response-write" class="headerlink" title="response.write"></a><a href="http://nodejs.cn/api/http.html#http_request_flushheaders" target="_blank" rel="noopener">response.write</a></h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">response.write(chunk[, encoding][, callback])#</span><br></pre></td></tr></table></figure>
+<ul>
+<li>chunk <string> | <buffer></buffer></string></li>
+<li>encoding <string> 默认值: ‘utf8’。</string></li>
+<li>callback <function></function></li>
+<li>返回: <boolean><br>如果调用此方法并且尚未调用 response.writeHead()，则将切换到隐式响应头模式并刷新隐式响应头。<br>这会发送一块响应主体。<strong>可以多次调用该方法以提供连续的响应主体片段。</strong><br>第一次调用 response.write() 时，它会将缓冲的响应头信息和主体的第一个数据块发送给客户端。 第二次调用response.write() 时，Node.js 假定数据将被流式传输，并分别发送新数据。 也就是说，响应被缓冲到主体的第一个数据块。</boolean></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">response.flushHeaders()</span><br></pre></td></tr></table></figure>
+<p>出于效率原因，Node.js 通常会缓冲请求头，直到调用 request.end() 或写入第一个请求数据块。 然后，它尝试将请求头和数据打包到单个 TCP 数据包中。这通常是期望的（它节省了 TCP 往返），但是可能很晚才发送第一个数据。request.flushHeaders() 绕过优化并启动请求。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">response.end()</span><br></pre></td></tr></table></figure>
+<p>此方法向服务器发出信号，表明已发送所有响应头和主体，该服务器应该视为此消息已完成。 必须在每个响应上调用此 response.end() 方法。</p>
+<h3 id="response-render"><a href="#response-render" class="headerlink" title="response.render"></a>response.render</h3><p>app.render负责生成视图，但是没有能力返回给客户端，需要借助res.send|res.write。<br>res.send和res.write的区别：res.send can only be called once, since it is equivalent to res.write + res.end()<br>伪代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">res.render = <span class="function"><span class="keyword">function</span>(<span class="params">view, locals, cb</span>)</span>&#123;</span><br><span class="line">    app.render(view, locals, <span class="function"><span class="keyword">function</span>(<span class="params">err, html</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">typeof</span> cb !== <span class="string">'undefined'</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> cb(err, html);</span><br><span class="line">        &#125;</span><br><span class="line">        res.send(html);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+
       
 
       
-    </li></ol></div>
+    </div>
     <div class="article-info article-info-index">
       
       
@@ -840,7 +889,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2018/11/18/reading-record/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/06/23/SSR渲染/">展开全文 >></a>
         </p>
       
 
@@ -860,7 +909,7 @@
   
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
     </nav>
   
 
@@ -951,15 +1000,15 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -975,11 +1024,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -987,7 +1032,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1003,15 +1052,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">下载</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">兼容</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1027,15 +1076,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">setState</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1067,11 +1116,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
               </li>
             
             <div class="clearfix"></div>

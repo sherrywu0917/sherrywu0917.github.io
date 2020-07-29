@@ -158,33 +158,565 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-core-decorators源码简析——readonly" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-reading-record" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/17/core-decorators源码简析——readonly/">core-decorators源码简析——readonly</a>
+      <a class="article-title" href="/2018/11/18/reading-record/">reading-record</a>
     </h1>
   
 
         
-        <a href="/2018/04/17/core-decorators源码简析——readonly/" class="archive-article-date">
-  	<time datetime="2018-04-17T07:40:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-17</time>
+        <a href="/2018/11/18/reading-record/" class="archive-article-date">
+  	<time datetime="2018-11-18T02:49:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-18</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>直接看源码，<code>readonly.js</code>代码非常简短，核心函数是<code>handleDescriptor</code>，通过修改描述对象descriptor的writable属性为false，将目标属性置为不可修改。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; decorate &#125; <span class="keyword">from</span> <span class="string">'./private/utils'</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handleDescriptor</span>(<span class="params">target, key, descriptor</span>) </span>&#123;</span><br><span class="line">  descriptor.writable = <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">return</span> descriptor;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">readonly</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> decorate(handleDescriptor, args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>其中<code>decorate</code>函数定义在utils文件中，具体如下:<br>
+        <h2 id="你的Tree-Shaking并没什么卵用"><a href="#你的Tree-Shaking并没什么卵用" class="headerlink" title="你的Tree-Shaking并没什么卵用"></a><a href="https://juejin.im/post/5a5652d8f265da3e497ff3de#comment" target="_blank" rel="noopener">你的Tree-Shaking并没什么卵用</a></h2><blockquote>
+<p>Tree-Shaking的原理</p>
+<ul>
+<li>ES6的模块引入是静态分析的，故而可以在编译时正确判断到底加载了什么代码。</li>
+<li>分析程序流，判断哪些变量未被使用、引用，进而删除此代码</li>
+</ul>
+</blockquote>
+<p>但现实比较骨感，es6的代码经过babel和webpack编译打包后，产生的副作用(可能会改变外部变量)导致多余的代码并未被删掉。<br>babel6在编译的时候，会调用_createClass方法，使用Object.defineProperty去定义类里面的方法，原因是因为在es6的特性中，类里面声明的方法是不可枚举的。所以设置<code>{ &quot;loose&quot;: false }</code>宽松模式，让babel编译的时候不必去严格遵循es6的特性。<br>此外，UglifyJS不会进行程序流分析，所以在压缩的时候无法排除掉可能有副作用的代码，所以这部分代码还是会被打包进去。<br>使用babel6/webpack打包可以考虑结合使用<code>BabelMinifyWebpackPlugin</code>，思路是先进行uglifyJS代码压缩，再去编译。</p>
+<blockquote>
+<p>评论中指出：关于Person和Apple阐述Babel副作用的例子在Babel升级到Babel7之后确实已经不存在了，使用Babel7的正式版和Webpack4亲测。</p>
+</blockquote>
+<h2 id="http2-0-相比-1-0有哪些重大改进？"><a href="#http2-0-相比-1-0有哪些重大改进？" class="headerlink" title="http2.0 相比 1.0有哪些重大改进？"></a><a href="https://www.zhihu.com/question/34074946" target="_blank" rel="noopener">http2.0 相比 1.0有哪些重大改进？</a></h2><ol>
+<li><p>多路复用<br>多路复用允许同时通过单一的 HTTP/2 连接发起多重的请求-响应消息。<br>在http1.0和1.1协议下，浏览器在同一时间针对同一域名下的请求有一定数量的限制。不同浏览器限制的数量不一样。</p>
+</li>
+<li><p>二进制分帧<br>http2.0在应用层和传输层之间增加了一个二进制分帧层，在该层中，会将传输信息分割成更小的消息和帧。将http1.x的头部信息封装在到了HEADER frame，相应的Request Body封装到DATA frame中。<br>http2.0让所有数据流共用一个连接，有效地使用TCP连接，减少服务端的链接压力，内存占用更少，实现高带宽。<br>此外，减少了TCP慢启动的时间。</p>
+        
+      
+
+      
+    </li></ol></div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/11/18/reading-record/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-菜鸟优化之路-前端性能测试工具" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/09/菜鸟优化之路-前端性能测试工具/">菜鸟优化之路-前端性能测试工具sitespeed.io</a>
+    </h1>
+  
+
+        
+        <a href="/2018/10/09/菜鸟优化之路-前端性能测试工具/" class="archive-article-date">
+  	<time datetime="2018-10-09T12:08:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-09</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="制定优化目标"><a href="#制定优化目标" class="headerlink" title="制定优化目标"></a>制定优化目标</h2><h3 id="度量标准"><a href="#度量标准" class="headerlink" title="度量标准"></a>度量标准</h3><ul>
+<li>首次有效绘制（First Meaningful Paint，简称FMP，当主要内容呈现在页面上）</li>
+<li>英雄渲染时间（Hero Rendering Times，度量用户体验的新指标，当用户最关心的内容渲染完成）</li>
+<li>可交互时间（Time to Interactive，简称TTI，指页面布局已经稳定，关键的页面字体是可见的，并且主进程可用于处理用户输入，基本上用户可以点击UI并与其交互）</li>
+<li>输入响应（Input responsiveness，界面响应用户输入所需的时间）</li>
+<li>感知速度指数（Perceptual Speed Index，简称PSI，测量页面在加载过程中视觉上的变化速度，分数越低越好）</li>
+<li>自定义指标，由业务需求和用户体验来决定。<br>FMP与英雄渲染时间非常相似，但它们不一样的地方在于FMP不区分内容是否有用，不区分渲染出的内容是否是用户关心的。</li>
+</ul>
+<h3 id="设定目标"><a href="#设定目标" class="headerlink" title="设定目标"></a>设定目标</h3><p>基于<a href="https://developers.google.com/web/fundamentals/performance/rail?hl=zh-cn" target="_blank" rel="noopener">RAIL</a>模型去制定优化的目标，<code>RAIL</code>是一种以用户为中心的性能模型，主要从响应、动画、空闲、加载四个层面去衡量页面性能。<br>
         
       
 
       
     </p></div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">前端性能优化</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">sitespeed.io</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/10/09/菜鸟优化之路-前端性能测试工具/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-菜鸟优化之路-图片webp-lazyload" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/27/菜鸟优化之路-图片webp-lazyload/">菜鸟优化之路-图片webp&amp;lazyload</a>
+    </h1>
+  
+
+        
+        <a href="/2018/09/27/菜鸟优化之路-图片webp-lazyload/" class="archive-article-date">
+  	<time datetime="2018-09-27T12:17:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-27</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="webp图片优化"><a href="#webp图片优化" class="headerlink" title="webp图片优化"></a>webp图片优化</h2><p>WebP是由google开发的一种图片格式，优势体现在它具有更优的图像数据压缩算法，能带来更小的图片体积，而且拥有肉眼识别无差异的图像质量；同时具备了无损和有损的压缩模式、Alpha 透明以及动画的特性，在 JPEG 和 PNG 上的转化效果都相当优秀、稳定和统一。<br><a href="https://caniuse.com/#search=webp" target="_blank" rel="noopener">webp兼容性</a>见下图<br><img src="/image/webp_caniuse.png" width="800px"><br>其中chrome和opera支持得比较好，safari和firefox目前不支持，但已经在实验阶段。</p>
+<h2 id="检测浏览器是否支持webp格式"><a href="#检测浏览器是否支持webp格式" class="headerlink" title="检测浏览器是否支持webp格式"></a>检测浏览器是否支持webp格式</h2><h3 id="方法1-canvas的toDataURL"><a href="#方法1-canvas的toDataURL" class="headerlink" title="方法1: canvas的toDataURL"></a>方法1: canvas的toDataURL</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkWebp</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="built_in">document</span>.createElement(<span class="string">'canvas'</span>).toDataURL(<span class="string">'image/webp'</span>).indexOf(<span class="string">'data:image/webp'</span>) == <span class="number">0</span>);</span><br><span class="line">    &#125;<span class="keyword">catch</span>(err) &#123;</span><br><span class="line">        <span class="keyword">return</span>  <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//or</span></span><br><span class="line">    !![].map &amp;&amp; <span class="built_in">document</span>.createElement(<span class="string">'canvas'</span>).toDataURL(<span class="string">'image/webp'</span>).indexOf(<span class="string">'data:image/webp'</span>) == <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对比一下chrome和ie下<code>document.createElement(&#39;canvas&#39;).toDataURL(&#39;image/webp&#39;)</code>下的输出：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ie</span></span><br><span class="line"><span class="string">"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAADGSURBVHhe7cExAQAAAMKg9U9tCF8gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAONUAv9QAAcDhjokAAAAASUVORK5CYII="</span></span><br><span class="line"><span class="comment">//chrome</span></span><br><span class="line"><span class="string">"data:image/webp;base64,UklGRrgAAABXRUJQVlA4WAoAAAAQAAAAKwEAlQAAQUxQSBIAAAABBxARERCQJP7/H0X0P+1/QwBWUDgggAAAAHANAJ0BKiwBlgA+bTaZSaQjIqEgKACADYlpbuF2sRtACewD32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99qwAAP7/1gAAAAAAAAAA"</span></span><br></pre></td></tr></table></figure></p>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">前端性能优化</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">webp</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/09/27/菜鸟优化之路-图片webp-lazyload/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-函数式编程的应用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/24/函数式编程的应用/">函数式编程的应用</a>
+    </h1>
+  
+
+        
+        <a href="/2018/08/24/函数式编程的应用/" class="archive-article-date">
+  	<time datetime="2018-08-24T01:38:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="react的render方法"><a href="#react的render方法" class="headerlink" title="react的render方法"></a>react的render方法</h3><p>render()函数应该纯净，意味着其不应该改变组件的状态，其每次调用都应返回相同的结果，同时不直接和浏览器交互。若需要和浏览器交互，将任务放在componentDidMount()阶段或其他的生命周期方法。保持render() 方法纯净使得组件更容易思考。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/08/24/函数式编程的应用/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-菜鸟优化之路" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/08/菜鸟优化之路/">菜鸟优化之路</a>
+    </h1>
+  
+
+        
+        <a href="/2018/08/08/菜鸟优化之路/" class="archive-article-date">
+  	<time datetime="2018-08-08T08:21:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="DeviceTiming工具"><a href="#DeviceTiming工具" class="headerlink" title="DeviceTiming工具"></a>DeviceTiming工具</h1><p>最近了解到<a href="https://github.com/danielmendel/DeviceTiming" target="_blank" rel="noopener">DeviceTiming</a>工具，可以帮助我们监测js在不同设备上的解析和执行时间，运行环境是在开发环境下。<br>搬运下git上的安装、运行命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//安装</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/etsy/DeviceTiming.git</span><br><span class="line"><span class="built_in">cd</span> DeviceTiming</span><br><span class="line">npm install</span><br><span class="line"></span><br><span class="line">//运行</span><br><span class="line">./devicetiming server /path/to/your/js</span><br></pre></td></tr></table></figure></p>
+<p><strong> 注意：devicetiming会改变被监控的js，要先备份好，不过有git记录的就不用担心了 </strong><br>运行了之后，用不同的设备访问开发环境下的站点，最后reload<code>http://localhost:8537/</code>页面，可以看到不同设备对js的解析和执行时间，如下图所示：<br><img src="/image/deviceTiming.png" width="1200px"><br>可以看到不同设备的ua信息，每个js的parse和exec时间。从上到下，三个设备分别是微信开发者工具、iphone、安卓机。从数据上看，安卓机parse和exec花费的时间最久，花费时间越长，用户的体验就会越差。<br>该站点面向的用户中安卓机份额更高，<code>how to optimize</code>显得比较重要。</p>
+<h1 id="how-to-optimize"><a href="#how-to-optimize" class="headerlink" title="how to optimize"></a>how to optimize</h1><h2 id="尾部调用优化（TCO）"><a href="#尾部调用优化（TCO）" class="headerlink" title="尾部调用优化（TCO）"></a>尾部调用优化（TCO）</h2><p>尾调用概念就是在函数最后一步调用其他函数。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">bar</span>(<span class="params">y</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> foo( y + <span class="number">1</span> );    <span class="comment">// 尾部调用</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">baz</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> + bar( <span class="number">40</span> );   <span class="comment">// 不是尾部调用</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">baz();                      <span class="comment">// 42</span></span><br></pre></td></tr></table></figure></p>
+<p><code>bar</code>函数的最后一步是调用<code>foo( y + 1 )</code>，属于尾部调用；而在<code>baz</code>函数中，调用完<code>bar(40)</code>后，还有执行<code>+ 1</code>的操作，就不属于尾部调用了。<br>
+        
+      
+
+      
+    </p></div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">前端性能优化</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/08/08/菜鸟优化之路/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-JS函数式编程笔记(下)" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/13/JS函数式编程笔记(下)/">JS函数式编程笔记(下)</a>
+    </h1>
+  
+
+        
+        <a href="/2018/07/13/JS函数式编程笔记(下)/" class="archive-article-date">
+  	<time datetime="2018-07-13T03:20:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-13</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="示例应用"><a href="#示例应用" class="headerlink" title="示例应用"></a>示例应用</h1><h3 id="声明式编程"><a href="#声明式编程" class="headerlink" title="声明式编程"></a>声明式编程</h3><ul>
+<li>命令式编程（imperative）：喜欢大量使用可变对象和指令，我们总是习惯于创建对象或者变量，并且修改它们的状态或者值，或者喜欢提供一系列指令，要求程序执行。</li>
+<li>声明式编程（Declarative）：对于声明式的编程范式，你不在需要提供明确的指令操作，所有的细节指令将会更好的被程序库所封装，你要做的只是提出你要的要求，声明你的用意即可。<br>与命令式不同，声明式意味着我们要写表达式，而不是一步一步的指示。<code>SQL</code>是典型的声明式编程，明确指出想要什么(what)，而不是如何实现(how)。<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 命令式</span></span><br><span class="line"><span class="keyword">var</span> makes = [];</span><br><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; cars.length; i++) &#123;</span><br><span class="line">  makes.push(cars[i].make);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 声明式</span></span><br><span class="line"><span class="keyword">var</span> makes = cars.map(<span class="function"><span class="keyword">function</span>(<span class="params">car</span>)</span>&#123; <span class="keyword">return</span> car.make; &#125;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>上述命令式编程要求先声明一个数组，再去遍历，然后执行循环中具体的方法。<br>使用<code>map</code>的版本是一个表达式，它对执行顺序没有要求,它指明的是做什么，不是怎么做。</p>
+<p>REFS:<br><a href="http://www.aqee.net/post/imperative-vs-declarative.html" target="_blank" rel="noopener">声明式编程和命令式编程的比较</a></p>
+<h1 id="Hindley-Milner-类型签名"><a href="#Hindley-Milner-类型签名" class="headerlink" title="Hindley-Milner 类型签名"></a>Hindley-Milner 类型签名</h1><blockquote>
+<p>类型签名在写纯函数时所起的作用非常大，短短一行，就能暴露函数的行为和目的。因为类型是可以推断的，所以明确的类型签名并不是必要的；不过你完全可以写精确度很高的类型签名，也可以让它们保持通用、抽象。<br>JavaScript 也有一些类型检查工具，比如 <a href="http://flowtype.org/" target="_blank" rel="noopener">Flow</a>，或者它的静态类型方言 <a href="http://www.typescriptlang.org/" target="_blank" rel="noopener">TypeScript</a> 。</p>
+</blockquote>
+<h3 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  capitalize :: String -&gt; String</span></span><br><span class="line"><span class="keyword">var</span> capitalize = <span class="function"><span class="keyword">function</span>(<span class="params">s</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> toUpperCase(head(s)) + toLowerCase(tail(s));</span><br><span class="line">&#125;</span><br><span class="line">capitalize(<span class="string">"smurf"</span>);</span><br><span class="line"><span class="comment">//=&gt; "Smurf"</span></span><br></pre></td></tr></table></figure>
+<p>从类型签名来看，<code>capitalize</code>方法接收了一个<code>String</code>，最终也返回了一个<code>String</code>。</p>
+<p>对于柯里化后的函数，对类型的签名可以有不同的理解：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  match :: Regex -&gt; String -&gt; [String]</span></span><br><span class="line"><span class="keyword">var</span> match = curry(<span class="function"><span class="keyword">function</span>(<span class="params">reg, s</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> s.match(reg);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>一种思路是接收<code>Regex</code>和<code>String</code>两种类型参数，返回一个<code>[String]</code></li>
+<li>另一种思路是<code>match :: Regex -&gt; (String -&gt; [String])</code>，先接收了一个<code>Regex</code>参数，返回一个新的函数，该函数接收<code>String</code>并返回一个<code>[String]</code>。</li>
+</ul>
+<h3 id="再举个栗子"><a href="#再举个栗子" class="headerlink" title="再举个栗子"></a>再举个栗子</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  reduce :: (b -&gt; a -&gt; b) -&gt; b -&gt; [a] -&gt; b</span></span><br><span class="line"><span class="keyword">var</span> reduce = curry(<span class="function"><span class="keyword">function</span>(<span class="params">f, x, xs</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> xs.reduce(f, x);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>约定俗成，a、b可以是任一种类型，但相同的字母<code>a</code>代表同一类型。其中<code>(b -&gt; a -&gt; b)</code>约定了函数的类型签名：</p>
+<ul>
+<li><code>b</code>是传入f的累加器（初始值是括号后面的<code>-&gt; b</code>）;</li>
+<li><code>a</code>是遍历<code>[a]</code>得到的<code>currentValue</code>;</li>
+<li><code>f</code>返回的类型是<code>b</code>，最终<code>reduce</code>方法返回的类型也就是<code>f</code>的返回。<br><strong>类型签名的美妙之处在于明确告诉我们函数做了什么</strong></li>
+</ul>
+<h3 id="缩小可能性范围"><a href="#缩小可能性范围" class="headerlink" title="缩小可能性范围"></a>缩小可能性范围</h3><p>大多数语言都有范型(也成为参数多态性)，其中函数是通过一个或多个抽象类型定义的。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// head :: [a] -&gt; a</span></span><br></pre></td></tr></table></figure></p>
+<p>引入了类型签名后，可以缩小<code>head</code>函数的可能范围，a可以是任意类型的参数，即多态性(polymorphism)，对于任意类型的参数都要支持<code>[a] -&gt; a</code>的映射，可以帮助我们缩小函数可能性的范围。<br>我们甚至可以用<code>[a] -&gt; a</code>去到类型签名搜索引擎里面搜索我们需要的函数，详细移步到<a href="https://www.haskell.org/hoogle/" target="_blank" rel="noopener">Hoogle</a>去尝试，很有意思。</p>
+<h3 id="自由定理"><a href="#自由定理" class="headerlink" title="自由定理"></a>自由定理</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// head :: [a] -&gt; a</span></span><br><span class="line">compose(f, head) == compose(head, map(f));</span><br></pre></td></tr></table></figure>
+<p>等式左边说的是，先获取数组的头部，然后对它调用函数 f；等式右边说的是，先对数组中的每一个元素调用 f，然后再取其返回结果的头部。这两个表达式的作用是相等的，但是前者要快得多。<br>可以得到一个普适的道理：如果你映射某个函数到列表上，然后对其应用 <code>f</code>，其等同于对映射应用 <code>f</code>。<br>数学提供的这种形式化方法，可以帮助计算机去进行类似的代码优化。</p>
+<h3 id="类型约束"><a href="#类型约束" class="headerlink" title="类型约束"></a>类型约束</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// sort :: Ord a =&gt; [a] -&gt; [a]</span></span><br></pre></td></tr></table></figure>
+<p>签名也可以把类型约束为一个特定的接口（interface），a必须是<code>Ord</code>对象，在强类型语言中，可以是一个自定义的接口。</p>
+<h1 id="特百惠"><a href="#特百惠" class="headerlink" title="特百惠"></a>特百惠</h1><h3 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h3><p>为什么叫特百惠呢？因为特百惠是一个家居品品牌，代表产品是容器。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Container = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.__value = x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Container.of = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> Container(x); &#125;;</span><br></pre></td></tr></table></figure></p>
+<p>使用<code>Container.of</code>作为构造器，暂且认为它是把值放到容器里的一种方式。</p>
+<h3 id="第一个-functor"><a href="#第一个-functor" class="headerlink" title="第一个 functor"></a>第一个 functor</h3><p>容器中有了值之后，我们需要一种方式来操作容器中的值：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// (a -&gt; b) -&gt; Container a -&gt; Container b</span></span><br><span class="line">Container.prototype.map = <span class="function"><span class="keyword">function</span>(<span class="params">f</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Container.of(f(<span class="keyword">this</span>.__value))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个<code>map</code>跟数组那个著名的<code>map</code>一样，除了前者的参数是<code>Container a</code>而后者是<code>[a]</code>。它们的使用方式也几乎一致：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Container.of(<span class="number">2</span>).map(<span class="function"><span class="keyword">function</span>(<span class="params">two</span>)</span>&#123; <span class="keyword">return</span> two + <span class="number">2</span> &#125;)</span><br><span class="line"><span class="comment">//=&gt; Container(4)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Container.of(<span class="string">"flamethrowers"</span>).map(<span class="function"><span class="keyword">function</span>(<span class="params">s</span>)</span>&#123; <span class="keyword">return</span> s.toUpperCase() &#125;)</span><br><span class="line"><span class="comment">//=&gt; Container("FLAMETHROWERS")</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Container.of(<span class="string">"bombs"</span>).map(concat(<span class="string">' away'</span>)).map(_.prop(<span class="string">'length'</span>))</span><br><span class="line"><span class="comment">//=&gt; Container(10)</span></span><br></pre></td></tr></table></figure></p>
+<p>Container将值传给map后，通过<code>f</code>方法，我们可以对值进行任意操作，操作结束后再放入<code>Container</code>中并返回，这样就可以连续对容器中的值进行操作。这样一直调用<code>map</code>的形式，不就是前面提到的组合么。<br>这里面起作用的<strong>数学魔法</strong>就是<code>functor</code>(函子):</p>
+<blockquote>
+<p>functor 是实现了<code>map</code>函数并遵守一些特定规则的容器类型。</p>
+</blockquote>
+<p>为什么要使用<code>functor</code>这种方式来处理呢？</p>
+<blockquote>
+<p>即让容器自己去运用函数能给我们带来什么好处？书中给出的答案是抽象——对于函数运用的抽象。</p>
+</blockquote>
+<h3 id="薛定谔的-Maybe"><a href="#薛定谔的-Maybe" class="headerlink" title="薛定谔的 Maybe"></a>薛定谔的 Maybe</h3><p>定义另外一个<code>functor</code>，同样实现了<code>map</code>函数的、类似容器的数据类型`Maybe’。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Maybe = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.__value = x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Maybe.of = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> Maybe(x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Maybe.prototype.isNothing = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (<span class="keyword">this</span>.__value === <span class="literal">null</span> || <span class="keyword">this</span>.__value === <span class="literal">undefined</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Maybe.prototype.map = <span class="function"><span class="keyword">function</span>(<span class="params">f</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.isNothing() ? Maybe.of(<span class="literal">null</span>) : Maybe.of(f(<span class="keyword">this</span>.__value));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>Maybe</code>和<code>Container</code>的不同点就是它新增了一个<code>isNothing</code>，在每次调用函数前，先检查它自己的值是否为空。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Maybe.of(<span class="string">"Malkovich Malkovich"</span>).map(match(<span class="regexp">/a/ig</span>));</span><br><span class="line"><span class="comment">//=&gt; this._value = match(/a/ig)(""Malkovich Malkovich"")</span></span><br><span class="line"><span class="comment">//=&gt; Maybe(['a', 'a'])</span></span><br><span class="line"></span><br><span class="line">Maybe.of(<span class="literal">null</span>).map(match(<span class="regexp">/a/ig</span>));</span><br><span class="line"><span class="comment">//=&gt; Maybe(null)</span></span><br></pre></td></tr></table></figure>
+<p>点记法（dot notation syntax）已经足够函数式了，但我们更想保持一种 pointfree 的风格。碰巧的是，<code>map</code>完全有能力以<code>curry</code>函数的方式来“代理”任何 functor，柯里化后就可以方便地使用<code>compose</code>了：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  map :: Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b</span></span><br><span class="line"><span class="keyword">var</span> map = curry(<span class="function"><span class="keyword">function</span>(<span class="params">f, any_functor_at_all</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> any_functor_at_all.map(f);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>结合前面提到的类型签名，首先约束了f是Functor类型，去掉类型约束后签名是<code>(a -&gt; b) -&gt; f a -&gt; f b</code>，可以看出传入的参数是一个函数<code>f</code>: (a -&gt; b)，一个<code>functor</code>: f a，最后返回一个<code>functor</code>: f b。<br>这个方法可以帮助我们取出容器中的值，可以参考下面的例子：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  safeHead :: [a] -&gt; Maybe(a)</span></span><br><span class="line"><span class="keyword">var</span> safeHead = <span class="function"><span class="keyword">function</span>(<span class="params">xs</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Maybe.of(xs[<span class="number">0</span>]); <span class="comment">// this.__value = xs[0]</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> streetName = compose(map(_.prop(<span class="string">'street'</span>)), safeHead, _.prop(<span class="string">'addresses'</span>));</span><br><span class="line"></span><br><span class="line">streetName(&#123;<span class="attr">addresses</span>: []&#125;);</span><br><span class="line"><span class="comment">// Maybe(null)</span></span><br><span class="line"></span><br><span class="line">streetName(&#123;<span class="attr">addresses</span>: [&#123;<span class="attr">street</span>: <span class="string">"Shady Ln."</span>, <span class="attr">number</span>: <span class="number">4201</span>&#125;]&#125;);</span><br><span class="line"><span class="comment">// Maybe("Shady Ln.")</span></span><br></pre></td></tr></table></figure></p>
+<p>safeHead返回了一个Maybe对象（eg2：Maybe({street: “Shady Ln.”, number: 4201})），要想对隐藏在Maybe容器中的值进行操作，需要借助<code>map</code>函数来操作，通过调用该对象的map函数，传入<code>_.prop(&#39;street&#39;)</code>函数，对<code>this.__value</code>进行操作，返回一个新的Maybe对象（eg2: Maybe(“Shady Ln.”)）。</p>
+<h3 id="“纯”错误处理"><a href="#“纯”错误处理" class="headerlink" title="“纯”错误处理"></a>“纯”错误处理</h3><p><code>Maybe</code>实现了空和非空两种类型的分开处理，利用这种思想，我们可以对错误进行更友好、健壮地处理。<br>用一个简单的例子示意一下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Left = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.__value = x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Left.of = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> Left(x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Left.prototype.map = <span class="function"><span class="keyword">function</span>(<span class="params">f</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> Right = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.__value = x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Right.of = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> Right(x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Right.prototype.map = <span class="function"><span class="keyword">function</span>(<span class="params">f</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Right.of(f(<span class="keyword">this</span>.__value));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> moment = <span class="built_in">require</span>(<span class="string">'moment'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//  getAge :: Date -&gt; User -&gt; Either(String, Number)</span></span><br><span class="line"><span class="keyword">var</span> getAge = curry(<span class="function"><span class="keyword">function</span>(<span class="params">now, user</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> birthdate = moment(user.birthdate, <span class="string">'YYYY-MM-DD'</span>);</span><br><span class="line">  <span class="keyword">if</span>(!birthdate.isValid()) <span class="keyword">return</span> Left.of(<span class="string">"Birth date could not be parsed"</span>);</span><br><span class="line">  <span class="keyword">return</span> Right.of(now.diff(birthdate, <span class="string">'years'</span>));</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">getAge(moment(), &#123;<span class="attr">birthdate</span>: <span class="string">'2005-12-12'</span>&#125;);</span><br><span class="line"><span class="comment">// Right(9)</span></span><br><span class="line"></span><br><span class="line">getAge(moment(), &#123;<span class="attr">birthdate</span>: <span class="string">'20010704'</span>&#125;);</span><br><span class="line"><span class="comment">// Left("Birth date could not be parsed")</span></span><br></pre></td></tr></table></figure>
+<p>其中Left用来处理错误状态，Right用来处理正常情况。</p>
+<h3 id="Old-McDonald-had-Effects…"><a href="#Old-McDonald-had-Effects…" class="headerlink" title="Old McDonald had Effects…"></a>Old McDonald had Effects…</h3><p>在纯函数那一章，通过将不纯的函数包裹在另一个函数中，使得它看起来像个纯函数。类似的例子：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  getFromStorage :: String -&gt; (_ -&gt; String)</span></span><br><span class="line"><span class="keyword">var</span> getFromStorage = <span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> localStorage[key];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这儿将<code>getFromStorage</code>改造成，相同的输入key总会对应相同的输出：一个从<code>localStorage</code>里取出某个特定元素的函数。（然而，感觉并没什么用啊= =）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> IO = <span class="function"><span class="keyword">function</span>(<span class="params">f</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.__value = f; <span class="comment">//f总是一个函数</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">IO.of = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> IO(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">IO.prototype.map = <span class="function"><span class="keyword">function</span>(<span class="params">f</span>) </span>&#123;</span><br><span class="line">  <span class="comment">//这儿和Maybe.of(f(this.__value))实现效果一致</span></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> IO(_.compose(f, <span class="keyword">this</span>.__value));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>IO(function(){ return x })</code>仅仅是为了延迟执行，其实我们得到的是 IO(x)。</p>
+<p>实际使用的时候：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">////// 纯代码库: lib/params.js ///////</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//  url :: IO String</span></span><br><span class="line"><span class="keyword">var</span> url = <span class="keyword">new</span> IO(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="built_in">window</span>.location.href; &#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//  toPairs =  String -&gt; [[String]]</span></span><br><span class="line"><span class="keyword">var</span> toPairs = compose(map(split(<span class="string">'='</span>)), split(<span class="string">'&amp;'</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">//  params :: String -&gt; [[String]]</span></span><br><span class="line"><span class="keyword">var</span> params = compose(toPairs, last, split(<span class="string">'?'</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">//  findParam :: String -&gt; IO Maybe [String]</span></span><br><span class="line"><span class="keyword">var</span> findParam = <span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> map(compose(Maybe.of, filter(compose(eq(key), head)), params), url);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">////// 非纯调用代码: main.js ///////</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用 __value() 来运行它！</span></span><br><span class="line">findParam(<span class="string">"searchTerm"</span>).__value();</span><br><span class="line"><span class="comment">// Maybe(['searchTerm', 'wafflehouse'])</span></span><br></pre></td></tr></table></figure></p>
+<p>本质上是将逻辑分成了<strong>纯代码库</strong>和<strong>非纯调用代码</strong>两部分，纯代码库最后生成的函数是唯一的，最后的风险都放在了调用者身上。<br><code>__value</code>的命名并不合理，<code>__value</code>的调用会触发前面已压栈的所有操作，替换为<code>unsafePerformIO</code>更能提醒用户它的变化无常。</p>
+<p>functor 的概念来自于范畴学，并满足一些定律。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// identity</span></span><br><span class="line">map(id) === id;</span><br><span class="line"></span><br><span class="line"><span class="comment">// composition</span></span><br><span class="line">compose(map(f), map(g)) === map(compose(f, g));</span><br></pre></td></tr></table></figure></p>
+<h1 id="Monad"><a href="#Monad" class="headerlink" title="Monad"></a>Monad</h1><h3 id="pointed-functor"><a href="#pointed-functor" class="headerlink" title="pointed functor"></a>pointed functor</h3><p><code>of</code>方法并不是用来避免使用<code>new</code>关键字的，而是用来把值放到默认最小化上下文（default minimal context）中的。<code>pointed functor</code>就是实现了<code>of</code>方法的Functor。<br><strong>默认最小化上下文是什么？</strong></p>
+<blockquote>
+<p>TODO</p>
+</blockquote>
+<h3 id="混合比喻"><a href="#混合比喻" class="headerlink" title="混合比喻"></a>混合比喻</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Support</span></span><br><span class="line"><span class="comment">// ===========================</span></span><br><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//  readFile :: String -&gt; IO String</span></span><br><span class="line"><span class="keyword">var</span> readFile = <span class="function"><span class="keyword">function</span>(<span class="params">filename</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> IO(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> fs.readFileSync(filename, <span class="string">'utf-8'</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//  print :: String -&gt; IO String</span></span><br><span class="line"><span class="keyword">var</span> print = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> IO(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(x);</span><br><span class="line">    <span class="keyword">return</span> x;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Example</span></span><br><span class="line"><span class="comment">// ===========================</span></span><br><span class="line"><span class="comment">//  cat :: IO (IO String)</span></span><br><span class="line"><span class="keyword">var</span> cat = compose(map(print), readFile);</span><br><span class="line"></span><br><span class="line">cat(<span class="string">".git/config"</span>)</span><br><span class="line"><span class="comment">// IO(IO("[core]\nrepositoryformatversion = 0\n"))</span></span><br></pre></td></tr></table></figure>
+<p>最后返回了一个嵌套两层的<code>IO</code>对象，如果想要再次调用，对其中的值进行处理，则需要<code>map(map(f))</code>；像是穿着两套防护服在工作，很奇怪。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Maybe.prototype.join = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.isNothing() ? Maybe.of(<span class="literal">null</span>) : <span class="keyword">this</span>.__value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> mmo = Maybe.of(Maybe.of(<span class="string">"nunchucks"</span>));</span><br><span class="line"><span class="comment">// Maybe(Maybe("nunchucks"))</span></span><br><span class="line"></span><br><span class="line">mmo.join();</span><br><span class="line"><span class="comment">// Maybe("nunchucks")</span></span><br></pre></td></tr></table></figure></p>
+<p>定义一个<code>join</code>方法，可以帮助我们简单地移除一层嵌套，在使用的时候，我们可以在每个map后面，都调用一次join方法，但是我们期望的不止如此。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  join :: Monad m =&gt; m (m a) -&gt; m a</span></span><br><span class="line"><span class="keyword">var</span> join = <span class="function"><span class="keyword">function</span>(<span class="params">mma</span>)</span>&#123; <span class="keyword">return</span> mma.join(); &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//  firstAddressStreet :: User -&gt; Maybe Street</span></span><br><span class="line"><span class="keyword">var</span> firstAddressStreet = compose(</span><br><span class="line">  join, map(safeProp(<span class="string">'street'</span>)), join, map(safeHead), safeProp(<span class="string">'addresses'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<h3 id="chain函数"><a href="#chain函数" class="headerlink" title="chain函数"></a>chain函数</h3><p>把<code>map</code>和<code>join</code>封装成chain函数，则<code>firstAddressStreet</code>方法可以改写成：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  chain :: Monad m =&gt; (a -&gt; m b) -&gt; m a -&gt; m b</span></span><br><span class="line"><span class="keyword">var</span> chain = curry(<span class="function"><span class="keyword">function</span>(<span class="params">f, m</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> m.map(f).join(); <span class="comment">// 或者 compose(join, map(f))(m)</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//  firstAddressStreet :: User -&gt; Maybe Street</span></span><br><span class="line"><span class="keyword">var</span> firstAddressStreet = compose(</span><br><span class="line">  chain(safeProp(<span class="string">'street'</span>)), chain(safeHead), safeProp(<span class="string">'addresses'</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>简单说，Monad就是一种设计模式，表示将一个运算过程，通过函数拆解成互相连接的多个步骤。你只要提供下一步运算所需的函数，整个运算就会自动进行下去。</p>
+</blockquote>
+<p>REFS:<br><a href="http://www.ruanyifeng.com/blog/2015/07/monad.html" target="_blank" rel="noopener">图解 Monad</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/07/13/JS函数式编程笔记(下)/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-JS函数式编程笔记(上)" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/02/JS函数式编程笔记(上)/">JS函数式编程笔记(上)</a>
+    </h1>
+  
+
+        
+        <a href="/2018/07/02/JS函数式编程笔记(上)/" class="archive-article-date">
+  	<time datetime="2018-07-02T11:20:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="一等公民的函数"><a href="#一等公民的函数" class="headerlink" title="一等公民的函数"></a>一等公民的函数</h1><h3 id="为啥说函数是一等公民？"><a href="#为啥说函数是一等公民？" class="headerlink" title="为啥说函数是一等公民？"></a>为啥说函数是一等公民？</h3><ul>
+<li>函数和其他对象一样，可以像对待任何其他数据类型一样对待它们——把它们存在数组里，当作参数传递，赋值给变量…等等。<br>关键点在于，调用的时候没必要再去包裹一层多余的函数，因为二者是等价的。<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">\\包裹了多余的函数</span><br><span class="line"><span class="keyword">var</span> greeting = <span class="function"><span class="keyword">function</span>(<span class="params">name</span>) </span>&#123;<span class="keyword">return</span> hi(name);&#125;</span><br><span class="line">\\ 一等公民式的调用</span><br><span class="line"><span class="keyword">var</span> greeting = hi;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="一等公民函数调用的好处"><a href="#一等公民函数调用的好处" class="headerlink" title="一等公民函数调用的好处"></a>一等公民函数调用的好处</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//最初的函数</span></span><br><span class="line">httpGet(<span class="string">'/post/2'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">json</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> renderPost(json);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 需要增加对err异常的处理，要处理的地方比较多</span></span><br><span class="line">httpGet(<span class="string">'/post/2'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">json, err</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> renderPost(json, err);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果使用一等公民函数的形式，则其他的改动会少很多</span></span><br><span class="line">httpGet(<span class="string">'/post/2'</span>, renderPost);</span><br></pre></td></tr></table></figure>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">函数式编程</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/07/02/JS函数式编程笔记(上)/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-core-decorators源码简析——throttle" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/25/core-decorators源码简析——throttle/">core-decorators源码简析——throttle</a>
+    </h1>
+  
+
+        
+        <a href="/2018/06/25/core-decorators源码简析——throttle/" class="archive-article-date">
+  	<time datetime="2018-06-25T08:14:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="throttle"><a href="#throttle" class="headerlink" title="@throttle"></a>@throttle</h3><p>节流函数：函数节流能使得连续的函数执行，变为<strong>固定时间段</strong>间断地执行。</p>
+<h3 id="使用实例"><a href="#使用实例" class="headerlink" title="使用实例"></a>使用实例</h3><p>例如在监听窗口滚动事件时，稍微滚动一下，就会触发多次onscroll事件，去更新位置信息。如果onscroll事件是去进行dom操作，频繁地更新dom可能会导致低版本浏览器卡死。所以希望可以间隔一段时间，再去执行回调函数。<br>应用<code>throttle</code>函数，设置wait时间为1000ms，可以保证回调函数至少每隔1000ms执行一次。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; throttle &#125; <span class="keyword">from</span> <span class="string">'core-decorators'</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Scroller</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  position = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">  @throttle(<span class="number">1000</span>, &#123;<span class="attr">leading</span>: <span class="literal">false</span>&#125;)</span><br><span class="line">  updatePosition() &#123;</span><br><span class="line">    <span class="keyword">this</span>.position = <span class="built_in">window</span>.scrollY;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  bindEvent() &#123;</span><br><span class="line">    <span class="built_in">window</span>.onscroll = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">this</span>.updatePosition()</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="源码实现"><a href="#源码实现" class="headerlink" title="源码实现"></a>源码实现</h3><h4 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h4><p>在调用的时候支持传入wait、options.leading、options.trailing三个参数：</p>
+<ul>
+<li>wait: 等待执行的时间，单位ms，默认值300</li>
+<li>{leading}: 绑定的函数在节流开始前执行，默认值true，触发事件刚开始时执行回调</li>
+<li>{trailing}: 绑定的函数在节流开始后执行，默认值true，触发事件结束时执行回调</li>
+</ul>
+<h4 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handleDescriptor</span>(<span class="params">target, key, descriptor, [wait = DEFAULT_TIMEOUT, options = &#123;&#125;]</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> callback = descriptor.value;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> callback !== <span class="string">'function'</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">SyntaxError</span>(<span class="string">'Only functions can be throttled'</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (options.leading !== <span class="literal">false</span>) &#123;</span><br><span class="line">    options.leading = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(options.trailing !== <span class="literal">false</span>) &#123;</span><br><span class="line">    options.trailing = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    ...descriptor,</span><br><span class="line">    value() &#123;</span><br><span class="line">      <span class="comment">// 同debounce，会返回this的Symbol('__core_decorators__')属性: 为Meta实例</span></span><br><span class="line">      <span class="keyword">const</span> meta = metaFor(<span class="keyword">this</span>);</span><br><span class="line">      <span class="keyword">const</span> &#123; throttleTimeoutIds, throttlePreviousTimestamps &#125; = meta;</span><br><span class="line">      <span class="keyword">const</span> timeout = throttleTimeoutIds[key];</span><br><span class="line">      <span class="comment">// 上次函数执行时的时间戳</span></span><br><span class="line">      <span class="keyword">let</span> previous = throttlePreviousTimestamps[key] || <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">const</span> now = <span class="built_in">Date</span>.now();</span><br><span class="line"></span><br><span class="line">      <span class="comment">// options.trailing为true时，将待执行函数callback的参数赋值给meta.throttleTrailingArgs，保证在setTimeout回调函数中可以取到参数</span></span><br><span class="line">      <span class="keyword">if</span> (options.trailing) &#123;</span><br><span class="line">        meta.throttleTrailingArgs = <span class="built_in">arguments</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 第一次调用，并且leading参数为false时，将上次执行时间戳设为当前</span></span><br><span class="line">      <span class="comment">// trailing为true时，leading为false，throttlePreviousTimestamps[key]始终被赋值为0</span></span><br><span class="line">      <span class="keyword">if</span> (!previous &amp;&amp; options.leading === <span class="literal">false</span>) &#123;</span><br><span class="line">        previous = now;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// leading为false的时候，previous=now, remaining时间始终等于wait，始终不会在节流函数开始时执行回调函数</span></span><br><span class="line">      <span class="comment">// leading为true的时候，第一次调用，previous为0，remaining为负值；再次调用，previous为上次回调执行时间，若距离上次执行时间已经等待了wait毫秒，则remaining&lt;=0</span></span><br><span class="line">      <span class="keyword">const</span> remaining = wait - (now - previous);</span><br><span class="line"></span><br><span class="line">      <span class="comment">//&#123;leading: true&#125; remaining&lt;=0的时候，会在节流开始前执行callback函数</span></span><br><span class="line">      <span class="keyword">if</span> (remaining &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        clearTimeout(timeout);</span><br><span class="line">        <span class="keyword">delete</span> throttleTimeoutIds[key];</span><br><span class="line">        <span class="comment">// 更新上次执行时间戳</span></span><br><span class="line">        throttlePreviousTimestamps[key] = now;</span><br><span class="line">        <span class="comment">// 执行回调函数</span></span><br><span class="line">        callback.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!timeout &amp;&amp; options.trailing) &#123;</span><br><span class="line">        <span class="comment">// 当前没有timeout对象，并且trailing为true</span></span><br><span class="line">        <span class="comment">// &#123;trailing: true, leading: false&#125; 设置remaining = wait毫秒后去执行回调函数</span></span><br><span class="line">        <span class="comment">// &#123;trailing: true, leading: true&#125; 第二次调用才会设置remaining=wait - (now - previous)毫秒后去执行回调函数</span></span><br><span class="line">        throttleTimeoutIds[key] = setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">          <span class="comment">// 更新上次执行时间戳，leading为false，throttlePreviousTimestamps[key]始终被赋值为0</span></span><br><span class="line">          throttlePreviousTimestamps[key] = options.leading === <span class="literal">false</span> ? <span class="number">0</span> : <span class="built_in">Date</span>.now();</span><br><span class="line">          <span class="comment">// 删掉timeout对象</span></span><br><span class="line">          <span class="keyword">delete</span> throttleTimeoutIds[key];</span><br><span class="line">          <span class="comment">// 执行回调函数</span></span><br><span class="line">          callback.apply(<span class="keyword">this</span>, meta.throttleTrailingArgs);</span><br><span class="line">          <span class="comment">// 防止内存泄露</span></span><br><span class="line">          meta.throttleTrailingArgs = <span class="literal">null</span>;</span><br><span class="line">        &#125;, remaining);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>结合了时间戳和定时器setTimeout两种方式来实现throttle函数:</p>
+<ul>
+<li>leading为true时，主要根据时间戳来记录上次执行时间，每次触发事件时，判断当前时间距离上次执行时间是否已经等待了wait毫秒，如果是，则立即执行</li>
+<li>trailing为true时，主要通过setTimeout定时器来设定间隔某个时间段才去执行<ul>
+<li>leading为false，定时<strong>wait毫秒(从当前时间算起)</strong>后去执行</li>
+<li>leading为true时，定时<strong>距离上次执行累计wait毫秒</strong>后去执行</li>
+</ul>
+</li>
+<li>每次执行都会记录下当前执行时间，用来控制时间间隔</li>
+</ul>
+</blockquote>
+
+      
+
+      
+    </div>
     <div class="article-info article-info-index">
       
       
@@ -205,7 +737,7 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">readonly</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">decorators源码简析——debounce</a>
         		</li>
       		
 		</ul>
@@ -215,7 +747,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2018/04/17/core-decorators源码简析——readonly/">展开全文 >></a>
+          <a class="article-more-a" href="/2018/06/25/core-decorators源码简析——throttle/">展开全文 >></a>
         </p>
       
 
@@ -233,41 +765,48 @@
 
 
   
-    <article id="post-core-decorators源码简析——autobind" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-core-decorators源码简析——lazyInitialize" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/12/core-decorators源码简析——autobind/">core-decorators源码简析——autobind</a>
+      <a class="article-title" href="/2018/06/14/core-decorators源码简析——lazyInitialize/">core-decorators源码简析——lazyInitialize</a>
     </h1>
   
 
         
-        <a href="/2018/04/12/core-decorators源码简析——autobind/" class="archive-article-date">
-  	<time datetime="2018-04-12T12:22:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-12</time>
+        <a href="/2018/06/14/core-decorators源码简析——lazyInitialize/" class="archive-article-date">
+  	<time datetime="2018-06-14T12:45:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-14</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="入口函数"><a href="#入口函数" class="headerlink" title="入口函数"></a>入口函数</h2><p>先看入口函数，通过<code>export default</code>暴露的autobind函数，通过<code>...args</code>形式的rest参数获取函数的多余参数，这儿是所有参数。通过decorator形式有两种调用方式：</p>
+        <h3 id="lazyInitialize"><a href="#lazyInitialize" class="headerlink" title="@lazyInitialize"></a>@lazyInitialize</h3><p><code>@lazyInitialize</code>标记的作用是，只有在属性真正使用的时候才会去初始化。适用于一些在未来可能会被用到、也可能不会被用到的属性上。</p>
+<h3 id="使用实例"><a href="#使用实例" class="headerlink" title="使用实例"></a>使用实例</h3><p>下面是<a href="https://github.com/jayphelps/core-decorators#lazyinitialize" target="_blank" rel="noopener">官网</a>给出的例子，可以帮助我们理解该标记的作用。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; lazyInitialize &#125; <span class="keyword">from</span> <span class="string">'core-decorators'</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createHugeBuffer</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'huge buffer created'</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">1000000</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Editor</span> </span>&#123;</span><br><span class="line">  @lazyInitialize</span><br><span class="line">  hugeBuffer = createHugeBuffer();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> editor = <span class="keyword">new</span> Editor();</span><br><span class="line"><span class="comment">// createHugeBuffer() has not been called yet</span></span><br><span class="line"></span><br><span class="line">editor.hugeBuffer;</span><br><span class="line"><span class="comment">// logs 'huge buffer created', now it has been called</span></span><br><span class="line"></span><br><span class="line">editor.hugeBuffer;</span><br><span class="line"><span class="comment">// already initialized and equals our buffer, so</span></span><br><span class="line"><span class="comment">// createHugeBuffer() is not called again</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; decorate, createDefaultSetter &#125; <span class="keyword">from</span> <span class="string">'./private/utils'</span>;</span><br><span class="line"><span class="keyword">const</span> &#123; defineProperty &#125; = <span class="built_in">Object</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handleDescriptor</span>(<span class="params">target, key, descriptor</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; configurable, enumerable, initializer, value &#125; = descriptor;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    configurable,</span><br><span class="line">    enumerable,</span><br><span class="line"></span><br><span class="line">    <span class="keyword">get</span>() &#123;</span><br><span class="line">      <span class="comment">// This happens if someone accesses the</span></span><br><span class="line">      <span class="comment">// property directly on the prototype</span></span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">this</span> === target) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">const</span> ret = initializer ? initializer.call(<span class="keyword">this</span>) : value;</span><br><span class="line"></span><br><span class="line">      defineProperty(<span class="keyword">this</span>, key, &#123;</span><br><span class="line">        configurable,</span><br><span class="line">        enumerable,</span><br><span class="line">        writable: <span class="literal">true</span>,</span><br><span class="line">        value: ret</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="keyword">set</span>: createDefaultSetter(key)</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export default function lazyInitialize(...args) &#123;</span><br><span class="line">  <span class="keyword">return</span> decorate(handleDescriptor, args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在第一次调用<code>editor.hugeBuffer</code>时，真正的初始化发生在这两步：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ret = initializer ? initializer.call(<span class="keyword">this</span>) : value;</span><br><span class="line">defineProperty(<span class="keyword">this</span>, key, &#123;</span><br><span class="line">    configurable,</span><br><span class="line">    enumerable,</span><br><span class="line">    writable: <span class="literal">true</span>,</span><br><span class="line">    value: ret</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p><strong>step1</strong></p>
 <ul>
-<li>@autobind()，会返回一个匿名函数<code>function (...argsClass) {return handle(argsClass);}</code>，argsClass为最终decorator传入的参数，函数内部返回了handle函数；在修饰器外面再封装一层函数的方式，可以用于接收额外的参数；</li>
-<li>@autobind，args即为decorator传入的参数，直接调用handle函数</li>
+<li>其中<code>initializer.call(this)</code>中的<code>this</code>是调用该方法的对象，这儿是<code>Editor</code>的实例对象<code>editor</code>，通过call方法<code>initializer</code>方法的this指向<code>editor</code>。</li>
+<li><code>initializer</code>是一个返回<code>createHugeBuffer()</code>的函数，<code>console.log(initializer)</code>的输出如下所示:（什么情况下initializer不存在，取value值？）<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ƒ initializer() &#123;</span><br><span class="line">    <span class="keyword">return</span> createHugeBuffer();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 两种调用方式</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 2. @autobind</span></span><br><span class="line"><span class="comment"> * @param  &#123;...[type]&#125; args [description]</span></span><br><span class="line"><span class="comment"> * @return &#123;[type]&#125;         [description]</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">autobind</span>(<span class="params">...args</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (args.length === <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">...argsClass</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> handle(argsClass);</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> handle(args);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="handle函数"><a href="#handle函数" class="headerlink" title="handle函数"></a>handle函数</h2><p>handle函数根据参数的长度去判断修饰类型，当args参数长度为1时，是对类的修饰，该参数即所要修饰的目标类；当长度为3时，是对方法的修饰，参数和Object.defineProperty的参数相对应<code>target, name, descriptor:{value, configurable, enumerable, writable}</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handle</span>(<span class="params">args</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (args.length === <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> autobindClass(...args);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> autobindMethod(...args);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="对类的修饰"><a href="#对类的修饰" class="headerlink" title="对类的修饰"></a>对类的修饰</h2><ul>
-<li><code>Object.getOwnPropertyDescriptors</code>会以键值对的形式返回某对象属性的描述对象descriptor；</li>
-<li><code>getOwnKeys</code>方法会返回一个数组，包含目标类原型对象上所有的属性的键名，包括不可枚举属性以及Symbol属性<br><code>autobindClass</code>遍历目标类原型上的所有方法，若某个属性对应的value类型是<code>function</code>并且属性不是<code>constructor</code>，则用<code>Object.defineProperty</code>对该属性进行重新赋值，调用<code>autobindMethod</code>实现对该方法的autobind；
-        
+<p><strong>step2</strong></p>
+<blockquote>
+<ul>
+<li><code>defineProperty</code>重新赋值了key值对应的descriptor对象，将初始化后的值ret赋值给对应的value字段，应该是模拟了<strong><em>在类构造函数执行时，<code>initializer</code>返回的值作为属性的值</em></strong>，<strong><em>在类构造函数执行后，<code>initializer</code>属性被替换为value属性</em></strong>。</li>
+</ul>
+</blockquote>
+<h4 id="为什么需要defineProperty"><a href="#为什么需要defineProperty" class="headerlink" title="为什么需要defineProperty"></a>为什么需要<code>defineProperty</code></h4><p>如果删除上面get方法的<code>defineProperty</code>，则editor.hugeBuffer每次都会调用get()方法，进而执行createHugeBuffer()方法，每次都会去重新初始化，所以在属性初始化完成后，需要对value赋值，替换掉<code>initializer</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//defineProperty(this, key, &#123;</span></span><br><span class="line"><span class="comment">//  configurable,</span></span><br><span class="line"><span class="comment">//  enumerable,</span></span><br><span class="line"><span class="comment">//  writable: true,</span></span><br><span class="line"><span class="comment">//  value: ret</span></span><br><span class="line"><span class="comment">//&#125;);</span></span><br></pre></td></tr></table></figure></p>
+
       
 
       
-    </li></ul></div>
+    </div>
     <div class="article-info article-info-index">
       
       
@@ -288,7 +827,7 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">autobind</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">lazyInitialize</a>
         		</li>
       		
 		</ul>
@@ -298,7 +837,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2018/04/12/core-decorators源码简析——autobind/">展开全文 >></a>
+          <a class="article-more-a" href="/2018/06/14/core-decorators源码简析——lazyInitialize/">展开全文 >></a>
         </p>
       
 
@@ -316,221 +855,44 @@
 
 
   
-    <article id="post-继承-原型链" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-core-decorators源码简析——debounce" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/10/继承-原型链/">继承&amp;原型链</a>
+      <a class="article-title" href="/2018/06/13/core-decorators源码简析——debounce/">core-decorators源码简析——debounce</a>
     </h1>
   
 
         
-        <a href="/2018/04/10/继承-原型链/" class="archive-article-date">
-  	<time datetime="2018-04-10T09:14:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-10</time>
+        <a href="/2018/06/13/core-decorators源码简析——debounce/" class="archive-article-date">
+  	<time datetime="2018-06-13T12:37:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-13</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="基于proto和prototype的原型链"><a href="#基于proto和prototype的原型链" class="headerlink" title="基于proto和prototype的原型链"></a>基于<strong>proto</strong>和prototype的原型链</h1><p>关于<code>__proto__</code>属性，MDN上的解释如下：</p>
-<blockquote>
-<p>The <strong>proto</strong> property of Object.prototype is an accessor property (a getter function and a setter function) that exposes the internal [[Prototype]] (either an object or null) of the object through which it is accessed.</p>
+        <h3 id="debounce"><a href="#debounce" class="headerlink" title="@debounce"></a>@debounce</h3><p>防抖动函数：当调用函数n秒后，才会执行该动作，若在这n秒内又调用该函数则将取消前一次并重新计算执行时间。</p>
+<h3 id="使用实例"><a href="#使用实例" class="headerlink" title="使用实例"></a>使用实例</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; debounce &#125; <span class="keyword">from</span> <span class="string">'core-decorators'</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Editor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  content = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">  @debounce(<span class="number">500</span>)</span><br><span class="line">  updateContent(content) &#123;</span><br><span class="line">    <span class="keyword">this</span>.content = content;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  bindEvent() &#123;</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'editor'</span>).oninput = <span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.updateContent(e.target.value)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">id</span>=<span class="string">"editor"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>例如在监听id为editor的编辑器输入时，每次输入都会触发<code>oninput</code>事件，调用<code>this.updateContent</code>方法。为了防止频繁地更新content，可以对<code>updateContent</code>装饰debounce方法，在输入的过程中不会去更新<code>this.content</code>，直到输入完成500毫秒后，再去一次性更新content内容。</p>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; metaFor &#125; <span class="keyword">from</span> <span class="string">'./private/utils'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> DEFAULT_TIMEOUT = <span class="number">300</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handleDescriptor</span>(<span class="params">target, key, descriptor, [wait = DEFAULT_TIMEOUT, immediate = false]</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> callback = descriptor.value;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> callback !== <span class="string">'function'</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">SyntaxError</span>(<span class="string">'Only functions can be debounced'</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    ...descriptor,</span><br><span class="line">    value() &#123;</span><br><span class="line">      <span class="comment">//返回this的Symbol('__core_decorators__')属性: 为Meta实例</span></span><br><span class="line">      <span class="keyword">const</span> &#123; debounceTimeoutIds &#125; = metaFor(<span class="keyword">this</span>);</span><br><span class="line">      <span class="comment">//已有的防抖函数调用</span></span><br><span class="line">      <span class="keyword">const</span> timeout = debounceTimeoutIds[key];</span><br><span class="line">      <span class="comment">//immediate为true且当前无timeout对象，多次调用的时候只在第一次调用时才去执行</span></span><br><span class="line">      <span class="keyword">const</span> callNow = immediate &amp;&amp; !timeout;</span><br><span class="line">      <span class="keyword">const</span> args = <span class="built_in">arguments</span>;</span><br><span class="line"></span><br><span class="line">      clearTimeout(timeout);</span><br><span class="line">      <span class="comment">// 每次都覆盖之前的防抖函数，执行最后一次传入的callback函数</span></span><br><span class="line">      debounceTimeoutIds[key] = setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">delete</span> debounceTimeoutIds[key];</span><br><span class="line">        <span class="keyword">if</span> (!immediate) &#123;</span><br><span class="line">          callback.apply(<span class="keyword">this</span>, args);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;, wait);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (callNow) &#123; <span class="comment">//先执行再等待</span></span><br><span class="line">        callback.apply(<span class="keyword">this</span>, args);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="调用参数"><a href="#调用参数" class="headerlink" title="调用参数"></a>调用参数</h4><p>在调用的时候支持传入wait和options.immediate两个参数：</p>
+<ul>
+<li>wait: 等待执行的时间，单位ms，默认值300</li>
+<li>{immediate}: 绑定的函数是否先执行，默认值false，等待wait时间后再执行；传递的参数为true时先执行</li>
+</ul>
+<h4 id="Meta对象"><a href="#Meta对象" class="headerlink" title="Meta对象"></a>Meta对象</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; debounceTimeoutIds &#125; = metaFor(<span class="keyword">this</span>);</span><br><span class="line"><span class="comment">//这个时候只有debounceTimeoutIds被初始化了哦，因为用了lazyInitialize</span></span><br><span class="line"><span class="built_in">console</span>.log(metaFor(<span class="keyword">this</span>))</span><br></pre></td></tr></table></figure>
+<p><code>metaFor</code>方法给当前实例增加了<code>Symbol(&#39;__core_decorators__&#39;)</code>属性，值为一个Meta对象。<br>Meta类如下所示，包括debounce和throttle用到的一些属性：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Meta</span> </span>&#123;</span><br><span class="line">  @lazyInitialize</span><br><span class="line">  debounceTimeoutIds = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  @lazyInitialize</span><br><span class="line">  throttleTimeoutIds = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  @lazyInitialize</span><br><span class="line">  throttlePreviousTimestamps = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  @lazyInitialize</span><br><span class="line">  throttleTrailingArgs = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">  @lazyInitialize</span><br><span class="line">  profileLastRan = <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>使用了<code>@lazyInitialize</code>标记，可以使得每次只初始化被用到的属性，像debounce的时候只用到debounceTimeoutIds属性。console输出Meta对象，结构如图所示，可以看到只初始化了debounceTimeoutIds属性：<br><img src="/image/debounce_meta.png" width="360px"></p>
+<h4 id="debounceTimeout存储"><a href="#debounceTimeout存储" class="headerlink" title="debounceTimeout存储"></a>debounceTimeout存储</h4><blockquote>
+<p>当调用被<code>@debounce</code>标记的方法时：<br>1 . setTimeout会延迟执行该函数，返回一个timeout对象；<br>2 . 返回的timeout对象会被存储在<code>debounceTimeoutIds[key]</code>中（以<code>updateContent</code>方法为例，<code>debounceTimeoutIds[key]</code>这里的key值就是<code>updateContent</code>）；<br>3 . 重复调用该方法会重新创建timeout对象，并覆盖之前的<code>debounceTimeoutIds[key]</code>（这里每次调用<code>updateContent</code>都会重新给<code>debounceTimeoutIds[&#39;updateContent&#39;]</code>赋值）；</p>
 </blockquote>
-<p>即是说，<code>__proto__</code> 属性指向了实例对象的原型Constructor.prototype。</p>
-<p>首先用一张图来总结<code>__proto__</code>和<code>prototype</code>的关系：<br><img src="/image/jsobj_full.jpg" width="600px"></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">继承</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">原型链</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/04/10/继承-原型链/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-npm转盘组件开发" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/09/npm转盘组件开发/">npm转盘组件开发</a>
-    </h1>
-  
-
-        
-        <a href="/2018/02/09/npm转盘组件开发/" class="archive-article-date">
-  	<time datetime="2018-02-09T06:39:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-02-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>在开始开发之前，首先要准备好node环境和npm账户，nodeJS基本都有安装好，要做的就是注册npm：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ npm adduser</span><br><span class="line">Username: your name</span><br><span class="line">Password: your password</span><br><span class="line">Email: (this IS public) your email</span><br></pre></td></tr></table></figure></p>
-<p>查询当前账号或者登陆别的用户：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm whoami</span><br><span class="line">$ npm login</span><br></pre></td></tr></table></figure></p>
-<h3 id="包管理工具lerna"><a href="#包管理工具lerna" class="headerlink" title="包管理工具lerna"></a>包管理工具lerna</h3><p>项目组采用了<a href="https://github.com/lerna/lerna" target="_blank" rel="noopener">lerna</a>包管理工具，可以在一个仓库下管理多个npm包，基于monorepo理念。</p>
-<blockquote>
-<p>Monorepo is a unified source code repository used by an organisation to host as much of its code as possible.<br>Monorepo 它是一种管理 organisation 代码的方式，在这种方式下会摒弃原先一个 module 一个 repo 的方式，取而代之的是把所有的 modules 都放在一个 repo 内来管理。</p>
-</blockquote>
-<p>lerna安装和初始化<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install lerna -g</span><br><span class="line">lerna init</span><br></pre></td></tr></table></figure></p>
-<p>初始化后，目录里面会自动生成/packages、lerna.json和package.json。<br>执行<code>lerna bootstrap</code>会自动为项目进行npm install和npm link操作，npm的作用是边开发边试用，具体使用参考<a href="http://javascript.ruanyifeng.com/nodejs/npm.html#toc18" target="_blank" rel="noopener">npm link</a>。<br>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">npm包</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">组件开发</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/02/09/npm转盘组件开发/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-IOS微信内二维码无法识别问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/06/IOS微信内二维码无法识别问题/">IOS微信内二维码无法识别问题</a>
-    </h1>
-  
-
-        
-        <a href="/2018/02/06/IOS微信内二维码无法识别问题/" class="archive-article-date">
-  	<time datetime="2018-02-06T03:41:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-02-06</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/02/06/IOS微信内二维码无法识别问题/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-decorator" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/01/16/decorator/">decorator</a>
-    </h1>
-  
-
-        
-        <a href="/2018/01/16/decorator/" class="archive-article-date">
-  	<time datetime="2018-01-16T14:02:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>REFS:<br><a href="http://taobaofed.org/blog/2015/11/16/es7-decorator/" target="_blank" rel="noopener">http://taobaofed.org/blog/2015/11/16/es7-decorator/</a><br><a href="http://es6.ruanyifeng.com/#docs/decorator" target="_blank" rel="noopener">http://es6.ruanyifeng.com/#docs/decorator</a><br><a href="http://raganwald.com/2015/06/26/decorators-in-es7.html" target="_blank" rel="noopener">http://raganwald.com/2015/06/26/decorators-in-es7.html</a></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">delete</span> debounceTimeoutIds[key];</span><br><span class="line">    <span class="keyword">if</span> (!immediate) &#123;</span><br><span class="line">      callback.apply(<span class="keyword">this</span>, args);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, wait);</span><br></pre></td></tr></table></figure>
+<p>执行的结果就是：<strong>每次都重新等待wait时间，再去执行callback方法，callback即是key值对应的方法</strong>。</p>
 
       
 
@@ -548,11 +910,15 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">core-decorators</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">decorator</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">es7</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">decorators源码简析——debounce</a>
         		</li>
       		
 		</ul>
@@ -562,313 +928,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2018/01/16/decorator/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-react高阶组件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/30/react高阶组件/">react高阶组件</a>
-    </h1>
-  
-
-        
-        <a href="/2017/10/30/react高阶组件/" class="archive-article-date">
-  	<time datetime="2017-10-30T09:39:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-30</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="什么是高阶组件？"><a href="#什么是高阶组件？" class="headerlink" title="什么是高阶组件？"></a>什么是高阶组件？</h3><p>官方文档指出，高阶组件（Higher-Order Components，简称HOC）是react中对组件逻辑进行重用的高级技术。但高阶组件本身并不是React API。它只是一种模式，这种模式是由react自身的组合性质必然产生的。<br>具体而言，高阶组件就是一个函数，且该函数接受一个组件作为参数，并返回一个新的组件。<br>先看一个典型的高阶组件：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// It's a function...</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myHOC</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// Which returns a function that takes a component...</span></span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">WrappedComponent</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// It creates a new wrapper component...</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">TheHOC</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">      render() &#123;</span><br><span class="line">        <span class="comment">// And it renders the component it was given</span></span><br><span class="line">        <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">WrappedComponent</span> &#123;<span class="attr">...this.props</span>&#125; /&gt;</span>;</span></span><br><span class="line"><span class="xml">      &#125;</span></span><br><span class="line"><span class="xml">    &#125;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    // Remember: it takes a component and returns a new component</span></span><br><span class="line"><span class="xml">    // Gotta return it here.</span></span><br><span class="line"><span class="xml">    return TheHOC;</span></span><br><span class="line"><span class="xml">  &#125;</span></span><br><span class="line"><span class="xml">&#125;</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="使用高阶组件优化代码"><a href="#使用高阶组件优化代码" class="headerlink" title="使用高阶组件优化代码"></a>使用高阶组件优化代码</h3><p>需求是要在网站的每个页面要添加签到请求和签到成功弹窗，显然，一般人都不会想着要在每个页面写一遍。首先，我想到的是引入一个React组件，但是要在每个页面的render方法里面添加该组件，需要改动所有页面对应组件的render方法，感觉比较繁琐且易出错。也可以通过js方法去动态创建签到成功弹窗，然后在每个页面里面引入该方法，不过同样需要改变组件内部方法，且不符合React项目风格。<br>最后，发现高阶组件可以满足我的需求，既实现了功能又不污染原有组件。下面是简化版的签到高阶组件：<br>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">高阶组件</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/10/30/react高阶组件/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-日常经验积累" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/19/日常经验积累/">日常经验积累</a>
-    </h1>
-  
-
-        
-        <a href="/2017/10/19/日常经验积累/" class="archive-article-date">
-  	<time datetime="2017-10-19T03:28:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="禁用复制功能"><a href="#禁用复制功能" class="headerlink" title="禁用复制功能"></a>禁用复制功能</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.oncontextmenu = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="literal">false</span>; &#125;  <span class="comment">//禁用鼠标右键功能</span></span><br><span class="line"><span class="built_in">document</span>.body.oncopy = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="literal">false</span>; &#125;    <span class="comment">//禁用复制功能</span></span><br><span class="line"><span class="built_in">document</span>.onselectstart = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="literal">false</span>; &#125;  <span class="comment">//禁用选择功能</span></span><br></pre></td></tr></table></figure>
-<h3 id="UC浏览器问题"><a href="#UC浏览器问题" class="headerlink" title="UC浏览器问题"></a>UC浏览器问题</h3><p>UC浏览器会过滤掉top、test、ad、download等关键字<br>uc浏览器判断到页面上文字居多时，会自动放大字体优化移动用户体验。<br>添加以下头部可以禁用掉该优化</p>
-<meta name="wap-font-scale" content="no">
-
-<h3 id="Font-Boosting问题"><a href="#Font-Boosting问题" class="headerlink" title="Font Boosting问题"></a>Font Boosting问题</h3><p>问题：字体的显示大小，与在CSS中指定的大小不一致。<br>通过设置max-height: 999999px;或max-height: 100%;可以解决</p>
-<h3 id="ios-lt-10-js无法实现复制"><a href="#ios-lt-10-js无法实现复制" class="headerlink" title="ios&lt;10 js无法实现复制"></a>ios&lt;10 js无法实现复制</h3><p><a href="https://stackoverflow.com/questions/34045777/copy-to-clipboard-using-javascript-in-ios" target="_blank" rel="noopener">copy-to-clipboard-using-javascript-in-ios</a></p>
-<h3 id="移动端无法实现保存图片到本地，除了移动端chrome和pc表现一致，其他都不行"><a href="#移动端无法实现保存图片到本地，除了移动端chrome和pc表现一致，其他都不行" class="headerlink" title="移动端无法实现保存图片到本地，除了移动端chrome和pc表现一致，其他都不行"></a>移动端无法实现保存图片到本地，除了移动端chrome和pc表现一致，其他都不行</h3><h3 id="ios微信缓存问题"><a href="#ios微信缓存问题" class="headerlink" title="ios微信缓存问题"></a>ios微信缓存问题</h3><p>问题：ios9系统下微信内(非必现)，从充值页回到正文页，正文页获取的余额没有刷新，发现get请求没有发出，应该是微信AJAX缓存的问题。可通过给ajax请求加时间戳的方式解决。<br>参考：<a href="https://www.jianshu.com/p/6baa49e26533" target="_blank" rel="noopener">微信自带浏览器物理返回不刷新问题</a></p>
-<p>奇怪现象：其他的ios系统下，请求也没有发出去，但是数据是正确的，可能和缓存快照有关系，正常的可能保存了这个页面上次运行的整个数据栈。</p>
-<h3 id="移动端滚动穿透问题完美解决方案"><a href="#移动端滚动穿透问题完美解决方案" class="headerlink" title="移动端滚动穿透问题完美解决方案"></a>移动端滚动穿透问题完美解决方案</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">body</span><span class="selector-class">.modal-open</span> &#123;</span><br><span class="line">    <span class="attribute">position</span>: fixed;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">100%</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>当打开modal的时候给body添加<code>modal-open</code>类，fixed让底部页面无法滚动，同时根据页面滚动位置设置top值。<br>在关闭modal时，再让页面恢复之前的滚动状态。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * ModalHelper helpers resolve the modal scrolling issue on mobile devices</span></span><br><span class="line"><span class="comment">  * https://github.com/twbs/bootstrap/issues/15852</span></span><br><span class="line"><span class="comment">  * requires document.scrollingElement polyfill https://github.com/yangg/scrolling-element</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">var</span> ModalHelper = (<span class="function"><span class="keyword">function</span>(<span class="params">bodyCls</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> scrollTop;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    afterOpen: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      scrollTop = <span class="built_in">document</span>.scrollingElement.scrollTop;</span><br><span class="line">      <span class="built_in">document</span>.body.classList.add(bodyCls);</span><br><span class="line">      <span class="built_in">document</span>.body.style.top = -scrollTop + <span class="string">'px'</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">    beforeClose: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="built_in">document</span>.body.classList.remove(bodyCls);</span><br><span class="line">      <span class="comment">// scrollTop lost after set position:fixed, restore it back.</span></span><br><span class="line">      <span class="built_in">document</span>.scrollingElement.scrollTop = scrollTop;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)(<span class="string">'modal-open'</span>);</span><br></pre></td></tr></table></figure></p>
-<h3 id="不简单的自适应高度输入框"><a href="#不简单的自适应高度输入框" class="headerlink" title="不简单的自适应高度输入框"></a>不简单的自适应高度输入框</h3><p>主要实现代码如下：<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">textarea</span> &#123;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">100%</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">92px</span>;</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">20px</span>;</span><br><span class="line">    <span class="attribute">line-height</span>: <span class="number">50px</span>;</span><br><span class="line">    <span class="attribute">resize</span>: none;</span><br><span class="line">    <span class="attribute">outline</span>: none;</span><br><span class="line">    <span class="attribute">border</span>: <span class="number">1px</span> solid <span class="number">#ccc</span>;</span><br><span class="line">    <span class="attribute">background</span>: <span class="number">#eee</span>;</span><br><span class="line">    <span class="attribute">font-size</span>: <span class="number">32px</span>;</span><br><span class="line">    <span class="attribute">box-sizing</span>: border-box;</span><br><span class="line">    overflow: hidden;  //去掉滚动条</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">textarea</span> <span class="attr">id</span>=<span class="string">"textarea"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> $textarea = <span class="built_in">document</span>.getElementById(<span class="string">'textarea'</span>);</span><br><span class="line"><span class="keyword">var</span> lastLength = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">var</span> lastHeight = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">$textarea.addEventListener(<span class="string">'input'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> currentLength = $textarea.value.length;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 判断字数如果比之前少了，说明内容正在减少，需要清除高度样式，重新获取</span></span><br><span class="line">    <span class="keyword">if</span> (currentLength &lt; lastLength) &#123;</span><br><span class="line">        $textarea.style.height = <span class="string">''</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> currentHeight = $textarea.scrollHeight;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果内容高度发生了变化，再去设置高度值</span></span><br><span class="line">    <span class="keyword">if</span> (lastHeight !== currentHeight || !$textarea.style.height) &#123;</span><br><span class="line">        $textarea.style.height = currentHeight + <span class="number">2</span> + <span class="string">'px'</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    lastLength = currentLength;</span><br><span class="line">    lastHeight = currentHeight;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>原理是检测textarea.scrollHeight属性变化，并随之设置textarea的高度。</p>
-<p>参考：<a href="https://juejin.im/post/5b7653bde51d454dba70c0b1?utm_source=gold_browser_extension" target="_blank" rel="noopener">https://juejin.im/post/5b7653bde51d454dba70c0b1?utm_source=gold_browser_extension</a></p>
-<h3 id="setTimeout-fun-0"><a href="#setTimeout-fun-0" class="headerlink" title="setTimeout(fun, 0)"></a>setTimeout(fun, 0)</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    func1();</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line">func2();</span><br></pre></td></tr></table></figure>
-<p>func1和func2谁会先执行？很明显func2先执行；<br>setTimeout的作用是将代码推迟到指定时间执行，如果指定时间为0，即setTimeout(f,0)，那么会立刻执行吗？<br>答案是不会。因为setTimeout运行机制说过，<strong>必须要等到当前脚本的同步任务和“任务队列”中已有的事件，全部处理完以后，才会执行setTimeout指定的任务</strong>。也就是说，setTimeout的真正作用是，在“任务队列”的现有事件的后面再添加一个事件，规定在指定时间执行某段代码。setTimeout添加的事件，会在下一次Event Loop执行。<br>setTimeout(f,0)将第二个参数设为0，作用是让f在现有的任务——<strong>脚本的同步任务和“任务队列”中已有的事件</strong>，一结束就立刻执行。也就是说，setTimeout(f,0)的作用是，尽可能早地执行指定的任务。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"Timeout"</span>);</span><br><span class="line">&#125;, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"a() 开始运行"</span>);</span><br><span class="line">  b(x);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"a() 结束运行"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">b</span>(<span class="params">y</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"b() 开始运行"</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"传入的值为"</span> + y);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"b() 结束运行"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"当前任务开始"</span>);</span><br><span class="line">a(<span class="number">42</span>);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"当前任务结束"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当前任务开始</span></span><br><span class="line"><span class="comment">// a() 开始运行</span></span><br><span class="line"><span class="comment">// b() 开始运行</span></span><br><span class="line"><span class="comment">// 传入的值为42</span></span><br><span class="line"><span class="comment">// b() 结束运行</span></span><br><span class="line"><span class="comment">// a() 结束运行</span></span><br><span class="line"><span class="comment">// 当前任务结束</span></span><br><span class="line"><span class="comment">// Timeout</span></span><br></pre></td></tr></table></figure></p>
-<p>上面代码说明，setTimeout(f,0)必须要等到当前脚本的所有同步任务结束后才会执行。<br>0毫秒实际上达不到的。根据HTML5标准，setTimeOut推迟执行的时间，<strong>最少是4毫秒</strong>。如果小于这个值，会被自动增加到4。这是为了防止多个setTimeout(f,0)语句连续执行，造成性能问题。<br>利用<code>setTimeout(func, 0)</code>可以帮助我们：</p>
-<ul>
-<li>调整函数运行顺序</li>
-<li>分割耗时任务</li>
-</ul>
-<h3 id="0-5px边框"><a href="#0-5px边框" class="headerlink" title="0.5px边框"></a>0.5px边框</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> <span class="selector-class">.scale-1px</span> &#123;</span><br><span class="line">    <span class="attribute">position</span>: relative;</span><br><span class="line">    <span class="attribute">margin-bottom</span>: <span class="number">20px</span>;</span><br><span class="line">    <span class="attribute">border</span>:none;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.scale-1px</span><span class="selector-pseudo">:after</span> &#123;</span><br><span class="line">    <span class="attribute">content</span>: <span class="string">''</span>;</span><br><span class="line">    <span class="attribute">position</span>: absolute;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">left</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">border</span>: <span class="number">1px</span> solid <span class="number">#000</span>;</span><br><span class="line">    <span class="attribute">box-sizing</span>: border-box;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">200%</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">200%</span>;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(0.5);</span><br><span class="line">    <span class="attribute">transform-origin</span>: left top;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="ios系统上active不生效问题"><a href="#ios系统上active不生效问题" class="headerlink" title="ios系统上active不生效问题"></a>ios系统上active不生效问题</h3><p>在iOS系统的移动设备中，需要在按钮元素或body/html上绑定一个touchstart事件才能激活:active状态。<br>可以采用下面两种方式解决：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.addEventListener(<span class="string">"touchstart"</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;, <span class="literal">false</span>);</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">ontouchstart</span>=<span class="string">""</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="beforeunload事件"><a href="#beforeunload事件" class="headerlink" title="beforeunload事件"></a>beforeunload事件</h3><p>兼容问题：为了优化用户体验，新式浏览器会要求有交互才会触发beforeunload事件，例如新版本的chrome浏览器。<br>PS: 从Firefox 4、 Chrome 51、Opera 38 和Safari 9.1开始，通用确认信息代替事件返回的字符串，即无法通过下面的方式自定义文案。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.onbeforeunload = <span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">  e = e || <span class="built_in">window</span>.event;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 兼容IE8和Firefox 4之前的版本</span></span><br><span class="line">  <span class="keyword">if</span> (e) &#123;</span><br><span class="line">    e.returnValue = <span class="string">'关闭提示'</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+</span></span><br><span class="line">  <span class="keyword">return</span> <span class="string">'关闭提示'</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>HTML5规范中指出，在该事件中调用window.alert(), window.confirm(), 和 window.prompt()，会被忽略。详细的可参考<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/onbeforeunload" target="_blank" rel="noopener">MDN</a>。</p>
-<h3 id="get请求没有body"><a href="#get请求没有body" class="headerlink" title="get请求没有body"></a>get请求没有body</h3><p>HTTP规范也不推荐这么做：<br>下面来自 rfc7231 ：</p>
-<blockquote>
-<p>A payload within a GET request message has no defined semantics;   sending a payload body on a GET request might cause some existing   implementations to reject the request.</p>
-</blockquote>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">总结</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/10/19/日常经验积累/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-sass应用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/08/28/sass应用/">SASS使用二三事</a>
-    </h1>
-  
-
-        
-        <a href="/2017/08/28/sass应用/" class="archive-article-date">
-  	<time datetime="2017-08-28T10:15:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="sass管理z-index"><a href="#sass管理z-index" class="headerlink" title="sass管理z-index"></a>sass管理z-index</h3><p>z-index的值和上下文有关系，在复杂布局中要跟踪z-index比较困难，z-index的取值范围很广，很容易出错，所以可以使用sass预处理器去统一管理。</p>
-<h4 id="定义浮层"><a href="#定义浮层" class="headerlink" title="定义浮层"></a>定义浮层</h4><p>首先，我们可以借助sass 3.3引入的Map定义一个数据结构，key代表了不同浮层类型，value即对应的z-index值：<br><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$z-layers</span>: (</span><br><span class="line">    <span class="string">'toast'</span>:          <span class="number">4000</span>,</span><br><span class="line">    <span class="string">'modal'</span>:          <span class="number">3000</span>,</span><br><span class="line">    <span class="string">'dropdown'</span>:       <span class="number">2000</span>,</span><br><span class="line">    <span class="string">'mask'</span>:           <span class="number">1000</span>,</span><br><span class="line">    <span class="string">'default'</span>:         <span class="number">1</span>,</span><br><span class="line">    <span class="string">'below'</span>:          -<span class="number">1</span>,</span><br><span class="line">    <span class="string">'bottomless-pit'</span>: -<span class="number">10000</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
-<h4 id="定义函数"><a href="#定义函数" class="headerlink" title="定义函数"></a>定义函数</h4><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@function z(<span class="variable">$layer</span>) &#123;</span><br><span class="line">    @return map-get(<span class="variable">$z-layers</span>, <span class="variable">$layer</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用了sass的map-get方法，如果$layer参数存在于$z-layers中，会返回对应的value值，如z(‘toast’)，返回对应的值为4000；若不存在于$z-layers中，则返回null。属性为null时，sass的编译不会输出。<br>也可以借助map-has-key方法检查元素是否存在，对于不存在的元素使用@warn指令输出警告信息，方便我们在开发的时候发现问题。<br><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@function z(<span class="variable">$layer</span>) &#123;</span><br><span class="line">    @<span class="keyword">if</span> not map-has-key(<span class="variable">$z-layers</span>, <span class="variable">$layer</span>) &#123;</span><br><span class="line">        @<span class="keyword">warn</span> <span class="string">"No z-index found in $z-layers map for `#&#123;$layer&#125;`. Property omitted."</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @return map-get(<span class="variable">$z-layers</span>, <span class="variable">$layer</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h4 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h4><figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//function方式</span></span><br><span class="line"><span class="selector-class">.m-mask</span> &#123;</span><br><span class="line">    <span class="attribute">z-index</span>: z(<span class="string">'mask'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//mixin方式</span></span><br><span class="line"><span class="selector-class">.m-mask</span> &#123;</span><br><span class="line">    @<span class="keyword">include</span> z(<span class="string">'mask'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对于单个属性来说，建议采用function的定义方式，比起mixin方式，使用起来更加清晰、简单。<br>
-        
-      
-
-      
-    </p></div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">css</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">sass</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/08/28/sass应用/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-分站开发总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/07/27/分站开发总结/">项目开发record</a>
-    </h1>
-  
-
-        
-        <a href="/2017/07/27/分站开发总结/" class="archive-article-date">
-  	<time datetime="2017-07-27T01:38:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="前端目录结构"><a href="#前端目录结构" class="headerlink" title="前端目录结构"></a>前端目录结构</h3><p>基于React + React-Router + Sass开发的webpack打包的多页面应用，其中正文页面和搜索页面是基于React-Router开发的单页面应用。路由类型采用的是BrowserRouter，在移动端pushState/replaceState没有兼容问题，可以放心使用。如果是要兼容IE9及以下，则不能使用BrowserRouter，建议使用HashRouter。此外，使用BrowserRouter后，可以借助history的特性帮助我们实现记录每个页面的历史停留位置。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">|-- assets</span><br><span class="line">  |</span><br><span class="line">  |-- config //webpack编译</span><br><span class="line">  |    |-- base.js //基础编译配置</span><br><span class="line">  |    |-- dev.js  //开发环境编译配置</span><br><span class="line">  |    |-- dll.js  //动态链接库编译配置</span><br><span class="line">  |    |-- hot.js  //热替换编译配置</span><br><span class="line">  |    |-- prod.js //开发环境编译配置</span><br><span class="line">  |    |-- util.js //定义配置相关的通用方法和变量</span><br><span class="line">  |</span><br><span class="line">  |-- src                //源码目录</span><br><span class="line">  |    |-- component        // 组件</span><br><span class="line">  |    |      |-- common      //公共组件</span><br><span class="line">  |    |      |--             //其他子组件</span><br><span class="line">  |    |-- entry              //入口js，与静态html文件相对应</span><br><span class="line">  |    |-- util               //通用方法</span><br><span class="line">  |    |-- image            //图片资源</span><br><span class="line">  |    |-- style            //样式</span><br><span class="line">  |</span><br><span class="line">  |-- template              //html模板，动态生成html文件</span><br><span class="line">  |</span><br><span class="line">  |-- mock.json      // mock数据</span><br><span class="line">  |-- server_hot.js  //实现热更新、拦截并处理前端请求(返回本地页面、mock数据，其他请求转发到服务端处理)  </span><br><span class="line">  |</span><br><span class="line">|-- dist //构建目录</span><br></pre></td></tr></table></figure></p>
-<p>其中，模板中是静态html文件，在没有添加后端路由的情况下，通过server_hot.js中的页面映射去访问前端页面，例如当匹配到路径/index时，返回index.html页面，结合mock数据，真正实现了前后端分离。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> templateMap = &#123;</span><br><span class="line">    <span class="string">'/search'</span>: <span class="string">'search.html'</span>,</span><br><span class="line">    <span class="string">'/search/book'</span>: <span class="string">'search.html'</span>,</span><br><span class="line">    <span class="string">'/index'</span>: <span class="string">'index.html'</span>,</span><br><span class="line">    <span class="string">'/history'</span>: <span class="string">'history.html'</span>,</span><br><span class="line">    <span class="string">'/rank'</span>: <span class="string">'rank.html'</span>,</span><br><span class="line">    <span class="string">'/home/more'</span>: <span class="string">'more.html'</span>,</span><br><span class="line">    <span class="string">'/category'</span>: <span class="string">'category.html'</span>,</span><br><span class="line">    <span class="string">'/info'</span>: <span class="string">'info.html'</span>,</span><br><span class="line">    <span class="string">'/detail'</span>: <span class="string">'detail.html'</span>,</span><br><span class="line">    <span class="string">'/book/reader'</span>: <span class="string">'reader.html'</span>,</span><br><span class="line">    <span class="string">'/recharge'</span>: <span class="string">'recharge.html'</span>,</span><br><span class="line">    <span class="string">'/catalog'</span>: <span class="string">'catalog.html'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> mapItem <span class="keyword">in</span> templateMap) &#123;</span><br><span class="line">    app.get(mapItem, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">        res.sendFile(__dirname + <span class="string">'/template/'</span> + templateMap[mapItem]);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h4 id="API转发后获取服务端数据失败的问题"><a href="#API转发后获取服务端数据失败的问题" class="headerlink" title="API转发后获取服务端数据失败的问题"></a>API转发后获取服务端数据失败的问题</h4><p>在使用http-proxy-middleware转发请求到后端时，发现有部分请求无法获得返回数据，首先可以确定的是请求被转发到后端了。调试发现后端会验证站点相关信息，在验证host的时候报错。猜测可能是请求转发后header里的host信息丢失，查询<a href="https://www.npmjs.com/package/http-proxy-middleware#http-proxy-middleware-options" target="_blank" rel="noopener">API</a>发现可以设置option.headers，如下所示。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> proxyMiddleware = <span class="built_in">require</span>(<span class="string">'http-proxy-middleware'</span>);</span><br><span class="line"><span class="keyword">var</span> apiProxy = proxyMiddleware(<span class="string">'/api'</span>, &#123; <span class="attr">target</span>: <span class="string">'http://ypxst.kuxuanbook.yuedu.163.com'</span>, <span class="attr">headers</span>: &#123;<span class="attr">host</span>: <span class="string">'ypxst.kuxuanbook.yuedu.163.com'</span>&#125;&#125;);</span><br></pre></td></tr></table></figure></p>
-<p>设置好host后，就可以正常获取接口返回数据了。</p>
-<h4 id="POST请求验证XSRF-TOKEN"><a href="#POST请求验证XSRF-TOKEN" class="headerlink" title="POST请求验证XSRF-TOKEN"></a>POST请求验证XSRF-TOKEN</h4><p>之前阅读常用的方式是后端写入freemarker模板或者通过异步接口获得，这次和后端约定统一放在cookie中。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">headers: &#123;</span><br><span class="line">    <span class="string">'Content-Type'</span>: <span class="string">'application/x-www-form-urlencoded'</span>,</span><br><span class="line">    <span class="string">'X-XSRF-TOKEN'</span>: csrf_token</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>从cookie中读取token后封装在post接口中，写在headers里面，这样在使用的时候就直接调用post方法，无需关注token验证。</p>
-<h4 id="使用git-subtree同步assets工程"><a href="#使用git-subtree同步assets工程" class="headerlink" title="使用git subtree同步assets工程"></a>使用git subtree同步assets工程</h4><p>assets资源存在于novel-webapp-wap和novel-webapp-recharge两个工程下面，recharge工程下面用到的是充值页面，其他页面都在wap工程下，之所以分开为两个工程是因为涉及到支付，充值的域名需要是唯一的，而分站的域名很多。为了保证二者资源的同步，可以使用git subtree实现子工程的同步。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取远端novel-webapp-assets的更新</span></span><br><span class="line">git subtree pull --prefix=src/main/webapp/assets ssh://git@g.hz.netease.com:22222/novel/novel-webapp-assets.git master --squash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将本地assets更新推送到远端novel-webapp-assets</span></span><br><span class="line">git subtree push --prefix=src/main/webapp/assets ssh://git@g.hz.netease.com:22222/novel/novel-webapp-assets.git master --squash</span><br></pre></td></tr></table></figure></p>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">总结</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">react</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">webpack</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/07/27/分站开发总结/">展开全文 >></a>
+          <a class="article-more-a" href="/2018/06/13/core-decorators源码简析——debounce/">展开全文 >></a>
         </p>
       
 
@@ -888,7 +948,7 @@
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
     </nav>
   
 
@@ -979,15 +1039,15 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1003,11 +1063,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1015,7 +1071,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1031,15 +1091,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">下载</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">兼容</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1055,15 +1115,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">setState</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1095,11 +1155,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
               </li>
             
             <div class="clearfix"></div>

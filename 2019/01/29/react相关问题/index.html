@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="lying fox">
 <meta property="og:description" content="什么是JSX?——浏览器是如何识别它的？JSX是facebook普及的一种标记语言，通过babel/TSC等工具会编译为React.createElementfunction。所以在React每个组件中，虽然没有显式用到React，但都需要import React from &amp;#39;react&amp;#39;。 JSX是如何区分React Component和HTML元素的？通过元素首字母的大小写，如">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-01-03T07:09:18.303Z">
+<meta property="og:updated_time" content="2020-07-17T08:10:05.787Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="react相关问题">
 <meta name="twitter:description" content="什么是JSX?——浏览器是如何识别它的？JSX是facebook普及的一种标记语言，通过babel/TSC等工具会编译为React.createElementfunction。所以在React每个组件中，虽然没有显式用到React，但都需要import React from &amp;#39;react&amp;#39;。 JSX是如何区分React Component和HTML元素的？通过元素首字母的大小写，如">
@@ -196,14 +196,14 @@
 <li>static getDerivedStateFromProps(nextProps, prevState) //会返回一个对象来更新当前的state对象</li>
 <li>shouldComponentUpdate()</li>
 <li>render()</li>
-<li>getSnapshotBeforeUpdate(prevProps, prevState) 在dom更新前，可以保存之前的滚动位置，便于在componentDidUpdate中去恢复</li>
+<li>getSnapshotBeforeUpdate(prevProps, prevState) 在dom更新前，可以捕获之前的滚动位置，便于在componentDidUpdate中去恢复</li>
 <li>componentDidUpdate(prevProps, prevState, snapshot) 在dom更新后,snapshot的值是getSnapshotBeforeUpdate的返回值</li>
 </ul>
 <p>不建议使用<code>UNSAFE_componentWillReceiveProps()</code>和<code>UNSAFE_componentWillUpdate()</code>，一次更新可能会调用多次。<br><code>UNSAFE_componentWillReceiveProps()</code>经常会带来bug和不一致的问题，例如在该方法中设置input值，当父组件更新的时候，用户的输入就会被置空。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">class EmailInput extends Component &#123;</span><br><span class="line">  state = &#123; email: this.props.email &#125;;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    return &lt;input onChange=&#123;this.handleChange&#125; value=&#123;this.state.email&#125; /&gt;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  handleChange = event =&gt; &#123;</span><br><span class="line">    this.setState(&#123; email: event.target.value &#125;);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  componentWillReceiveProps(nextProps) &#123;</span><br><span class="line">    // This will erase any local state updates!</span><br><span class="line">    // Do not do this.</span><br><span class="line">    this.setState(&#123; email: nextProps.email &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h4 id="Unmounting"><a href="#Unmounting" class="headerlink" title="Unmounting"></a>Unmounting</h4><ul>
 <li>componentWillUnmount()</li>
 </ul>
-<p><code>getDerivedStateFromProps(props, state)</code>每次render之前都会被触发，与<code>componentWillReceiveProps</code>只在父组件rerender时会触发不一样。此外，<code>getDerivedStateFromProps</code>方法不建议经常使用，使用前想一想是否有替代方案。</p>
+<p><code>getDerivedStateFromProps(nextProps, prevState)</code>每次render之前都会被触发，例如在挂载时、接收到新的props、调用了setState和forceUpdate都会触发，与<code>componentWillReceiveProps</code>只在父组件rerender时会触发不一样。此外，<code>getDerivedStateFromProps</code>方法不建议经常使用，使用前想一想是否有替代方案。</p>
 <h4 id="错误捕获"><a href="#错误捕获" class="headerlink" title="错误捕获"></a>错误捕获</h4><ul>
 <li>static getDerivedStateFromError(error)</li>
 <li>componentDidCatch(error, info)<br>错误边界(Error Boundaries) 仅可以捕获其子组件的错误。<br>使用static getDerivedStateFromError()在抛出错误后渲染回退UI。 使用 componentDidCatch() 来记录错误信息。</li>
@@ -215,24 +215,6 @@
 <li>r2: 在componentWillMount中调用setState不会触发rerender，所以一般不会被用来获取数据。</li>
 <li>r3: React16之后采用了Fiber架构，类似ComponentWillMount的生命周期钩子都有可能执行多次，所以不在这些生命周期中做有副作用的操作，比如请求数据。</li>
 <li>r4: constructor用来初始化组件，作用应该保持纯粹，不应该引入数据获取这种有副作用的操作。</li>
-</ul>
-<h4 id="react-fiber纤程"><a href="#react-fiber纤程" class="headerlink" title="react fiber纤程"></a>react fiber纤程</h4><p>fiber是纤程颗粒化的概念，一个线程可以包含多个Fiber，主要是对react更新机制的优化。React16之前的版本，更新组件会一直占用主线程，如果组件树过大，则可能会导致浏览器失去响应。在React16中加入的fiber可以将同步任务拆解，每次执行完一小片后，都会把控制权交还给react负责任务调度的模块，如果有优先级更高的任务，就先执行高优先级的任务。</p>
-<h5 id="拆什么"><a href="#拆什么" class="headerlink" title="拆什么"></a>拆什么</h5><p>首先，看React的渲染，包括两个阶段：调度阶段(reconciliation)和渲染阶段(commit)。</p>
-<ul>
-<li>调度阶段react根据数据更新virtual DOM，再运用diff算法找到需要VDOM change。这一部分的工作是可以拆分的。</li>
-<li>渲染阶段根据计算出的所有diff去一次性更新真实的DOM。<br>组件比较庞大时，diff运算会比较耗时，不可控，所以需要拆分的是调度阶段。</li>
-</ul>
-<h5 id="怎么拆"><a href="#怎么拆" class="headerlink" title="怎么拆"></a>怎么拆</h5><p>fiber tree的部分结构如下所示，将简单的数结构，变成了基于单链表的树结构。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    alternate: Fiber|null, //在fiber更新时克隆出的镜像fiber，对fiber的修改会标记在这个fiber上</span><br><span class="line">    nextEffect: Fiber | null, // 单链表结构，方便遍历 Fiber Tree 上有副作用的节点</span><br><span class="line">    pendingWorkPriority: PriorityLevel, // 标记子树上待更新任务的优先级</span><br><span class="line"></span><br><span class="line">    stateNode: any, // 管理 instance 自身的特性</span><br><span class="line">    return: Fiber|null, // 指向 Fiber Tree 中的父节点</span><br><span class="line">    child: Fiber|null, // 指向第一个子节点</span><br><span class="line">    sibling: Fiber|null, // 指向兄弟节点</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h5 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h5><p>因为是单链表(A → B → C)的结构，所以在每次执行到某个节点(A → B)被中断后，下次可以从该节点(B → C)接着执行。<br>requestIdleCallback会让一个低优先级的任务在空闲期被调用，而requestAnimationFrame会让一个高优先级的任务在下一个栈帧被调用，从而保证了主线程按照优先级执行 fiber 单元。</p>
-<blockquote>
-<p>优先级顺序为：文本框输入 &gt; 本次调度结束需完成的任务 &gt; 动画过渡 &gt; 交互反馈 &gt; 数据更新 &gt; 不会显示但以防将来会显示的任务。</p>
-</blockquote>
-<p>因为react fiber机制，一个任务很可能执行到一半就被其他优先级更高的任务所替代，或者因为时间原因而被终止。当再次执行这个任务时，是从头开始执行一遍，就会导致组件的某些 will 生命周期可能被多次调用而影响性能。</p>
-<p>REFs:</p>
-<ul>
-<li><a href="https://juejin.im/post/5bca74cfe51d450e9163351b" target="_blank" rel="noopener">[译]以面试官的角度来看React工作面试</a></li>
-<li><a href="https://juejin.im/post/5be969656fb9a049ad76931f" target="_blank" rel="noopener">浅析 React Fiber</a></li>
-<li><a href="https://tech.youzan.com/react-fiber/" target="_blank" rel="noopener">浅谈React 16中的Fiber机制</a></li>
 </ul>
 <h3 id="react事件注册分发"><a href="#react事件注册分发" class="headerlink" title="react事件注册分发"></a>react事件注册分发</h3><p>事件注册的时候，react 把所有事件都委托到了document上，减少注册事件的数量，降低内存占用。<br>事件被触发后，冒泡到document处，找到触发的dom和react component，当前触发的事件会被加入batchedUpdates批处理队列中，在事件对列中，事件分发的核心handleTopLevel保证了子元素在父元素前面（此处分析的是trapBubbledEvent）。<br>事件执行的时候，首先找到合适的plugin（v16版本有5种）构造对应的合成事件，第一次触发new 创建的事件对象会放到缓存池中，下次直接从对象池中取。最后，就是拿到与事件相关的元素实例和回调函数。</p>
 <h4 id="onClickCapture"><a href="#onClickCapture" class="headerlink" title="onClickCapture"></a>onClickCapture</h4><p>如果想要注册捕获事件，可以使用onClickCapture。但React的合成事件都是统一注册在document元素上的，且只有冒泡阶段，但合成事件会区分捕获和冒泡两种类型，来保证合成事件的执行顺序。此外，<strong>原生事件的执行都会早于合成事件的执行</strong>，因为合成事件都要等到事件冒泡到document上，才会执行。<br>执行顺序是：原生捕获事件 -&gt; 原生事件冒泡 -&gt; 合成事件捕获 -&gt; 合成事件冒泡 </p>
@@ -260,6 +242,11 @@
 <h2 id="key值的作用"><a href="#key值的作用" class="headerlink" title="key值的作用"></a>key值的作用</h2><ul>
 <li>提高diff的效率</li>
 <li>避免就地复用</li>
+</ul>
+<h2 id="完全受控组件-amp-完全非受控组件"><a href="#完全受控组件-amp-完全非受控组件" class="headerlink" title="完全受控组件 &amp; 完全非受控组件"></a>完全受控组件 &amp; 完全非受控组件</h2><p>为了避免外部props覆盖掉内部state的变化</p>
+<ul>
+<li>完全受控组件：子组件没有state，值的获取和修改都交给父组件去处理</li>
+<li>完全非受控组件：子组件维护自己的state，props值只用来初始化state，给子组件添加key值，当props发生变化的时候，修改子组件的key值，会重新创建一个子组件而不是更新已有的子组件</li>
 </ul>
 
       
@@ -480,15 +467,15 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">总结</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">es6</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">js</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">总结</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -504,11 +491,7 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -516,7 +499,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">autobind</a>
+                <a href="javascript:void(0)" class="js-tag color5">lazyInitialize</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">readonly</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -532,15 +519,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">下载</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">兼容</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">lottie</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -556,15 +543,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">diff</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">setState</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">高阶组件</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -596,11 +583,11 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
+                <a href="javascript:void(0)" class="js-tag color5">webp</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">webp</a>
+                <a href="javascript:void(0)" class="js-tag color3">sitespeed.io</a>
               </li>
             
             <div class="clearfix"></div>
