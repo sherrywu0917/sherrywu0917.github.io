@@ -9,7 +9,24 @@ tags: [es6, js]
   - let取代var, let仅在代码块中有效
   - for循环计数器适合用let
   - let不存在变量提升
-  - 暂时性死区
+  - 暂时性死区: 
+    ES6 明确规定，如果区块中存在let和const命令，这个区块对这些命令声明的变量，从一开始就形成了封闭作用域。**凡是在声明之前就使用这些变量，就会报错**。
+    总之，在代码块内，使用let命令声明变量之前，该变量都是不可用的。这在语法上，称为“暂时性死区”（temporal dead zone，简称 TDZ）。
+  ``` js
+  if (true) {
+    console.log(typeof a);
+
+    // TDZ开始
+    tmp = 'abc'; // ReferenceError
+    console.log(tmp); // ReferenceError
+    // Uncaught ReferenceError: Cannot access 'tmp' before initialization
+    // at <anonymous>:3:7
+    // (anonymous) @ VM211:3
+
+    let tmp; // TDZ结束
+    console.log(tmp); // undefined  
+  }
+  ```
   - 不允许重复声明
   - 块级作用域（全局作用域、函数作用域）
 
@@ -146,7 +163,7 @@ proxy.title // 35
 ### 用处
 1. 属性拦截
 2. 拦截过滤各种操作，如new/defineProperty/delete/getPrototypeOf等
-2. 私有属性模拟
+3. 私有属性模拟
 has方法用来拦截HasProperty操作，即判断对象是否具有某个属性时，这个方法会生效。典型的操作就是in运算符。
 ``` javascript
 var handler = {
@@ -265,6 +282,10 @@ Object.getOwnPropertyNames(Point.prototype)
 // ["constructor","toString"]
 ```
 上面代码中，toString方法是Point类内部定义的方法，它是不可枚举的。这一点与ES5的行为不一致。Object.keys这儿用来判断是否可枚举。
+### 注意点
+- 类和模块的内部，默认就是严格模式，所以不需要使用use strict指定运行模式。
+- 不存在变量提升。
+- static关键字，就表示该方法不会被实例继承，而是直接通过类来调用，但可以被子类继承。
 
 ## Set集合
 用最简洁的代码实现数组去重：

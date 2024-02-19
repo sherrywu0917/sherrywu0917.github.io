@@ -4,6 +4,359 @@ date: 2019-04-02 10:08:50
 tags: [react, setState]
 ---
 ## setState更新机制
+### V16版本为例
+**setState**
+``` js
+Component.prototype.setState = function (partialState, callback) {
+  !(typeof partialState === 'object' || typeof partialState === 'function' || partialState == null) ? invariant(false, 'setState(...): takes an object of state variables to update or a function which returns an object of state variables.') : void 0;
+  this.updater.enqueueSetState(this, partialState, callback, 'setState');
+};
+```
+****
+``` js
+var classComponentUpdater = {
+  isMounted: isMounted,
+  enqueueSetState: function (inst, payload, callback) {
+    var fiber = get(inst);
+  // However, if two updates are scheduled within the same event, we
+  // should treat their start times as simultaneous, even if the actual clock
+  // time has advanced between the first and second call.
+
+  // In other words, because expiration times determine how updates are batched,
+  // we want all updates of like priority that occur within the same event to
+  // receive the same expiration time. Otherwise we get tearing.
+   // expirationTime时间决定了如何批量更新，期望是如果两个update发生在同一个event内，他们的过期时间一致
+    var currentTime = requestCurrentTime();
+    var expirationTime = computeExpirationForFiber(currentTime, fiber);
+    // 返回一个Update节点
+    // {
+    //   expirationTime: expirationTime,
+
+    //   tag: UpdateState,
+    //   payload: null,
+    //   callback: null,
+
+    //   next: null,
+    //   nextEffect: null
+    // }
+    var update = createUpdate(expirationTime);
+    // payload就是将要更新的particalState
+    update.payload = payload;
+    if (callback !== undefined && callback !== null) {
+      {
+        warnOnInvalidCallback$1(callback, 'setState');
+      }
+      update.callback = callback;
+    }
+
+    flushPassiveEffects();
+    // 将当前要更新的通过链表的形式放到fiber.updateQueue更新队列中
+    enqueueUpdate(fiber, update);
+    // 在expirationTime时间内去更新，调用requestWork函数。
+    scheduleWork(fiber, expirationTime);
+  },
+  enqueueReplaceState: function (inst, payload, callback) {
+    
+  },
+  enqueueForceUpdate: function (inst, callback) {
+    
+  }
+}
+```
+**performWork**
+``` js
+// requestWork is called by the scheduler whenever a root receives an update.
+// It's up to the renderer to call renderRoot at some point in the future.
+function requestWork(root, expirationTime) {
+  addRootToSchedule(root, expirationTime);
+  if (isRendering) {
+    // Prevent reentrancy. Remaining work will be scheduled at the end of
+    // the currently rendering batch.
+    return;
+  }
+
+  if (isBatchingUpdates) {
+    // Flush work at the end of the batch.
+    if (isUnbatchingUpdates) {
+      // ...unless we're inside unbatchedUpdates, in which case we should
+      // flush it now.
+      nextFlushedRoot = root;
+      nextFlushedExpirationTime = Sync;
+      performWorkOnRoot(root, Sync, false);
+    }
+    return;
+  }
+
+  // TODO: Get rid of Sync and use current time?
+  if (expirationTime === Sync) {
+    performSyncWork();
+  } else {
+    scheduleCallbackWithExpirationTime(root, expirationTime);
+  }
+}
+```
+如果这次的setState并不是由合成事件触发的，那么isBatchingUpdates将会为false。如果为false就会直接执行performSyncWork函数了，马上对这次setState进行diff和渲染了。
+如果当前处在批量更新或者rendering中，直接return，不重复调用scheduleCallbackWithExpirationTime函数；会在workLoop中去检查是否还有更新任务，更新队列(updateQueue)中弹出更新任务来执行，每执行完一个‘执行单元‘，就检查一下剩余时间是否充足，如果充足就进行执行下一个执行单元，反之则停止执行，保存现场，等下一次有执行权时恢复。
+``` js
+function scheduleCallbackWithExpirationTime(root, expirationTime) {
+  if (callbackExpirationTime !== NoWork) {
+    // A callback is already scheduled. Check its expiration time (timeout).
+    if (expirationTime < callbackExpirationTime) {
+      // Existing callback has sufficient timeout. Exit.
+      return;
+    } else {
+      if (callbackID !== null) {
+        // Existing callback has insufficient timeout. Cancel and schedule a
+        // new one.
+        scheduler.unstable_cancelCallback(callbackID);
+      }
+    }
+    // The request callback timer is already running. Don't start a new one.
+  } else {
+    startRequestCallbackTimer();
+  }
+
+  callbackExpirationTime = expirationTime;
+  var currentMs = scheduler.unstable_now() - originalStartTimeMs;
+  var expirationTimeMs = expirationTimeToMs(expirationTime);
+  var timeout = expirationTimeMs - currentMs;
+  callbackID = scheduler.unstable_scheduleCallback(performAsyncWork, { timeout: timeout });
+}
+```
+performAsyncWork -> performWork -> performWorkOnRoot -> renderRoot -> workLoop
+``` js
+function workLoop(isYieldy) {
+  if (!isYieldy) {
+    // Flush work without yielding
+    while (nextUnitOfWork !== null) {
+      // 如何获取下一个需要更新的Fiber节点？
+      // 猜测：通过dfs去遍历？ 先child -> return，判断是否需要更新？
+      nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+    }
+  } else {
+    // Flush asynchronous work until there's a higher priority event
+    while (nextUnitOfWork !== null && !shouldYieldToRenderer()) {
+      nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+    }
+  }
+}
+```
+performUnitOfWork -> updateClassComponent等diff和更新组件 -> mountClassInstance|updateClassInstance|resumeMountClassInstance -> processUpdateQueue去遍历fiber.updateQueue，更新payload
+
+
+#### 如何获取nextUnitOfWork
+step1: dfs先去获取需要更新的子节点child
+``` js
+function bailoutOnAlreadyFinishedWork(current$$1, workInProgress, renderExpirationTime) {
+  cancelWorkTimer(workInProgress);
+
+  if (current$$1 !== null) {
+    // Reuse previous context list
+    workInProgress.contextDependencies = current$$1.contextDependencies;
+  }
+
+  if (enableProfilerTimer) {
+    // Don't update "base" render times for bailouts.
+    stopProfilerTimerIfRunning(workInProgress);
+  }
+
+  // Check if the children have any pending work.
+  // 通过childExpirationTime时间去检查当前Fiber节点的children是否有更新任务
+  // 如果children需要更新，返回child
+  var childExpirationTime = workInProgress.childExpirationTime;
+  if (childExpirationTime < renderExpirationTime) {
+    // The children don't have any work either. We can skip them.
+    // TODO: Once we add back resuming, we should check if the children are
+    // a work-in-progress set. If so, we need to transfer their effects.
+    return null;
+  } else {
+    // This fiber doesn't have work, but its subtree does. Clone the child
+    // fibers and continue.
+    cloneChildFibers(current$$1, workInProgress);
+    return workInProgress.child;
+  }
+}
+```
+step2: dfs先访问兄弟节点siblings，遍历完siblings，再返回父节点return
+```js
+function completeUnitOfWork(workInProgress) {
+  // Attempt to complete the current unit of work, then move to the
+  // next sibling. If there are no more siblings, return to the
+  // parent fiber.
+  while (true) {
+    // The current, flushed, state of this fiber is the alternate.
+    // Ideally nothing should rely on this, but relying on it here
+    // means that we don't need an additional field on the work in
+    // progress.
+    var current$$1 = workInProgress.alternate;
+    {
+      setCurrentFiber(workInProgress);
+    }
+
+    var returnFiber = workInProgress.return;
+    var siblingFiber = workInProgress.sibling;
+
+    if ((workInProgress.effectTag & Incomplete) === NoEffect) {
+      if (true && replayFailedUnitOfWorkWithInvokeGuardedCallback) {
+        // Don't replay if it fails during completion phase.
+        mayReplayFailedUnitOfWork = false;
+      }
+      // This fiber completed.
+      // Remember we're completing this unit so we can find a boundary if it fails.
+      nextUnitOfWork = workInProgress;
+      if (enableProfilerTimer) {
+        if (workInProgress.mode & ProfileMode) {
+          startProfilerTimer(workInProgress);
+        }
+        nextUnitOfWork = completeWork(current$$1, workInProgress, nextRenderExpirationTime);
+        if (workInProgress.mode & ProfileMode) {
+          // Update render duration assuming we didn't error.
+          stopProfilerTimerIfRunningAndRecordDelta(workInProgress, false);
+        }
+      } else {
+        nextUnitOfWork = completeWork(current$$1, workInProgress, nextRenderExpirationTime);
+      }
+      if (true && replayFailedUnitOfWorkWithInvokeGuardedCallback) {
+        // We're out of completion phase so replaying is fine now.
+        mayReplayFailedUnitOfWork = true;
+      }
+      stopWorkTimer(workInProgress);
+      resetChildExpirationTime(workInProgress, nextRenderExpirationTime);
+      {
+        resetCurrentFiber();
+      }
+
+      if (nextUnitOfWork !== null) {
+        // Completing this fiber spawned new work. Work on that next.
+        return nextUnitOfWork;
+      }
+
+      if (returnFiber !== null &&
+      // Do not append effects to parents if a sibling failed to complete
+      (returnFiber.effectTag & Incomplete) === NoEffect) {
+        // Append all the effects of the subtree and this fiber onto the effect
+        // list of the parent. The completion order of the children affects the
+        // side-effect order.
+        if (returnFiber.firstEffect === null) {
+          returnFiber.firstEffect = workInProgress.firstEffect;
+        }
+        if (workInProgress.lastEffect !== null) {
+          if (returnFiber.lastEffect !== null) {
+            returnFiber.lastEffect.nextEffect = workInProgress.firstEffect;
+          }
+          returnFiber.lastEffect = workInProgress.lastEffect;
+        }
+
+        // If this fiber had side-effects, we append it AFTER the children's
+        // side-effects. We can perform certain side-effects earlier if
+        // needed, by doing multiple passes over the effect list. We don't want
+        // to schedule our own side-effect on our own list because if end up
+        // reusing children we'll schedule this effect onto itself since we're
+        // at the end.
+        var effectTag = workInProgress.effectTag;
+        // Skip both NoWork and PerformedWork tags when creating the effect list.
+        // PerformedWork effect is read by React DevTools but shouldn't be committed.
+        if (effectTag > PerformedWork) {
+          if (returnFiber.lastEffect !== null) {
+            returnFiber.lastEffect.nextEffect = workInProgress;
+          } else {
+            returnFiber.firstEffect = workInProgress;
+          }
+          returnFiber.lastEffect = workInProgress;
+        }
+      }
+
+      if (true && ReactFiberInstrumentation_1.debugTool) {
+        ReactFiberInstrumentation_1.debugTool.onCompleteWork(workInProgress);
+      }
+
+      if (siblingFiber !== null) {
+        // If there is more work to do in this returnFiber, do that next.
+        return siblingFiber;
+      } else if (returnFiber !== null) {
+        // If there's no more work in this returnFiber. Complete the returnFiber.
+        workInProgress = returnFiber;
+        continue;
+      } else {
+        // We've reached the root.
+        return null;
+      }
+    } else {
+      if (enableProfilerTimer && workInProgress.mode & ProfileMode) {
+        // Record the render duration for the fiber that errored.
+        stopProfilerTimerIfRunningAndRecordDelta(workInProgress, false);
+
+        // Include the time spent working on failed children before continuing.
+        var actualDuration = workInProgress.actualDuration;
+        var child = workInProgress.child;
+        while (child !== null) {
+          actualDuration += child.actualDuration;
+          child = child.sibling;
+        }
+        workInProgress.actualDuration = actualDuration;
+      }
+
+      // This fiber did not complete because something threw. Pop values off
+      // the stack without entering the complete phase. If this is a boundary,
+      // capture values if possible.
+      var next = unwindWork(workInProgress, nextRenderExpirationTime);
+      // Because this fiber did not complete, don't reset its expiration time.
+      if (workInProgress.effectTag & DidCapture) {
+        // Restarting an error boundary
+        stopFailedWorkTimer(workInProgress);
+      } else {
+        stopWorkTimer(workInProgress);
+      }
+
+      {
+        resetCurrentFiber();
+      }
+
+      if (next !== null) {
+        stopWorkTimer(workInProgress);
+        if (true && ReactFiberInstrumentation_1.debugTool) {
+          ReactFiberInstrumentation_1.debugTool.onCompleteWork(workInProgress);
+        }
+
+        // If completing this work spawned new work, do that next. We'll come
+        // back here again.
+        // Since we're restarting, remove anything that is not a host effect
+        // from the effect tag.
+        next.effectTag &= HostEffectMask;
+        return next;
+      }
+
+      if (returnFiber !== null) {
+        // Mark the parent fiber as incomplete and clear its effect list.
+        returnFiber.firstEffect = returnFiber.lastEffect = null;
+        returnFiber.effectTag |= Incomplete;
+      }
+
+      if (true && ReactFiberInstrumentation_1.debugTool) {
+        ReactFiberInstrumentation_1.debugTool.onCompleteWork(workInProgress);
+      }
+
+      if (siblingFiber !== null) {
+        // If there is more work to do in this returnFiber, do that next.
+        return siblingFiber;
+      } else if (returnFiber !== null) {
+        // If there's no more work in this returnFiber. Complete the returnFiber.
+        workInProgress = returnFiber;
+        continue;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  // Without this explicit null return Flow complains of invalid return type
+  // TODO Remove the above while(true) loop
+  // eslint-disable-next-line no-unreachable
+  return null;
+}
+```
+
+**如果数据的到达速度快于帧速率，我们可以合并和批量更新**
 如果当前处于更新中，新的setState更新就会被push到dirtyComponent中，所以setState是异步的。
 ### V15版本为例
 **step1: setState**
@@ -34,6 +387,9 @@ enqueueSetState: function (publicInstance, partialState) {
     enqueueUpdate(internalInstance);
 }
 ```
+这段代码可以得知，enqueueSetState 做了两件事： 
+1、将新的state放进数组里 
+2、用enqueueUpdate来处理将要更新的实例对象
 partialState被放到一个数组中去维护，这个方法会获取当前组件的实例，即需要更新的组件，也放入到队列中。
 
 **step3: enqueueUpdate**
@@ -49,8 +405,8 @@ function enqueueUpdate(component) {
   dirtyComponents.push(component);
 }
 ```
-如果isBatchingUpdates标志位是true，说明当前正处于组件更新的阶段，则将当前组件实例push到dirtyComponents数组中；
-反之，立刻触发更新。
+如果isBatchingUpdates标志位是true，说明当前正处于组件更新的阶段，就不会立刻去更新组件，而是将当前组件实例push到dirtyComponents数组中；反之，立刻触发更新。
+所以，不是每一次的setState都会同步更新组件，**setState是一个异步的过程，它会集齐一批需要更新的组件然后一起更新**。
 
 **step4: batchingStrategy**
 ReactDefaultBatchingStrategy.js
@@ -64,7 +420,7 @@ var ReactDefaultBatchingStrategy = {
 
     ReactDefaultBatchingStrategy.isBatchingUpdates = true;
 
-    // 如果当前事务正在更新过程中，则调用callback，既enqueueUpdate
+    // 如果当前事务正在更新过程中，则调用callback，即enqueueUpdate
     if (alreadyBatchingUpdates) {
       return callback(a, b, c, d, e);
     } else {
@@ -138,8 +494,8 @@ function batchedUpdates(callback, a, b, c, d, e) {
 ### 原生事件绑定和setTimeout中setState
 原生事件绑定不会通过合成事件的方式处理，自然也不会进入更新事务的处理流程。setTimeout也一样，在setTimeout回调执行时已经完成了原更新组件流程，不会放入dirtyComponent进行异步更新，其结果自然是同步的。
 
-**在组件生命周期中或者react事件绑定中，setState是通过异步更新的。在延时的回调或者原生事件绑定的回调中调用setState不一定是异步的。**
-
+**在组件生命周期中或者react事件绑定中，setState是通过异步更新的。在延时的回调(promise.then、setTimeout)或者原生事件绑定的回调中调用setState不一定是异步的。**
+https://blog.logrocket.com/simplifying-state-management-in-react-apps-with-batched-updates/
 
 ### setState为什么设计为异步？
 #### 1.保证内部的一致性
@@ -177,3 +533,7 @@ React 会依据不同的调用源，给不同的 setState() 调用分配不同�
 - react children方式
 - react高阶组件实现状态共享
 - redux、mobx状态管理
+
+### setState注意点
+- 调用完，最新的值通过this.state通常是拿不到的
+- 多次调用setState

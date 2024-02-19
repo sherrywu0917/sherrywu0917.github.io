@@ -58,9 +58,8 @@ import(/* webpackChunkName: "lottie-light" */ '../lib/lottie_light.min.js').then
         renderer: 'svg',
         loop: true,
         autoplay: true,
-        animationData: require('../data/ribbon.json')
+        animationData: require('../data/logo.json')
     });
 })
 ```
-示例demo可以参见codepen上的[ribbon-lottie](https://codepen.io/sherrywu0917/pen/XPNavE)，测试数据`ribbon.json`可以下载[彩带json数据]( https://easyreadfs.nosdn.127.net/1548645419902/ribbon.json)。
-
+示例demo可以参见codepen上的[lottie-logo](https://codepen.io/sherrywu0917/pen/XPNavE)，测试数据`lottie_logo.json`可以下载[lottie logo json数据](https://raw.githubusercontent.com/splitinfinities/lottie-wc/master/src/assets/lottie_logo.json)。

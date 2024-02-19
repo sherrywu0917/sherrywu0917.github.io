@@ -1,6 +1,6 @@
 ---
 title: 表单和post参数总结
-date: 2019-03-26 16:50:01
+date: 2019-11-26 16:50:01
 tags:
 ---
 
@@ -91,3 +91,8 @@ param2: foo
 Request Payload
 param2=bar
 param3=baz
+
+
+### fetch的get、post请求参数
+- get，拼接到url上
+- post，参数放到body中`{body: JSON.stringify({p1: 1})}`

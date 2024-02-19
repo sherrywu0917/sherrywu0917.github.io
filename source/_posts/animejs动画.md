@@ -4,7 +4,7 @@ date: 2019-12-27 11:26:12
 tags:
 ---
 ### 概述
-anime.js是一个灵活的轻量JavaScript动画库，支持CSS属性、JS对象、DOM属性和SVG。压缩后仅6.2K，且不依赖任何第三方库，加载迅速。在[git](https://github.com/juliangarnier/anime)上Usedby数量8.5k, Star数量为33.5k。此外，anime遵从MIT开源协议,可应用于各种商业网站或app而无需付费。
+anime.js是一个灵活的轻量JavaScript动画库，支持CSS属性、JS对象、DOM属性和SVG。压缩后仅6.2K，且不依赖任何第三方库，加载迅速。在[git](https://github.com/juliangarnier/anime)上Usedby数量8.5k, Star数量为37.5k。此外，anime遵从MIT开源协议,可应用于各种商业网站或app而无需付费。
 
 ### 简单的浮动动画
 首先看一个简单的示例，实现了气泡的上下浮动动画，效果详见[浮动动画](https://codepen.io/sherrywu0917/pen/yLyoNQj)。
@@ -24,7 +24,7 @@ const floatAnimation = anime({
     1. 百分比：`translateY: '100%'`
     2. 相对数值：`translateY: { value: '*=2.5',duration: 1000}`，相对于translateY的初始值去计算
     3. 设置初始值：`translateY: [100, 250]`，设置数组的形式，会将translateY的初始值设置为100px，并且从100px移动到250px
-    4. 函数：`translateY: function(el, i, l) {return (l - i) * 50;}`
+    4. 函数：`translateY: function(target, index, targetsLength) {return (targetsLength - index) * 50;}`, target为当前动画目标元素，index为动画目标的索引，targetsLength为总动画目标数
 - `duration`代表动画的持续时间，单位为毫秒；
 - `loop`定义了动画是否需要循环，默认值为false；
 - `direction`的意义和animation-direction属性一致，定义是否应该轮流反向播放动画，可选的值有正向动画`normal`、反向动画`reverse`和往返动画`alternate`；

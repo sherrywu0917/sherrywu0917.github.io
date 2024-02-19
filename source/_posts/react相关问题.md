@@ -55,7 +55,7 @@ function hello() {
 - static getDerivedStateFromProps(nextProps, prevState) //会返回一个对象来更新当前的state对象
 - shouldComponentUpdate()
 - render()
-- getSnapshotBeforeUpdate(prevProps, prevState) 在dom更新前，可以保存之前的滚动位置，便于在componentDidUpdate中去恢复
+- getSnapshotBeforeUpdate(prevProps, prevState) 在dom更新前，可以捕获之前的滚动位置，便于在componentDidUpdate中去恢复
 - componentDidUpdate(prevProps, prevState, snapshot) 在dom更新后,snapshot的值是getSnapshotBeforeUpdate的返回值
 
 不建议使用`UNSAFE_componentWillReceiveProps()`和`UNSAFE_componentWillUpdate()`，一次更新可能会调用多次。
@@ -83,7 +83,7 @@ class EmailInput extends Component {
 #### Unmounting
 - componentWillUnmount()
 
-`getDerivedStateFromProps(props, state)`每次render之前都会被触发，与`componentWillReceiveProps`只在父组件rerender时会触发不一样。此外，`getDerivedStateFromProps`方法不建议经常使用，使用前想一想是否有替代方案。
+`getDerivedStateFromProps(nextProps, prevState)`每次render之前都会被触发，例如在挂载时、接收到新的props、调用了setState和forceUpdate都会触发，与`componentWillReceiveProps`只在父组件rerender时会触发不一样。此外，`getDerivedStateFromProps`方法不建议经常使用，使用前想一想是否有替代方案。
 
 #### 错误捕获
 - static getDerivedStateFromError(error)
@@ -104,48 +104,20 @@ React V16.6引入的新特性lazy，以及React-loadable库。
 - r3: React16之后采用了Fiber架构，类似ComponentWillMount的生命周期钩子都有可能执行多次，所以不在这些生命周期中做有副作用的操作，比如请求数据。
 - r4: constructor用来初始化组件，作用应该保持纯粹，不应该引入数据获取这种有副作用的操作。
 
-#### react fiber纤程
-fiber是纤程颗粒化的概念，一个线程可以包含多个Fiber，主要是对react更新机制的优化。React16之前的版本，更新组件会一直占用主线程，如果组件树过大，则可能会导致浏览器失去响应。在React16中加入的fiber可以将同步任务拆解，每次执行完一小片后，都会把控制权交还给react负责任务调度的模块，如果有优先级更高的任务，就先执行高优先级的任务。
-##### 拆什么
-首先，看React的渲染，包括两个阶段：调度阶段(reconciliation)和渲染阶段(commit)。
-- 调度阶段react根据数据更新virtual DOM，再运用diff算法找到需要VDOM change。这一部分的工作是可以拆分的。
-- 渲染阶段根据计算出的所有diff去一次性更新真实的DOM。
-组件比较庞大时，diff运算会比较耗时，不可控，所以需要拆分的是调度阶段。
-
-##### 怎么拆
-fiber tree的部分结构如下所示，将简单的数结构，变成了基于单链表的树结构。
-``` json
-{
-    alternate: Fiber|null, //在fiber更新时克隆出的镜像fiber，对fiber的修改会标记在这个fiber上
-    nextEffect: Fiber | null, // 单链表结构，方便遍历 Fiber Tree 上有副作用的节点
-    pendingWorkPriority: PriorityLevel, // 标记子树上待更新任务的优先级
-
-    stateNode: any, // 管理 instance 自身的特性
-    return: Fiber|null, // 指向 Fiber Tree 中的父节点
-    child: Fiber|null, // 指向第一个子节点
-    sibling: Fiber|null, // 指向兄弟节点
-}
-```
-
-##### 执行顺序
-因为是单链表(A → B → C)的结构，所以在每次执行到某个节点(A → B)被中断后，下次可以从该节点(B → C)接着执行。
-requestIdleCallback会让一个低优先级的任务在空闲期被调用，而requestAnimationFrame会让一个高优先级的任务在下一个栈帧被调用，从而保证了主线程按照优先级执行 fiber 单元。
-> 优先级顺序为：文本框输入 > 本次调度结束需完成的任务 > 动画过渡 > 交互反馈 > 数据更新 > 不会显示但以防将来会显示的任务。
-
-因为react fiber机制，一个任务很可能执行到一半就被其他优先级更高的任务所替代，或者因为时间原因而被终止。当再次执行这个任务时，是从头开始执行一遍，就会导致组件的某些 will 生命周期可能被多次调用而影响性能。
-
-REFs:
-- [[译]以面试官的角度来看React工作面试](https://juejin.im/post/5bca74cfe51d450e9163351b)
-- [浅析 React Fiber](https://juejin.im/post/5be969656fb9a049ad76931f)
-- [浅谈React 16中的Fiber机制](https://tech.youzan.com/react-fiber/)
 
 ### react事件注册分发
 事件注册的时候，react 把所有事件都委托到了document上，减少注册事件的数量，降低内存占用。
-事件被触发后，冒泡到document处，找到触发的dom和react component，当前触发的事件会被加入batchedUpdates批处理队列中，在事件对列中，事件分发的核心handleTopLevel保证了子元素在父元素前面（此处分析的是trapBubbledEvent）。
-事件执行的时候，首先找到合适的plugin（v16版本有5种）构造对应的合成事件，第一次触发new 创建的事件对象会放到缓存池中，下次直接从对象池中取。最后，就是拿到与事件相关的元素实例和回调函数。
+事件被触发后：
+- 冒泡到document处，找到触发的dom和对应的react component
+- 当前触发的事件会被加入batchedUpdates批处理队列中
+- 在事件队列中，事件分发的核心handleTopLevel保证了子元素在父元素前面（此处分析的是trapBubbledEvent）。
+- 事件执行的时候，首先找到合适的plugin（v16版本有5种）构造对应的合成事件，第一次触发new 创建的事件对象会放到缓存池中，下次直接从对象池中取。
+- 最后，就是拿到与事件相关的元素实例和回调函数。
+
 #### onClickCapture
 如果想要注册捕获事件，可以使用onClickCapture。但React的合成事件都是统一注册在document元素上的，且只有冒泡阶段，但合成事件会区分捕获和冒泡两种类型，来保证合成事件的执行顺序。此外，**原生事件的执行都会早于合成事件的执行**，因为合成事件都要等到事件冒泡到document上，才会执行。
 执行顺序是：原生捕获事件 -> 原生事件冒泡 -> 合成事件捕获 -> 合成事件冒泡 
+
 
 
 ### react 源码
@@ -209,3 +181,7 @@ let list = [xxx];
 - 提高diff的效率
 - 避免就地复用
 
+## 完全受控组件 & 完全非受控组件
+为了避免外部props覆盖掉内部state的变化
+- 完全受控组件：子组件没有state，值的获取和修改都交给父组件去处理
+- 完全非受控组件：子组件维护自己的state，props值只用来初始化state，给子组件添加key值，当props发生变化的时候，修改子组件的key值，会重新创建一个子组件而不是更新已有的子组件
