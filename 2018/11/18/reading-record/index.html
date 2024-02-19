@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>reading-record | lying fox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="你的Tree-Shaking并没什么卵用Tree-Shaking作用：消除无用的js代码 与传统的DCE(dead code elimination)区别：DCE是消灭不可能执行的代码，而Tree-shaking更关注于消除没有用到的代码Tree-Shaking的原理 ES6模块依赖关系是确定的，和运行时的状态无关，可以进行可靠的静态分析，故而可以在编译时正确判断到底加载了什么代码。 es6 mo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="reading-record">
+<meta property="og:url" content="https://sherrywu0917.github.io/2018/11/18/reading-record/index.html">
+<meta property="og:site_name" content="lying fox">
+<meta property="og:description" content="你的Tree-Shaking并没什么卵用Tree-Shaking作用：消除无用的js代码 与传统的DCE(dead code elimination)区别：DCE是消灭不可能执行的代码，而Tree-shaking更关注于消除没有用到的代码Tree-Shaking的原理 ES6模块依赖关系是确定的，和运行时的状态无关，可以进行可靠的静态分析，故而可以在编译时正确判断到底加载了什么代码。 es6 mo">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2024-02-19T04:51:45.053Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="reading-record">
+<meta name="twitter:description" content="你的Tree-Shaking并没什么卵用Tree-Shaking作用：消除无用的js代码 与传统的DCE(dead code elimination)区别：DCE是消灭不可能执行的代码，而Tree-shaking更关注于消除没有用到的代码Tree-Shaking的原理 ES6模块依赖关系是确定的，和运行时的状态无关，可以进行可靠的静态分析，故而可以在编译时正确判断到底加载了什么代码。 es6 mo">
+  
+    <link rel="alternate" href="/atom.xml" title="lying fox" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">lying fox</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://sherrywu0917.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-reading-record" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/11/18/reading-record/" class="article-date">
+  <time datetime="2018-11-18T02:49:49.000Z" itemprop="datePublished">2018-11-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      reading-record
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="你的Tree-Shaking并没什么卵用"><a href="#你的Tree-Shaking并没什么卵用" class="headerlink" title="你的Tree-Shaking并没什么卵用"></a><a href="https://juejin.im/post/5a5652d8f265da3e497ff3de#comment" target="_blank" rel="noopener">你的Tree-Shaking并没什么卵用</a></h2><h3 id="Tree-Shaking作用：消除无用的js代码"><a href="#Tree-Shaking作用：消除无用的js代码" class="headerlink" title="Tree-Shaking作用：消除无用的js代码"></a>Tree-Shaking作用：消除无用的js代码</h3><ul>
+<li>与传统的DCE(dead code elimination)区别：DCE是消灭不可能执行的代码，而Tree-shaking更关注于消除没有用到的代码<h3 id="Tree-Shaking的原理"><a href="#Tree-Shaking的原理" class="headerlink" title="Tree-Shaking的原理"></a>Tree-Shaking的原理</h3></li>
+<li>ES6模块依赖关系是确定的，和运行时的状态无关，可以进行可靠的静态分析，故而可以在编译时正确判断到底加载了什么代码。<ul>
+<li>es6 module可以进行tree-shaking，require不可以，因为commonJS规范是在运行时才确定依赖关系</li>
+</ul>
+</li>
+<li>分析程序流，判断哪些变量未被使用、引用，进而删除此代码<br>tree-shaking对函数效果较好，但是不能消除无用的类，因为动态语言的特性，判断类的方法是否有被使用，比较困难。</li>
+</ul>
+<p>但现实比较骨感，es6的代码经过babel和webpack编译打包后，产生的副作用(可能会改变外部变量)导致多余的代码并未被删掉。<br>babel6在编译的时候，会调用_createClass方法，使用Object.defineProperty去定义类里面的方法，原因是因为在es6的特性中，类里面声明的方法是不可枚举的。所以设置<code>{ &quot;loose&quot;: false }</code>宽松模式，让babel编译的时候不必去严格遵循es6的特性。<br>此外，UglifyJS不会进行程序流分析，所以在压缩的时候无法排除掉可能有副作用的代码，所以这部分代码还是会被打包进去。<br>使用babel6/webpack打包可以考虑结合使用<code>BabelMinifyWebpackPlugin</code>，思路是先进行uglifyJS代码压缩，再去编译。</p>
+<blockquote>
+<p>评论中指出：关于Person和Apple阐述Babel副作用的例子在Babel升级到Babel7之后确实已经不存在了，使用Babel7的正式版和Webpack4亲测。</p>
+</blockquote>
+<h2 id="http2-0-相比-1-0有哪些重大改进？"><a href="#http2-0-相比-1-0有哪些重大改进？" class="headerlink" title="http2.0 相比 1.0有哪些重大改进？"></a><a href="https://www.zhihu.com/question/34074946" target="_blank" rel="noopener">http2.0 相比 1.0有哪些重大改进？</a></h2><ol>
+<li>多路复用<br>多路复用允许同时通过单一的 HTTP/2 连接发起多重的请求-响应消息。可以很容易的去<strong>实现多流并行而不用依赖建立多个 TCP 连接</strong>，HTTP/2 把 HTTP 协议通信的基本单位缩小为一个一个的帧，这些帧对应着逻辑流中的消息。<br>好处：</li>
+</ol>
+<ul>
+<li>并行地在同一个 TCP 连接上。http2.0让所有数据流共用一个连接，有效地使用TCP连接，减少服务端的链接压力，内存占用更少，实现高带宽。</li>
+<li>减少了TCP慢启动的时间。</li>
+<li>可以变相的解决浏览器针对同一域名的请求限制阻塞问题。因为浏览器在同一时间针对同一域名下的请求有一定数量的限制，不同浏览器限制的数量不一样。</li>
+</ul>
+<ol start="2">
+<li><p>二进制分帧<br>http2.0在应用层和传输层之间增加了一个二进制分帧层，在该层中，会将传输信息分割成更小的消息和帧。将http1.x的头部信息封装在到了HEADER frame，相应的Request Body封装到DATA frame中。<br>好处：识别这3部分就要做协议解析，http1.x的解析是基于文本。基于文本协议的格式解析存在天然缺陷，文本的表现形式有多样性，要做到健壮性考虑的场景必然很多，二进制则不同，只认0和1的组合。基于这种考虑http2.0的协议解析决定采用二进制格式，实现方便且健壮。</p>
+<a id="more"></a>
+</li>
+<li><p>首部压缩<br>支持首部压缩，使用了HPACK算法，减少了传输的header大小。客户端和服务器维护同一张头信息表，头部字段都会存入该表，之后只需要传对应的索引即可，避免了header的重复传输。</p>
+</li>
+<li><p>服务端推送<br>服务器可以向客户端推送可能需要的资源，对一个请求发送多个响应。</p>
+<blockquote>
+<p>「如果客户端早已在缓存中有了一份 copy 怎么办？」<br>一个推荐的解决方案是，客户端使用一个简洁的 Cache Digest 来告诉服务器，哪些已经在缓存中存在。</p>
+</blockquote>
+</li>
+<li><p>设置资源的优先级<br>浏览器可以一次请求多个资源，指定一些优先级信息来帮助确定应该如何处理这些资源，然后等待服务器发回所有数据，而不是一次请求一个。如果浏览器和服务器都支持优先级，则应使用浏览器指定的规则并使用所有可用带宽来传递资源，而不会有资源之间的相互竞争。</p>
+</li>
+</ol>
+<p>支持http2.0的前提是使用了SSL/TLS9(安全传输层协议)，如果网站没有使用SSL/TLS，接入http2.0协议带来的性能提升大致可以被TLS带来的性能损耗所抵消。</p>
+<h3 id="http1-x"><a href="#http1-x" class="headerlink" title="http1.x"></a>http1.x</h3><p>线程阻塞，在同一时间，同一域名的请求有一定数量限制，超过限制数目的请求会被阻塞.</p>
+<h4 id="http1-0"><a href="#http1-0" class="headerlink" title="http1.0"></a>http1.0</h4><p>每次TCP连接，只能提供一次request和response的响应，结束自动断开</p>
+<h4 id="http1-1"><a href="#http1-1" class="headerlink" title="http1.1"></a>http1.1</h4><p>支持长连接(Response Headers头中出现Connection:keep-alive)，但服务器对请求的响应是串行进行的，只有处理完上一次请求之后，才会去处理下一个请求。</p>
+<h3 id="https"><a href="#https" class="headerlink" title="https"></a>https</h3><ul>
+<li>ssl安全协议：https在http的基础上增加了SSL(Secure Sockets Layer)层，对HTTP协议传输的数据进行加密</li>
+<li>ca证书：https需要申请ca证书</li>
+<li>端口：http端口80，https端口443</li>
+<li>所属层：http基于应用层，https一般说是位于应用层和传输层之间<h4 id="https建立连接"><a href="#https建立连接" class="headerlink" title="https建立连接"></a>https建立连接</h4></li>
+</ul>
+<ol>
+<li>服务器先从认证机构申请数字证书</li>
+<li>浏览器访问网站，发送支持的加密协议</li>
+<li>服务器筛选出合适的加密协议</li>
+<li>服务器返回数字证书，证书中有密钥</li>
+<li>浏览器利用内置的顶级证书验证CA证书的正确性，解析服务器返回的数字证书得到服务器的公钥。</li>
+<li>浏览器生成一个对称加密的密钥，再使用服务器的公钥进行加密后，将加密后的密钥发送给服务器，</li>
+<li>服务器使用私钥解密，得到对称加密的密钥，使用该密钥加密数据发送给浏览器端</li>
+<li>浏览器端解密数据，SSL开始通信</li>
+</ol>
+<h3 id="websocket"><a href="#websocket" class="headerlink" title="websocket"></a>websocket</h3><ul>
+<li>全双工通信，可以在浏览器中使用</li>
+<li>借用了http的协议完成握手，然后再转为WebSocket（基于TCP协议，但本身属于应用层协议）</li>
+<li>建立长连接 </li>
+</ul>
+<h3 id="OSI七层网络模型"><a href="#OSI七层网络模型" class="headerlink" title="OSI七层网络模型"></a>OSI七层网络模型</h3><p>应用层 表示层 会话层 传输层 网络层 数据链路层 物理层</p>
+<h3 id="TCP四层模型"><a href="#TCP四层模型" class="headerlink" title="TCP四层模型"></a>TCP四层模型</h3><p>应用层 传输层（TCP/UDP） 网络层 数据链路层</p>
+<p><a href="https://www.mnot.net/talks/h2fe/" target="_blank" rel="noopener">https://www.mnot.net/talks/h2fe/</a><br><a href="https://www.w3ctech.com/topic/1563#tip7sharding" target="_blank" rel="noopener">https://www.w3ctech.com/topic/1563#tip7sharding</a><br><a href="https://juejin.im/post/5c1d9b8ae51d4559746922de" target="_blank" rel="noopener">https://juejin.im/post/5c1d9b8ae51d4559746922de</a></p>
+<h2 id="xss攻击"><a href="#xss攻击" class="headerlink" title="xss攻击"></a>xss攻击</h2><p>例如：<a href="http://xxx/search?keyword=&quot;&gt;" target="_blank" rel="noopener">http://xxx/search?keyword=&quot;&gt;</a><script>alert(‘XSS’);</script><br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">value</span>=<span class="string">"&lt;%= getParameter("</span><span class="attr">keyword</span>") %&gt;</span>"&gt;</span><br><span class="line"></span><br><span class="line">// 参数拼接后</span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">value</span>=<span class="string">""</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript">alert(<span class="string">'XSS'</span>);</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>"&gt;</span><br></pre></td></tr></table></figure></p>
+<p>跨站脚本攻击（Cross-site scripting），分为存储型(存储到数据库中)、反射型(网站服务端将恶意代码从URL中取出，拼接在HTML中返回给浏览器)和Dom型(前端浏览器拼接并执行)，需要前端处理的是Dom型。<br>预防：</p>
+<ul>
+<li>合适的HTML转义，完善的转义库需要针对上下文制定多种规则，例如 HTML 属性、HTML 文字内容、HTML 注释、跳转链接、内联 JavaScript 字符串、内联 CSS 样式表等等</li>
+<li>利用模板引擎 开启模板引擎自带的 HTML 转义功能</li>
+<li>避免内联事件 尽量不要使用 onLoad=”onload(‘‘)”</li>
+<li>避免拼接 HTML</li>
+<li>时刻保持警惕 在插入位置为 DOM 属性、链接等位置时</li>
+<li>增加攻击难度，降低攻击后果 通过 CSP（Content Security Policy，禁止外域等等）、输入长度配置、接口安全措施等方法，增加攻击的难度，降低攻击的后果</li>
+<li>主动检测和发现 可使用 XSS 攻击字符串和自动扫描工具寻找潜在的 XSS 漏洞</li>
+</ul>
+<p>可以手动拼接字符串<code>jaVasCript:/*-/*</code>/<em>`/</em>‘/<em>“/**/(/</em> */oNcliCk=alert() )//%0D%0A%0d%0a//&lt;/stYle/&lt;/titLe/&lt;/teXtarEa/&lt;/scRipt/–!&gt;\x3csVg/&lt;sVg/oNloAd=alert()//&gt;\x3e`去检查</p>
+<h2 id="position-fixed"><a href="#position-fixed" class="headerlink" title="position:fixed"></a>position:fixed</h2><p>position:fixed 的元素将相对于屏幕视口（viewport）的位置来指定其位置。并且元素的位置在屏幕滚动时不会改变。<br><strong>但是当元素祖先的 transform 属性非 none 时，容器由视口改为该祖先。</strong><br>设置为position:fixed的元素，如果存在transform为非none的元素祖先时，会相对该元素去进行定位。因为transform设置为非none时，会创建一个堆叠上下文和包含块，会影响子元素的固定定位。<br>不是所有的创建新的堆叠上下文都会影响fixed定位，在最新的Chrome浏览器下，只有下面3种还会影响：</p>
+<ul>
+<li>设置了 transform-style: preserve-3d 的元素</li>
+<li>perspective 值不为 none 的元素</li>
+<li>在 will-change 中指定了任意 CSS 属性<br>但不同浏览器表现不同，所以要具体问题具体分析。</li>
+</ul>
+<h2 id="vm-wh"><a href="#vm-wh" class="headerlink" title="vm wh"></a>vm wh</h2><p>显示器宽度: screen.width<br>浏览器宽度: window.outerWidth<br>网页宽度: window.innerWidth</p>
+<p>wm wh是相对与网页的宽高的，网页的宽为100vm，网页的高度为100vh</p>
+<h2 id="事件捕获-冒泡"><a href="#事件捕获-冒泡" class="headerlink" title="事件捕获 冒泡"></a>事件捕获 冒泡</h2><ul>
+<li>对于非target节点则先执行捕获在执行冒泡</li>
+<li>对于target节点则是先执行先注册的事件，无论冒泡还是捕获<br>A超链接上的onclick事件会先于href执行，可以联想到通常会在click事件中去阻止冒泡或者默认事件。</li>
+</ul>
+<h2 id="http协议"><a href="#http协议" class="headerlink" title="http协议"></a>http协议</h2><p>1xx 消息<br>2xx 成功</p>
+<h3 id="3xx-重定向"><a href="#3xx-重定向" class="headerlink" title="3xx 重定向"></a>3xx 重定向</h3><ul>
+<li><p>301 Moved Permanently 永久重定向</p>
+<ul>
+<li>在请求的 URL 已被移除时使用。响应的 Location 首部中应该包含 资源现在所处的 URL。</li>
+<li>默认是缓存的</li>
+</ul>
+</li>
+<li><p>302 Found 临时重定向</p>
+<ul>
+<li>与 301 状态码类似；但是，客户端应该使用 Location 首部给出的 URL 来临时定位资源。将来的请求仍应使用老的 URL。</li>
+<li>默认不缓存，除非设置了Cache-Control或Expires</li>
+</ul>
+</li>
+<li><p>303 See Other 临时重定向</p>
+<ul>
+<li>303 是为了区分302而存在的。</li>
+<li>虽然 RFC 1945 和 RFC 2068 规范不允许客户端在重定向时改变请求的方法，但是很多现存的浏览器在收到302响应时，直接使用GET方式访问在Location中规定的URI，而无视原先请求的方法。因此状态码303被添加了进来，用以明确服务器期待客户端进行何种反应。重定向到新地址时，客户端必须使用GET方法请求新地址。</li>
+</ul>
+</li>
+<li><p>307 Temporary Redirect 临时重定向</p>
+<ul>
+<li>这个状态码和302相似，有一个唯一的区别是不允许将请求方法从post改为get。</li>
+<li>默认不缓存，除非设置了Cache-Control或Expires</li>
+</ul>
+</li>
+<li><p>308 Permanent Redirect 永久重定向</p>
+<ul>
+<li>此状态码类似于301（永久移动），但不允许更改从POST到GET的请求方法。</li>
+<li>默认是缓存的 </li>
+</ul>
+</li>
+<li><p>304 Not modified</p>
+</li>
+</ul>
+<h3 id="4xx-客户端错误"><a href="#4xx-客户端错误" class="headerlink" title="4xx 客户端错误"></a>4xx 客户端错误</h3><ul>
+<li>400 Bad Request 请求出现语法错误。</li>
+<li>401 Unauthorized 访问被拒绝，客户试图未经授权访问受密码保护的页面。</li>
+<li>403 Forbidden 资源不可用。服务器理解客户的请求，但拒绝处理它</li>
+<li>405 Method not allowed</li>
+</ul>
+<h3 id="5xx-服务端错误"><a href="#5xx-服务端错误" class="headerlink" title="5xx 服务端错误"></a>5xx 服务端错误</h3><ul>
+<li>500 Internal server error 服务器遇到了意料不到的情况，不能完成客户的请求</li>
+<li>502 Bad gateway  服务器作为网关或者代理时，为了完成请求访问下一个服务器，但该服务器返回了非法的应答。</li>
+<li>503 Service Unavailable 服务不可用，服务器由于维护或者负载过重未能应答。</li>
+<li>504 Gateway timeout 网关超时，由作为代理或网关的服务器使用，表示不能及时地从远程服务器获得应答。</li>
+</ul>
+<h2 id="浏览器渲染页面的过程"><a href="#浏览器渲染页面的过程" class="headerlink" title="浏览器渲染页面的过程"></a>浏览器渲染页面的过程</h2><h3 id="请求加载页面的主要流程"><a href="#请求加载页面的主要流程" class="headerlink" title="请求加载页面的主要流程"></a>请求加载页面的主要流程</h3><ol>
+<li>输入URL</li>
+<li>确认是否使用本地缓存<ul>
+<li>Expires: 服务器时间，客户端时间可能和服务器时间不一致，所以不准；</li>
+<li>cache-control:max-age=484200 在这个时间内缓存有效；</li>
+</ul>
+</li>
+<li>DNS查询：根据域名查出IP地址</li>
+<li>建立TCP连接，三次握手</li>
+<li>发出HTTP请求</li>
+<li>服务端响应<ul>
+<li>本地缓存过期后，向服务器询问缓存是否真的过期了，带上if-modified-since和Etag(Etag资源的实体标识，更准确)，如果缓存未过期，返回304</li>
+</ul>
+</li>
+<li>如果可以缓存，会被存储起来</li>
+<li>客户端渲染</li>
+<li>关闭或继续保持TCP连接，断开连接需要四次挥手(client:fin server: ack server: fin client: ack)</li>
+</ol>
+<h3 id="为什么断开连接需要四次挥手"><a href="#为什么断开连接需要四次挥手" class="headerlink" title="为什么断开连接需要四次挥手"></a>为什么断开连接需要四次挥手</h3><ul>
+<li>client端发FIN报文</li>
+<li>server端返回ACK确认（为什么没有一起返回FIN，因为server端此时可能还有数据需要发送，所以需要等server端把数据发送完毕后，再去发送FIN报文关闭连接）</li>
+<li>server端发FIN报文</li>
+<li><p>client端返回ACK确认</p>
+<h3 id="call和apply的作用和区别"><a href="#call和apply的作用和区别" class="headerlink" title="call和apply的作用和区别"></a>call和apply的作用和区别</h3><ul>
+<li>函数</li>
+<li>改变方法执行的上下文</li>
+<li>call是传多个参数，apply是传入参数数组<h4 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h4></li>
+<li>Array.prototype.slice.call([类数组])，将类数组如arguments、NodeList转为数组</li>
+<li>应用Object.prototype.toString.call([obj])去判断具体的类型[object Type] Type可以为Boolean，String，Object，Array，Set等等</li>
+<li>获取数组最大值，Math.prototype.max.apply(Math, [3, 4, 5])</li>
+<li>合并数组，Array.prototype.push.apply(arr1, arr2)</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"><span class="meta">    'use strict'</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;).call(<span class="literal">null</span>); <span class="comment">// null</span></span><br><span class="line"></span><br><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;).call(<span class="literal">null</span>); <span class="comment">// 非严格模式下，null和undefined会被替换为全局变量，通常情况下是window</span></span><br></pre></td></tr></table></figure>
+<p>this的指向</p>
+<ul>
+<li>new, this指向的是创建的实例对象</li>
+<li>call, apply, bind</li>
+<li>obj.foo()</li>
+<li>默认绑定。如果在严格模式下，则绑定到 undefined，否则绑定到全局对象。</li>
+<li><p>箭头函数没有自己的 this, 它的this继承于上一层代码块的this。</p>
+<h3 id="websocket-全双工通信"><a href="#websocket-全双工通信" class="headerlink" title="websocket 全双工通信"></a>websocket 全双工通信</h3><h3 id="webworker-多线程"><a href="#webworker-多线程" class="headerlink" title="webworker 多线程"></a>webworker 多线程</h3><p>作用：可以另开子线程，处理复杂数据的计算<br><strong>注意点</strong></p>
+<ul>
+<li>同源限制：分配给 Worker 线程运行的脚本文件，必须与主线程的脚本文件同源。</li>
+<li>DOM 限制：Worker 线程所在的全局对象，与主线程不一样，无法读取主线程所在网页的 DOM 对象，也无法使用document、window、parent这些对象。但是，Worker 线程可以navigator对象和location对象。</li>
+<li>通信联系：Worker 线程和主线程不在同一个上下文环境，它们不能直接通信，必须通过消息完成。</li>
+<li>脚本限制：Worker 线程不能执行alert()方法和confirm()方法，但可以使用 XMLHttpRequest 对象发出 AJAX 请求。</li>
+<li>文件限制：Worker 线程无法读取本地文件，即不能打开本机的文件系统（file://），它所加载的脚本，必须来自网络。<h4 id="海量数据的渲染"><a href="#海量数据的渲染" class="headerlink" title="海量数据的渲染"></a>海量数据的渲染</h4></li>
+<li>setTimeout/requestAnimationFrame分批处理</li>
+<li>虚拟滚动列表</li>
+</ul>
+</li>
+</ul>
+<h3 id="跨域"><a href="#跨域" class="headerlink" title="跨域"></a>跨域</h3><ul>
+<li>JSONP: 利用script标签不受跨域的限制，只支持get请求<ul>
+<li>client端：构建script，发起跨域get请求，在url上拼接上参数和callback</li>
+<li>server端：响应请求，将结果作为callback的参数（需要对json对象序列化），并返回callback函数的代码：<ul>
+<li><code>callback({params: xxx})</code></li>
+<li>序列化与反序列化：主要解决的是数据的一致性问题，数据需要序列化以后才能在服务端和客户端之间传输</li>
+</ul>
+</li>
+<li>浏览器会执行callback函数，并传递解析后json对象作为参数</li>
+</ul>
+</li>
+<li><p>代理请求方式解决接口跨域问题：node.js代理请求，nginx反向代理接口跨域</p>
+</li>
+<li><p>postMessage：允许与其他窗口（或iframe）互相通信</p>
+</li>
+<li><p>document.domain和iframe，如果两个页面的主域名相同，则还可以通过设置 document.domain 属性将它们认为是同源的。</p>
+<ul>
+<li>父页面通过ifr.contentWindow就可以访问子页面的window，子页面通过window.parent或parent访问父页面的window</li>
+</ul>
+</li>
+<li><p>location.hash + iframe跨域</p>
+</li>
+<li><p>使用CORS(Cross-origin resource sharing)协议: CORS需要浏览器和服务器同时支持。服务端设置 Access-Control-Allow-Origin：* ，客户端设置是否发送cookie，例如XMLHttpRequest的withCredentials，fetch请求的credentials: ‘same-origin’, mode: ‘cors’；</p>
+<ul>
+<li>浏览器端会在Request Headers中新增一个origin字段</li>
+<li>默认不发送cookie和http认证</li>
+<li>服务器端设置Access-Control-Allow-Credentials：允许前端带认证cookie，启用此项后，上面的域名不能为’*’，必须指定具体的域名，否则浏览器会提示</li>
+<li>区分简单请求和复杂请求，复杂请求在正式发出请求之前会有一次预检（预检有效期内只会发出一次预检）<h4 id="跨域资源共享标准（-cross-origin-sharing-standard-）允许在下列场景中使用跨域-HTTP-请求："><a href="#跨域资源共享标准（-cross-origin-sharing-standard-）允许在下列场景中使用跨域-HTTP-请求：" class="headerlink" title="跨域资源共享标准（ cross-origin sharing standard ）允许在下列场景中使用跨域 HTTP 请求："></a>跨域资源共享标准（ cross-origin sharing standard ）允许在下列场景中使用跨域 HTTP 请求：</h4></li>
+</ul>
+</li>
+<li>前文提到的由 XMLHttpRequest 或 Fetch 发起的跨域 HTTP 请求。</li>
+<li>eb 字体 (CSS 中通过 @font-face 使用跨域字体资源), 因此，网站就可以发布 TrueType 字体资源，并只允许已授权网站进行跨站调用。</li>
+<li>WebGL 贴图</li>
+<li>使用 drawImage 将 Images/video 画面绘制到 canvas</li>
+</ul>
+<h3 id="跨标签页通信"><a href="#跨标签页通信" class="headerlink" title="跨标签页通信"></a>跨标签页通信</h3><ul>
+<li><p>window.open 和 postMessage</p>
+<ul>
+<li>当指定<code>window.open</code>的第二个name参数时，再次调用<code>window.open(&#39;****&#39;, &#39;child&#39;)</code>会使之前已经打开的同name子页面刷新</li>
+<li>由于安全策略，异步请求之后再调用<code>window.open</code>会被浏览器阻止，不过可以通过句柄设置子页面的url即可实现类似效果<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 首先先开一个空白页</span></span><br><span class="line"><span class="keyword">const</span> tab = <span class="built_in">window</span>.open(<span class="string">'about:blank'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 请求完成之后设置空白页的url</span></span><br><span class="line">fetch(<span class="comment">/* ajax */</span>).then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    tab.location.href = <span class="string">'**url**'</span>;</span><br><span class="line">    tab.postMessage(<span class="string">'msg'</span>, <span class="string">'**origin**'</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>localStorage 与监听 window.onstorage，event对象包括key、oldValue、newValue等参数</p>
+</li>
+<li>cookie </li>
+<li>sessionStorage</li>
+<li>借助server</li>
+</ul>
+<h3 id="判断是否是数组"><a href="#判断是否是数组" class="headerlink" title="判断是否是数组"></a>判断是否是数组</h3><ul>
+<li>[] instanceof Array</li>
+<li>[].<strong>proto</strong> == Array.prototype</li>
+<li>[].constructor == Array // constructor可以修改</li>
+<li>Object.prototype.toString.call([]) == ‘[object Array]’</li>
+<li>Array.isArray([])</li>
+</ul>
+<p>对于自定义的类A，修改了A.prototype后，修改原型之前创建的实例的原型链不会发生改变。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">A</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> a = <span class="keyword">new</span> A();</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">B</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">A.prototype = B.prototype;</span><br><span class="line">a <span class="keyword">instanceof</span> A <span class="comment">//false</span></span><br><span class="line">a.__proto__ == A.prototype <span class="comment">//false</span></span><br></pre></td></tr></table></figure></p>
+<p>因为instanceof是在原型链上查找的，所以instanceof和<strong>proto</strong>判断实例的方式都是false</p>
+<h4 id="类数组-vs-数组"><a href="#类数组-vs-数组" class="headerlink" title="类数组 vs 数组"></a>类数组 vs 数组</h4><p>类数组有arguments、Dom对象列表(NodeList)、带length属性的对象（如：{1: ‘mon’, 3: ‘wed’, length: 4}）<br><strong>类数组转成数组</strong></p>
+<ul>
+<li>Array.prototype.slice.call(arrayLike)</li>
+<li>[…arrayLike]</li>
+<li>Array.from(arrayLike)<br>转为数组后就可以使用数组众多的方法，例如map、filter、slice、join、reduce、sort等等。</li>
+</ul>
+<h2 id="let-const"><a href="#let-const" class="headerlink" title="let const"></a>let const</h2><ul>
+<li>不存在变量提升</li>
+<li><p>暂时性死区<br>如果使用了let、const，则该区域会形成一个封闭的作用域，在变量tmp使用let声明之前使用，都会报错，但如果一个变量根本没有被声明，反而不会报错。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">  <span class="keyword">typeof</span> tmp; <span class="comment">// Uncaught ReferenceError: tmp is not defined</span></span><br><span class="line">  <span class="keyword">typeof</span> undeclared_var;  <span class="comment">//'undefined'</span></span><br><span class="line">  <span class="keyword">let</span> tmp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>不允许重复声明</p>
+</li>
+<li>块级作用域<br>ES5中只有全局作用域和函数作用域，ES6新增了块级作用域，let和const只在声明的块级作用域中有效。</li>
+</ul>
+<h3 id="函数的执行上下文"><a href="#函数的执行上下文" class="headerlink" title="函数的执行上下文"></a>函数的执行上下文</h3><p>1、创建阶段【当函数被调用，但未执行任何其内部代码之前】</p>
+<ul>
+<li>创建作用域链（Scope Chain）</li>
+<li>创建顺序：函数的形参==&gt;&gt;函数声明==&gt;&gt;变量声明</li>
+<li>求”this“的值</li>
+</ul>
+<p><strong>函数的声明比变量优先级要高，并且定义过程不会被变量覆盖，除非是赋值</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo3</span>(<span class="params">a</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> a = <span class="number">10</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">    <span class="built_in">console</span>.log(a)</span><br><span class="line">&#125;</span><br><span class="line">foo3(<span class="number">20</span>) <span class="comment">//'10' 创建变量的顺序是 形参a, function a()&#123;&#125;, var a;执行的顺序是 a=10; console</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo3</span>(<span class="params">a</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> a </span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">    <span class="built_in">console</span>.log(a)</span><br><span class="line">&#125;</span><br><span class="line">foo3(<span class="number">20</span>) <span class="comment">//'function a()&#123;&#125;' 创建变量的顺序是 形参a, function a()&#123;&#125;, var a;执行的顺序是 console</span></span><br></pre></td></tr></table></figure></p>
+<p>2、执行阶段</p>
+<ul>
+<li>在当前上下文上运行/解释函数代码，并随着代码一行行执行指派变量的值。</li>
+</ul>
+<h3 id="BFC-Block-Formatting-Context"><a href="#BFC-Block-Formatting-Context" class="headerlink" title="BFC(Block Formatting Context)"></a>BFC(Block Formatting Context)</h3><p>BFC是一个独立的渲染区域，内部的元素遵循一定的规则去布局，<strong>不会影响外部元素也不会被外部元素影响</strong>。</p>
+<h4 id="生成BFC"><a href="#生成BFC" class="headerlink" title="生成BFC"></a>生成BFC</h4><ul>
+<li>根元素</li>
+<li>oveflow不为visible</li>
+<li>float不为none</li>
+<li>绝对定位absolute和fixed</li>
+<li>flex元素和直接子元素</li>
+<li>display: inline-block、table-cell、table-caption</li>
+<li>grid元素和直接子元素</li>
+<li>display：table也认为可以生成BFC，其实这里的主要原因在于Table会默认生成一个匿名的table-cell，正是这个匿名的table-cell生成了BFC</li>
+<li>display 值为 flow-root 的元素</li>
+</ul>
+<h4 id="BFC布局规则"><a href="#BFC布局规则" class="headerlink" title="BFC布局规则"></a>BFC布局规则</h4><ol>
+<li>每个元素的margin box的左边，与包含块border box的左边相接触(对于从左往右的格式化，否则相反)。即使存在浮动也是如此。</li>
+<li>BFC的区域不会与float box重叠。（结合1、2，实现两栏布局|三栏布局）</li>
+<li>同一个BFC中相邻的box在垂直方向上的margin会合并 （外边距折叠）</li>
+<li>内部的box会在垂直方向上一个接一个放置</li>
+<li>计算BFC的高度时，浮动元素也参与计算（可以参考清除浮动前，外部元素的高度没有被撑起来）</li>
+</ol>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><ul>
+<li>清除浮动就是创建了一个新的BFC来包含浮动元素（oveflow:hidden/auto）<ul>
+<li>因为BFC的特性，内部元素不应该影响外部元素布局，所以将浮动元素包含进来</li>
+</ul>
+</li>
+<li>属于同一BFC的两块级元素的外边距会折叠<ul>
+<li>相邻元素之间</li>
+<li>父元素与第一个或最后一个子元素</li>
+<li>空的块级元素上下边距会折叠</li>
+</ul>
+</li>
+</ul>
+<h3 id="cookie、sessionStorage与localStorage"><a href="#cookie、sessionStorage与localStorage" class="headerlink" title="cookie、sessionStorage与localStorage"></a>cookie、sessionStorage与localStorage</h3><ul>
+<li>cookie 4k 设置过期时间 每次http请求都会带上cookie 设置httponly的无法被js读取</li>
+<li>sessionStorage 5M 永久 仅在客户端</li>
+<li>localStorage  5M 会话期间 仅在客户端</li>
+</ul>
+<h3 id="盒模型"><a href="#盒模型" class="headerlink" title="盒模型"></a>盒模型</h3><p>margin, border, padding，content </p>
+<ul>
+<li>IE的怪异盒模型 盒子的总宽度 = margin + css设置的width  对应box-sizing的border-box</li>
+<li>标准盒模型 盒子的总宽度 = margin + border + padding + css设置的width  对应box-sizing的content-box<br><strong>应用</strong>：百分比的布局，在不同状态之间切换的button等</li>
+</ul>
+<h3 id="css选择器优先级"><a href="#css选择器优先级" class="headerlink" title="css选择器优先级"></a>css选择器优先级</h3><ul>
+<li>从高到低：<ul>
+<li>内联样式</li>
+<li>ID 选择器（例如，#example）</li>
+<li>类选择器 (例如，.example)，属性选择器（例如，[type=”radio”]）和伪类（例如，:hover，:first-child）</li>
+<li>类型选择器 (例如，div)，伪元素（例如，::after ::before）(除了before和after其他常见的都是伪类)</li>
+</ul>
+</li>
+<li>!important 例外规则：此声明将覆盖任何其他声明</li>
+</ul>
+<h3 id="flex弹性布局"><a href="#flex弹性布局" class="headerlink" title="flex弹性布局"></a>flex弹性布局</h3><p>有水平的主轴和垂直的交叉轴</p>
+<ul>
+<li>flex-direction</li>
+<li>flex-wrap 排列不下时如何换行</li>
+<li>flex-flow: [direction] [wrap]</li>
+<li>justify-content</li>
+<li>align-Items</li>
+<li>align-content: 当有多根主轴时，即item不止一行的时候，多行在交叉轴上的对齐方式<br>item的属性</li>
+<li>order 布局顺序</li>
+<li>flex-shrink: 收缩 默认为1，表示当空间不足时，item自动缩小</li>
+<li>flex-grow: 延伸 默认为0，即当有多余空间时也不放大</li>
+<li>flex-basis: 项目在主轴上占据的空间，默认为auto，优先级比width|height高</li>
+<li>align-self: 允许item有自己独特的在交叉轴上的对齐方式，默认值为auto，与父元素的align-items的值一样</li>
+</ul>
+<h3 id="深拷贝的实现"><a href="#深拷贝的实现" class="headerlink" title="深拷贝的实现"></a>深拷贝的实现</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> toString = <span class="built_in">Object</span>.prototype.toString;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span>(<span class="params">origin</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> cloned = &#123;&#125;</span><br><span class="line">    <span class="keyword">let</span> cls = toString.call(origin)</span><br><span class="line">    <span class="keyword">if</span>(cls == <span class="string">'[object Date]'</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> Ctor = origin.constructor</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Ctor(origin);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (cls == <span class="string">'[object Map]'</span>) &#123;</span><br><span class="line">        origin.forEach(<span class="function">(<span class="params">subValue, key</span>) =&gt;</span> &#123;</span><br><span class="line">            result.set(key, deepClone(subValue))</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (cls == <span class="string">'[object Set]'</span>) &#123;</span><br><span class="line">        origin.forEach(<span class="function">(<span class="params">subValue</span>) =&gt;</span> &#123;</span><br><span class="line">            cloned.add(deepClone(subValue))</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> origin == <span class="string">'object'</span> || <span class="keyword">typeof</span> origin == <span class="string">'array'</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">var</span> key <span class="keyword">in</span> origin) &#123;</span><br><span class="line">            cloned[key] = deepClone(origin[key]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        cloned = origin;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cloned;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="babel原理及插件开发"><a href="#babel原理及插件开发" class="headerlink" title="babel原理及插件开发"></a>babel原理及插件开发</h3><p>babel解析分为三步：</p>
+<ul>
+<li>使用@babel/parser解析器，根据estree规范构造AST语法树<ul>
+<li>默认支持最新的ECMAScript规范（ES2017）</li>
+<li>JSX Flow TypeScript</li>
+</ul>
+</li>
+<li>转换AST<ul>
+<li>根据一定的规则转换、修改AST（babel插件或者预置的stage-0，1，2，3，jsx等）</li>
+</ul>
+</li>
+<li>使用@babel/generator将AST转为code</li>
+</ul>
+<h3 id="stage-0"><a href="#stage-0" class="headerlink" title="stage-0"></a>stage-0</h3><ul>
+<li>transform-do-expressions 支持在react的jsx语法中使用if/else语句</li>
+<li>transform-function-bind 提供::去实现和bind一样的作用</li>
+</ul>
+<h3 id="stage-1"><a href="#stage-1" class="headerlink" title="stage-1"></a>stage-1</h3><ul>
+<li>transform-class-constructor-call</li>
+<li>transform-export-extensions</li>
+</ul>
+<h3 id="stage-2"><a href="#stage-2" class="headerlink" title="stage-2"></a>stage-2</h3><ul>
+<li>syntax-dynamic-import 可以解析动态import语法</li>
+<li>transform-class-properties 支持property（不在prototype上）和static的定义</li>
+<li>transform-decorators </li>
+</ul>
+<h3 id="stage-3"><a href="#stage-3" class="headerlink" title="stage-3"></a>stage-3</h3><ul>
+<li>syntax-trailing-function-commas 允许参数后添加逗号</li>
+<li>transform-object-reset-spread rest参数… 解构</li>
+<li>transform-async-generator-functions transform-async-to-generator 支持async和await语法</li>
+<li>transform-exponentiation-operator 通过**这个符号进行幂操作</li>
+</ul>
+<h3 id="webpack打包原理，loader原理"><a href="#webpack打包原理，loader原理" class="headerlink" title="webpack打包原理，loader原理"></a>webpack打包原理，loader原理</h3><h4 id="webpack构建流程"><a href="#webpack构建流程" class="headerlink" title="webpack构建流程"></a>webpack构建流程</h4><ul>
+<li>合并shell的参数和config.js配置的参数</li>
+<li>注册所有配置的插件，让插件监听webpack生命周期</li>
+<li>从entry入口开始解析文件，构建AST语法树，递归查找依赖</li>
+<li>根据loader配置的规则对文件进行处理</li>
+<li>递归完后得到每个文件的最终结果</li>
+<li>应用plugin插件扩展webpack的功能</li>
+<li>最后根据entry配置生成chunk，输出chunk<br>可以说一下持久化缓存的过程。<br>从 webpack2 开始，已经内置了对 ES6、CommonJS、AMD 模块化语句的支持。但不包括新的ES6语法转为ES5代码，这部分工作还是留给了babel及其插件。</li>
+</ul>
+<h3 id="技术栈以及遇到的问题"><a href="#技术栈以及遇到的问题" class="headerlink" title="技术栈以及遇到的问题"></a>技术栈以及遇到的问题</h3><p>React + React-Router + Sass + Rem + Webpack打包<br><strong>问题</strong></p>
+<ul>
+<li>资源同步问题 gitsubtree</li>
+<li>正文页历史滚动位置：正文页和从其他页面返回第一步都是onpopstate事件（只对pushState和replaceState的页面有效）拿到key值，但是从其他页面返回，页面会reload一下，reload之前（先判断key值是否存在于历史位置中）存下当前key值和posHistory[key]值，在页面reload后，再恢复位置。</li>
+<li>微信url返回问题</li>
+<li>二维码无法识别问题</li>
+<li>代码分片</li>
+</ul>
+<p><strong>其他</strong></p>
+<ul>
+<li>polyfill引入方式</li>
+</ul>
+<h3 id="如何提高webpack打包速度"><a href="#如何提高webpack打包速度" class="headerlink" title="如何提高webpack打包速度"></a>如何提高webpack打包速度</h3><ul>
+<li>热更新或热替换</li>
+<li>选择合适的devtool：sourceMap设置</li>
+<li>babel-loader开启缓存</li>
+<li>全局script标签引入react/react-dom等第三方库</li>
+<li>DllPlugin和DllReferencePlugin动态链接库</li>
+<li>提取公共代码</li>
+<li>使用HappyPack多进程打包构建</li>
+<li>优化打包文件路径配置，使用include和exclude</li>
+<li>ModuleConcatenationPlugin插件开启作用域提升：它将一些有联系的模块，放到一个闭包函数里面去，通过减少闭包函数数量从而加快JS的执行速度</li>
+<li>noParse：有时不需要解析某些模块的依赖（这些模块并没有依赖，或者并根本就没有模块化）</li>
+<li>异步加载</li>
+<li>只引入模块中的一部分</li>
+<li>如何提高UglifyJsPlugin的压缩速度<ul>
+<li>cache 设置缓存</li>
+<li>parallel 开启多进程并行压缩</li>
+<li>sourceMap 帮助定位问题，但是可以关闭提高压缩速度</li>
+</ul>
+</li>
+</ul>
+<h3 id="promise"><a href="#promise" class="headerlink" title="promise"></a>promise</h3><h4 id="错误catch问题"><a href="#错误catch问题" class="headerlink" title="错误catch问题"></a>错误catch问题</h4><ol>
+<li>将原本的callback形式的函数Promise化，然后通过promise.then(xxx).catch()去捕获异步操作中抛出的错误。</li>
+<li>在使用try/catch的时候，要配合async/await去使用，因为这样能保证异步函数的同步执行，这样能在try/catch方法中捕获异步函数中抛出的错误。</li>
+<li>跟传统的try/catch代码块不同的是，如果没有使用catch()方法指定错误处理的回调函数，Promise 对象抛出的错误不会传递到外层代码，即不会有任何反应。</li>
+</ol>
+<ul>
+<li>有一个提案<code>Promise.try</code>可以用来统一处理同步和异步请求，支持then和catch方法，catch可以捕获所有同步和异步的错误<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Promise</span>.try(<span class="function"><span class="params">()</span> =&gt;</span> database.users.get(&#123;<span class="attr">id</span>: userId&#125;))</span><br><span class="line">  .then(...)</span><br><span class="line">  .catch(...)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h4><ul>
+<li>实例方法： then, catch, finally</li>
+<li>静态方法： all, race, resolve, reject, allSettled<ul>
+<li>Promise.resolve([xxx]) 接收的参数可以是Promise实例、thenable对象、原始值、空，可以用来实现async函数</li>
+<li>allSettled是ES2020新增的，返回值状态始终是fulfilled<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> resolved = <span class="built_in">Promise</span>.resolve(<span class="number">42</span>);</span><br><span class="line"><span class="keyword">const</span> rejected = <span class="built_in">Promise</span>.reject(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> allSettledPromise = <span class="built_in">Promise</span>.allSettled([resolved, rejected]);</span><br><span class="line"></span><br><span class="line">allSettledPromise.then(<span class="function"><span class="keyword">function</span> (<span class="params">results</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(results);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 只有allSettled会返回对应promises对象的status</span></span><br><span class="line"><span class="comment">// [</span></span><br><span class="line"><span class="comment">//    &#123; status: 'fulfilled', value: 42 &#125;,</span></span><br><span class="line"><span class="comment">//    &#123; status: 'rejected', reason: -1 &#125;</span></span><br><span class="line"><span class="comment">// ]</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Generator-函数与-Promise-的结合"><a href="#Generator-函数与-Promise-的结合" class="headerlink" title="Generator 函数与 Promise 的结合"></a>Generator 函数与 Promise 的结合</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getFoo</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>)</span>&#123;</span><br><span class="line">    resolve(<span class="string">'foo'</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> g = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> foo = <span class="keyword">yield</span> getFoo();</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'1:'</span>, foo);</span><br><span class="line">    <span class="keyword">const</span> bar = <span class="keyword">yield</span> getFoo();</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'2'</span>, bar);</span><br><span class="line">  &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(e);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">run</span>(<span class="params">generator</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> gen = generator();</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">step</span>(<span class="params">result</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span>(result.done) &#123;</span><br><span class="line">        <span class="keyword">return</span> result.value;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> result.value.then(<span class="function"><span class="keyword">function</span>(<span class="params">v</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> step(gen.next(v));</span><br><span class="line">      &#125;, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> step(gen.throw(e));</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    step(gen.next());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">run(g);</span><br></pre></td></tr></table></figure>
+<h2 id="JSbridge原理"><a href="#JSbridge原理" class="headerlink" title="JSbridge原理"></a>JSbridge原理</h2><h3 id="JavaScript-调用-Native"><a href="#JavaScript-调用-Native" class="headerlink" title="JavaScript 调用 Native"></a>JavaScript 调用 Native</h3><ul>
+<li>注入API: 客户端通过webview提供的API，向JavaScript的Context（window）中注入对象和方法，让JavaScript调用时，直接执行相应的 Native 代码逻辑，达到 JavaScript 调用 Native 的目的</li>
+<li>拦截 URL SCHEME: Web 端通过某种方式（例如 iframe.src）发送 URL Scheme 请求，之后 Native 拦截到请求并根据 URL SCHEME（包括所带的参数）进行相关操作。（需要创建请求、耗时、url长度限制、参数不够直观）<h3 id="Native-调用-JavaScript"><a href="#Native-调用-JavaScript" class="headerlink" title="Native 调用 JavaScript"></a>Native 调用 JavaScript</h3></li>
+<li>WebView作为自组件存在于View/Activity中，直接调用相应的API：Native 调用 JavaScript，其实就是执行拼接 JavaScript 字符串，从外部调用 JavaScript 中的方法，因此 JavaScript 的方法必须在全局的 window 上。<h3 id="JSBridge-接口实现"><a href="#JSBridge-接口实现" class="headerlink" title="JSBridge 接口实现"></a>JSBridge 接口实现</h3></li>
+<li>callback参考JSON机制：<ul>
+<li>当发送 JSONP 请求时，url 参数里会有 callback 参数，其值是 当前页面唯一 的，而同时以此参数值为 key 将回调函数存到 window 上，随后，服务器返回 script 中，也会以此参数值作为句柄，调用相应的回调函数。<br><a href="https://juejin.im/post/5abca877f265da238155b6bc" target="_blank" rel="noopener">https://juejin.im/post/5abca877f265da238155b6bc</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="html的font-size计算"><a href="#html的font-size计算" class="headerlink" title="html的font-size计算"></a>html的font-size计算</h2><ul>
+<li>wy: font值 / 100 = deviceWidth / 750</li>
+<li>taobao： font值 <em> r / 75 </em> r = deviceWidth / 750 </li>
+</ul>
+<h2 id="rest参数和扩展运算符"><a href="#rest参数和扩展运算符" class="headerlink" title="rest参数和扩展运算符"></a>rest参数和扩展运算符</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">push</span>(<span class="params">array, ...items</span>) </span>&#123; <span class="comment">//这个...是rest参数，将其他参数放到items数组中</span></span><br><span class="line">  array.push(...items);  <span class="comment">//这个...是扩展运算符，可以看作是rest的逆运算</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>任何 [Symbol.Iterator] 接口的对象，都可以用扩展运算符转为真正的数组。</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> nodeList = <span class="built_in">document</span>.querySelectorAll(<span class="string">'div'</span>);</span><br><span class="line"><span class="keyword">var</span> array = [...nodeList];</span><br></pre></td></tr></table></figure></p>
+<h2 id="Symbol作用"><a href="#Symbol作用" class="headerlink" title="Symbol作用"></a>Symbol作用</h2><ul>
+<li>属性名冲突</li>
+</ul>
+<h2 id="解构赋值"><a href="#解构赋值" class="headerlink" title="解构赋值"></a>解构赋值</h2><p>解构赋值默认会调用Iterator 接口，除此之外扩展运算符、for…of循环、yield*、Map、set、Array.from、Promise.all、Promise.race等等任何接收数组为参数的场合，都调用了Iterator接口。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//数组解构</span></span><br><span class="line"><span class="keyword">let</span> [a, b, c] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//对象结构</span></span><br><span class="line"><span class="keyword">let</span> &#123;foo&#125; = &#123;<span class="attr">foo</span>: <span class="number">1</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//字符串结构</span></span><br><span class="line"><span class="keyword">const</span> [a, b, c, d, e] = <span class="string">'hello'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//数值和布尔值 会被转成对象</span></span><br><span class="line"><span class="keyword">let</span> &#123;<span class="attr">toString</span>: s&#125; = <span class="number">123</span>;</span><br><span class="line">s === <span class="built_in">Number</span>.prototype.toString <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> &#123;<span class="attr">toString</span>: s&#125; = <span class="literal">true</span>;</span><br><span class="line">s === <span class="built_in">Boolean</span>.prototype.toString <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//函数参数的解构赋值</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">[x, y]</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> x + y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">add([<span class="number">1</span>, <span class="number">2</span>]); <span class="comment">// 3</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="对象的遍历"><a href="#对象的遍历" class="headerlink" title="对象的遍历"></a>对象的遍历</h2><ul>
+<li>for…in循环：只遍历对象自身的和继承的可枚举的属性。</li>
+<li>Object.keys()：返回对象自身的所有可枚举的属性的键名。</li>
+<li>JSON.stringify()：只串行化对象自身的可枚举的属性。，</li>
+<li><p>Object.assign()： 忽略enumerable为false的属性，只拷贝对象自身的可枚举的属性。</p>
+</li>
+<li><p>Object.getOwnPropertyNames(obj)：返回对象自身的所有可枚举+不可枚举的属性（但不包括Symbol属性）的键名。</p>
+</li>
+<li>Object.getOwnPropertySymbols(obj)：返回对象自身的所有Symbol属性的键名。</li>
+<li><p>Reflect.ownKeys(obj)：返回对象自身的所有键名。</p>
+</li>
+<li><p>for of / for in可以中断</p>
+</li>
+<li>forEach 不能中断</li>
+<li>map不能中断<h3 id="自身可枚举属性"><a href="#自身可枚举属性" class="headerlink" title="自身可枚举属性"></a>自身可枚举属性</h3></li>
+<li>用class A extends B创建的对象实例，可以返回A和B的所有属性attr，因为继承是父类先创建了this实例，然后子类修改this实例</li>
+<li>getter在class中是不可枚举的，class的方法都是不可枚举的</li>
+<li>getter在普通对象中是可枚举的，如var a = {get a(){ return 1;}}; 这个时候序列化也是可以拿到值的”{“a”:1}”<br><strong><code>JSON.stringify</code>首先会调用toJSON方法，然后undefined、方法、Symbol等会被忽略，仅序列化自身可枚举的属性</strong></li>
+</ul>
+<h2 id="具备Iterator接口的数据结构"><a href="#具备Iterator接口的数据结构" class="headerlink" title="具备Iterator接口的数据结构"></a>具备Iterator接口的数据结构</h2><ul>
+<li>Map</li>
+<li>Set</li>
+<li>Array</li>
+<li>String</li>
+<li>arguments</li>
+<li>NodeList</li>
+<li>TypedArray</li>
+</ul>
+<p><strong>对象不具备Iterator属性，所以不支持for…of..遍历</strong><br>因为对象key值顺序不定，此外有补充Map数据结构，可变因素很多：是否是原型链上的、是否可枚举、是否要包括Symbol属性。<br>遍历顺序：先遍历出整数属性（integer properties，按照升序），然后其他属性按照创建时候的顺序遍历出来。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> codes = &#123;</span><br><span class="line">  <span class="string">"c"</span>: <span class="string">"China"</span>,</span><br><span class="line">  <span class="string">"49"</span>: <span class="string">"Germany"</span>,</span><br><span class="line">  <span class="string">"41"</span>: <span class="string">"Switzerland"</span>,</span><br><span class="line">  <span class="string">"44"</span>: <span class="string">"Great Britain"</span>,</span><br><span class="line">  <span class="string">"4.5"</span>: <span class="string">"Great Britain"</span>,</span><br><span class="line">  <span class="string">"+5"</span>: <span class="string">"Great Britain"</span>,</span><br><span class="line">  <span class="string">"-5"</span>: <span class="string">"Great Britain"</span>,</span><br><span class="line">  <span class="string">"b"</span>: <span class="string">"British"</span>,</span><br><span class="line">  <span class="string">"1"</span>: <span class="string">"USA"</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> code <span class="keyword">in</span> codes) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(code); <span class="comment">// 1, 41, 44, 49, c, 4.5, +5, -5, b</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Map和WeakMap的区别"><a href="#Map和WeakMap的区别" class="headerlink" title="Map和WeakMap的区别"></a>Map和WeakMap的区别</h3><ul>
+<li>WeakMap只能使用对象作为键名</li>
+<li>WeakMap没有遍历操作<br>因为没有办法列出所有键名，某个键名是否存在完全不可预测，跟垃圾回收机制是否运行相关。这一刻可以取到键名，下一刻垃圾回收机制突然运行了，这个键名就没了，为了防止出现不确定性，就统一规定不能取到键名。</li>
+<li>WeakMap无法清空，即不支持clear方法</li>
+<li>WeakMap只支持set、get、has、delete4个API</li>
+</ul>
+<h3 id="Object和Map的区别"><a href="#Object和Map的区别" class="headerlink" title="Object和Map的区别"></a>Object和Map的区别</h3><ul>
+<li><p>Object的key值都会默认转为string</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> object = &#123;&#125;;</span><br><span class="line">object[<span class="number">4</span>] = <span class="number">40</span>;</span><br><span class="line">object[&#123;&#125;] = <span class="number">100</span>;</span><br><span class="line">object[<span class="literal">NaN</span>] = <span class="number">50</span>;</span><br><span class="line">object[<span class="built_in">Symbol</span>.key] = <span class="number">60</span>; </span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> key <span class="keyword">in</span> object)&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">typeof</span>(key));</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//string</span></span><br><span class="line"><span class="comment">//string</span></span><br><span class="line"><span class="comment">//string</span></span><br><span class="line"><span class="comment">//string</span></span><br><span class="line"><span class="built_in">console</span>.log(object);</span><br><span class="line"><span class="comment">//&#123;4: 40, [object Object]: 100, NaN: 50, undefined: 60&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Map的键值不局限于字符串，可以是各种类型的值（包括对象）</p>
+</li>
+<li>Object不具备Iterator属性，所以不支持for…of遍历</li>
+</ul>
+<h2 id="generator和yeild"><a href="#generator和yeild" class="headerlink" title="generator和yeild"></a>generator和yeild</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">f</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">var</span> n1 = <span class="keyword">yield</span> <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(n1)</span><br><span class="line">    <span class="keyword">var</span> n2 = <span class="keyword">yield</span> <span class="number">3</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(n2)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'end'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> g = f();</span><br><span class="line">g.next(); <span class="comment">// &#123;value: 1, done: false&#125;</span></span><br><span class="line">g.next(); <span class="comment">// &#123;value: 2, done: false&#125;</span></span><br><span class="line">g.next(<span class="number">2</span>); <span class="comment">// 2 &#123;value: 3, done: false&#125;</span></span><br><span class="line">g.next(); <span class="comment">// undefined &#123;value: 'end', done: true&#125; </span></span><br><span class="line">g.next(); <span class="comment">// &#123;value: undefined, done: true&#125;</span></span><br></pre></td></tr></table></figure>
+<p>如果有return值，会将return语句后面的表达式的值，作为返回的对象的value属性值，但此时的遍历已经结束，done为true。for…of只会返回done为false的遍历值。<br>yield表达式本身没有返回值，或者说总是返回undefined。next方法可以带一个参数，该参数就会被当作上一个yield表达式的返回值。<br>Generator函数只有在调用next()方法的时候，才会被执行。</p>
+<h2 id="按顺序完成异步操作"><a href="#按顺序完成异步操作" class="headerlink" title="按顺序完成异步操作"></a>按顺序完成异步操作</h2><h3 id="promise-1"><a href="#promise-1" class="headerlink" title="promise"></a>promise</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">logInOrder</span>(<span class="params">urls</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 远程读取所有URL</span></span><br><span class="line">  <span class="keyword">const</span> textPromises = urls.map(<span class="function"><span class="params">url</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> fetch(url).then(<span class="function"><span class="params">response</span> =&gt;</span> response.text());</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 按次序输出</span></span><br><span class="line">  textPromises.reduce(<span class="function">(<span class="params">chain, textPromise</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> chain.then(<span class="function"><span class="params">()</span> =&gt;</span> textPromise)</span><br><span class="line">      .then(<span class="function"><span class="params">text</span> =&gt;</span> <span class="built_in">console</span>.log(text));</span><br><span class="line">  &#125;, <span class="built_in">Promise</span>.resolve());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="async"><a href="#async" class="headerlink" title="async"></a>async</h3><p><a href="https://objcer.com/2017/10/12/async-await-with-forEach/" target="_blank" rel="noopener">https://objcer.com/2017/10/12/async-await-with-forEach/</a><br><figure class="highlight js"><figcaption><span>顺序进行</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">logInOrder</span>(<span class="params">urls</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> url <span class="keyword">of</span> urls) &#123;</span><br><span class="line">    <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(url);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">await</span> response.text());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">logInOrder</span>(<span class="params">urls</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 并发读取远程URL 并发执行，因为只有async函数内部是继发执行，外部不受影响</span></span><br><span class="line">  <span class="keyword">const</span> textPromises = urls.map(<span class="keyword">async</span> url =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(url);</span><br><span class="line">    <span class="keyword">return</span> response.text();</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 按次序输出  for..of循环内部使用了await，因此实现了按顺序输出。</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> textPromise <span class="keyword">of</span> textPromises) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">await</span> textPromise);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//Promise.all(textPromises).then(result =&gt; console.log(result)); 并发</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="内存泄露"><a href="#内存泄露" class="headerlink" title="内存泄露"></a>内存泄露</h2><blockquote>
+<p>定义：不再用到的内存没有及时释放，就叫做内存泄露。<br>垃圾回收，如果一个变量的引用计数为0，则表示这个值不再用到了，因此可以将这块内存释放。</p>
+</blockquote>
+<h4 id="防止内存泄露"><a href="#防止内存泄露" class="headerlink" title="防止内存泄露"></a>防止内存泄露</h4><ul>
+<li>WeakMap和WeakSet</li>
+<li>引用置为null</li>
+<li>移除事件绑定</li>
+<li>小心全局变量</li>
+<li>小心闭包</li>
+</ul>
+<h4 id="常见的内存泄露场景"><a href="#常见的内存泄露场景" class="headerlink" title="常见的内存泄露场景"></a>常见的内存泄露场景</h4><ol>
+<li>意外的全局变量</li>
+<li>定时器的处理函数没有及时释放，没有调用clearInterval方法</li>
+<li>脱离 DOM 的引用</li>
+<li>闭包上下文绑定后没有被释放</li>
+</ol>
+<h2 id="Promise和setTimeout区别"><a href="#Promise和setTimeout区别" class="headerlink" title="Promise和setTimeout区别"></a>Promise和setTimeout区别</h2><h3 id="事件循环"><a href="#事件循环" class="headerlink" title="事件循环:"></a>事件循环:</h3><h4 id="同步任务VS异步任务"><a href="#同步任务VS异步任务" class="headerlink" title="同步任务VS异步任务"></a>同步任务VS异步任务</h4><p>当我们设置一个延迟函数的时候，当前脚本并不会阻塞，它只是会在浏览器的事件表中进行记录，程序会继续向下执行。当延迟的时间结束之后，会将回调函数添加至<strong>事件队列（task queue）</strong>中，事件队列拿到了任务过后便将任务压入<strong>执行栈（stack）</strong>当中，执行栈执行任务，输出 ‘setTimeout’。</p>
+<h4 id="如何判断结束？"><a href="#如何判断结束？" class="headerlink" title="如何判断结束？"></a>如何判断结束？</h4><p><strong>JS引擎</strong>的monitoring process进程，会持续不断的检查主线程执行栈是否为空，一旦为空，就会去Event Queue那里检查是否有等待被调用的函数。<br>由于 JS 是单线程的，同步执行任务会造成浏览器的阻塞，所以我们将 JS 分成一个又一个的任务，通过不停的循环来执行事件队列中的任务。这就使得当我们挂起某一个任务的时候可以去做一些其他的事情，而不需要等待这个任务执行完毕。所以事件循环的运行机制大致分为以下步骤：</p>
+<ol>
+<li>检查事件队列是否为空，如果为空，则继续检查；如不为空，则执行 2；</li>
+<li>取出事件队列的首部，压入执行栈；</li>
+<li>执行任务；</li>
+<li>检查执行栈，如果执行栈为空，则跳回第 1 步；如不为空，则继续检查；</li>
+</ol>
+<h4 id="宏任务和微任务"><a href="#宏任务和微任务" class="headerlink" title="宏任务和微任务"></a>宏任务和微任务</h4><ul>
+<li>MacroTask: setTimeout, setInterval, setImmediate, I/O, 网络请求</li>
+<li>MicroTask: process.nextTick, promise的then和catch, Object.observe, MutationObserver<br>requestAnimationFrame<br>UI rendering</li>
+</ul>
+<p>在某一个macrotask执行完后，在重新渲染与开始下一个宏任务之前，就会将在它执行期间产生的所有microtask都执行完毕（在渲染前）。<strong>微任务会在执行栈执行完后立即执行，而宏任务要等到下一次的event loop才会被执行</strong>。</p>
+<blockquote>
+<p>在node环境下，process.nextTick的优先级高于Promise，也就是说：在宏任务结束后会先执行微任务队列中的nextTickQueue，然后才会执行微任务中的Promise执行机制：<br>一次事件循环过程：</p>
+<ol>
+<li>执行一个宏任务（栈中没有就从事件队列中获取）</li>
+<li>执行过程中如果遇到微任务，就将它添加到微任务的任务队列中</li>
+<li>宏任务执行完毕后，立即执行当前微任务队列中的所有微任务（依次执行）</li>
+<li>当前宏任务执行完毕，开始检查渲染，然后GUI线程接管渲染(规范允许浏览器自己选择是否更新视图，根据回流和重绘的规则？<a href="https://www.html5rocks.com/zh/tutorials/internals/howbrowserswork" target="_blank" rel="noopener">https://www.html5rocks.com/zh/tutorials/internals/howbrowserswork</a>)</li>
+<li>渲染完毕后，JS引擎线程继续，开始下一个宏任务（从宏任务队列中获取）<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(<span class="string">'test'</span>);&#125;, <span class="number">1</span>);</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(<span class="string">'test2'</span>);&#125;, <span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">requestAnimationFrame(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'raf'</span>);</span><br><span class="line">    requestAnimationFrame(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'raf2'</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 输出的可能顺序 1</span></span><br><span class="line"><span class="comment">// raf - 第一次raf 和 test的时间取决于当前帧还剩下的时间，如果&lt;=4ms则先执行raf</span></span><br><span class="line"><span class="comment">// test</span></span><br><span class="line"><span class="comment">// test2</span></span><br><span class="line"><span class="comment">// raf2 - 下一次渲染之前有16ms的时间，可以执行两次宏任务</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出的可能顺序 2</span></span><br><span class="line"><span class="comment">// test - 第一次raf 和 test的时间取决于当前帧还剩下的时间，如果&gt;4ms则先执行test</span></span><br><span class="line"><span class="comment">// raf</span></span><br><span class="line"><span class="comment">// test2</span></span><br><span class="line"><span class="comment">// raf2 - 下一次渲染之前有16ms的时间，可以执行两次宏任务</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+<h4 id="任务优先级"><a href="#任务优先级" class="headerlink" title="任务优先级"></a>任务优先级</h4><ul>
+<li>来自不同任务源的任务会进入到不同的任务队列。其中setTimeout与setInterval是同源的。</li>
+<li>微任务队列优先级： process.nextTick &gt; Promise.then &gt; Object.observe(废弃属性) &gt; MutationObserver</li>
+<li>宏任务队列优先级： setTimeout/setInterval&gt; 异步IO &gt; setImmediate<br>对于 UI rendering 来说，浏览器会在每次清空微任务队列会根据实际情况触发。</li>
+</ul>
+<p>REF:<br><a href="https://www.jianshu.com/p/12b9f73c5a4f" target="_blank" rel="noopener">前端基础进阶（十二）：深入核心，详解事件循环机制</a><br><a href="https://juejin.im/post/59e85eebf265da430d571f89#heading-4" target="_blank" rel="noopener">这一次，彻底弄懂 JavaScript 执行机制</a></p>
+<h2 id="js实现new"><a href="#js实现new" class="headerlink" title="js实现new"></a>js实现new</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">instance</span>(<span class="params">Cls, ...params</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> obj = <span class="built_in">Object</span>.create(Cls.prototype);</span><br><span class="line">    <span class="keyword">let</span> res = Cls.apply(obj, params);</span><br><span class="line">    <span class="comment">//如果是非primitive类型的返回值，会return这个对象</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> res === <span class="string">"object"</span> || <span class="keyword">typeof</span> res === <span class="string">"function"</span>) &#123; </span><br><span class="line">    	<span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> obj</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>按值传递<br><a href="https://juejin.im/post/58cf180b0ce4630057d6727c#heading-1" target="_blank" rel="noopener">https://juejin.im/post/58cf180b0ce4630057d6727c#heading-1</a></p>
+<h2 id="相等操作符"><a href="#相等操作符" class="headerlink" title="相等操作符(==)"></a>相等操作符(==)</h2><p>相等操作符会对操作值进行隐式转换后进行比较：</p>
+<ul>
+<li>如果一个操作值为布尔值，则在比较之前先将其转换为数值  //false == 0 true</li>
+<li>如果一个操作值为字符串，另一个操作值为数值，则通过Number()函数将字符串转换为数值  //‘0’ == 0 true</li>
+<li>如果一个操作值是对象，另一个不是，则调用对象的valueOf()方法，得到的结果按照前面的规则进行比较 //new Number(1) == 1 true</li>
+<li>null与undefined是相等的  //null == undefined true</li>
+<li>如果一个操作值为NaN，则相等比较返回false  //NaN == NaN false</li>
+<li>如果两个操作值都是对象，则比较它们是不是指向同一个对象 //var a = {a: 1}; var b = {a: 1}; a == b; false</li>
+</ul>
+<p>Object.valueof()返回值为该对象的原始值,不同类型对象的valueOf()方法的返回值不同。</p>
+<h3 id="XMLHttpRequest-readyState和status的状态"><a href="#XMLHttpRequest-readyState和status的状态" class="headerlink" title="XMLHttpRequest readyState和status的状态"></a>XMLHttpRequest readyState和status的状态</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ReadyState = &#123;</span><br><span class="line">  UNSENT: <span class="number">0</span>, <span class="comment">// Client has been created. open() not called yet.</span></span><br><span class="line">  OPENED: <span class="number">1</span>, <span class="comment">// open() has been called.	</span></span><br><span class="line">  HEADERS_RECEIVED: <span class="number">2</span>,	<span class="comment">// send() has been called, and headers and status are available.</span></span><br><span class="line">  LOADING: <span class="number">3</span>, <span class="comment">//	Downloading; responseText holds partial data.</span></span><br><span class="line">  DONE: <span class="number">4</span>, <span class="comment">// The operation is complete.</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> oReq = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'UNSENT'</span>, xhr.readyState); <span class="comment">// readyState will be 0</span></span><br><span class="line">oReq.onprogress = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'LOADING'</span>, xhr.readyState); <span class="comment">// readyState will be 3</span></span><br><span class="line">&#125;;</span><br><span class="line">oReq.onload = <span class="function"><span class="keyword">function</span> <span class="title">reqListener</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">this</span>.status === <span class="number">200</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> data = <span class="built_in">JSON</span>.parse(<span class="keyword">this</span>.responseText);</span><br><span class="line">    <span class="built_in">console</span>.log(data);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'DONE'</span>, xhr.readyState); <span class="comment">// readyState will be 4</span></span><br><span class="line">&#125;</span><br><span class="line">oReq.open(<span class="string">'get'</span>, <span class="string">'./api/some.json'</span>, <span class="literal">true</span>);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'OPENED'</span>, xhr.readyState); <span class="comment">// readyState will be 1</span></span><br><span class="line">oReq.send();</span><br></pre></td></tr></table></figure>
+<h4 id="application-json-charset-utf-8和application-x-www-form-urlencoded-charset-utf-8的区别："><a href="#application-json-charset-utf-8和application-x-www-form-urlencoded-charset-utf-8的区别：" class="headerlink" title="application/json; charset=utf-8和application/x-www-form-urlencoded; charset=utf-8的区别："></a><code>application/json; charset=utf-8</code>和<code>application/x-www-form-urlencoded; charset=utf-8</code>的区别：</h4><ol>
+<li><p><code>application/json</code>告诉webServer post请求传递的是JSON数据类型:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="attr">Name</span> : <span class="string">'John Smith'</span>, <span class="attr">Age</span>: <span class="number">23</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>application/x-www-form-urlencoded</code>告诉webServer post请求传递的数据会被拼接到url上</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Name=John+Smith&amp;Age=<span class="number">23</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="「前端进阶」高性能渲染十万条数据-时间分片"><a href="#「前端进阶」高性能渲染十万条数据-时间分片" class="headerlink" title="「前端进阶」高性能渲染十万条数据(时间分片)"></a><a href="https://juejin.im/post/5d76f469f265da039a28aff7#heading-1" target="_blank" rel="noopener">「前端进阶」高性能渲染十万条数据(时间分片)</a></h3><blockquote>
+<p>性能关键：渲染耗时</p>
+<ul>
+<li>分片渲染，一次渲染20条，在setTimeout或requestAnimationFrame回调中触发，requestAnimationFrame性能好于setTimeout</li>
+<li>先append到documentFragment，直接append到document每次都会触发回流，并且会计算样式表（当然现在浏览器的优化已经做的很好了， 当append元素到document中后，没有访问 getComputedStyle 之类的方法时，现代浏览器也可以把样式表的计算推迟到脚本执行之后）。<br><strong>setTimeout 和闪屏现象</strong></li>
+<li>setTimeout的执行时间可能比设定的要晚。每次timeout后会将callback放到事件队列中，需要在当前主线程执行完成后才会去检查事件队列。</li>
+<li>刷新频率受屏幕分辨率和屏幕尺寸的影响，因此不同设备的刷新频率可能会不同，而setTimeout只能设置一个固定时间间隔，这个时间不一定和屏幕的刷新时间相同。<br>以上两种情况都会导致setTimeout的执行步调和屏幕的刷新步调不一致。<br>在setTimeout中对dom进行操作，必须要等到屏幕下次绘制时才能更新到屏幕上，如果两者步调不一致，就可能导致中间某一帧的操作被跨越过去，而直接更新下一帧的元素，从而导致丢帧现象。</li>
+</ul>
+</blockquote>
+<h3 id="performance-timing"><a href="#performance-timing" class="headerlink" title="performance.timing"></a>performance.timing</h3><p>在 Navigation Timing Level 2 草案中，已经废弃了 PerformanceTiming 接口，并且提供了新的接口 PerformanceNavigationTiming 代替其功能。<br>为什么被废弃？因为 W3C 给我们提供了更全面、更强大的一个性能分析矩阵，比单一的 performance.timing 更加强大，能帮助我们从各个方面分析前端页面性能。</p>
+<h3 id="pushstate-和-popstate应用"><a href="#pushstate-和-popstate应用" class="headerlink" title="pushstate 和 popstate应用"></a>pushstate 和 popstate应用</h3><ul>
+<li>回退缓存</li>
+<li>回退挽留弹窗<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * onpopstate是在history.back之后调用的，这个时候event.state是返回后的history的状态，之前的state已经被pop出去了。</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="built_in">window</span>.onpopstate = <span class="function"><span class="keyword">function</span>(<span class="params">event</span>) </span>&#123;</span><br><span class="line">  alert(<span class="string">"location: "</span> + <span class="built_in">document</span>.location + <span class="string">", state: "</span> + <span class="built_in">JSON</span>.stringify(event.state));</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">history.pushState(&#123;<span class="attr">page</span>: <span class="number">1</span>&#125;, <span class="string">"title 1"</span>, <span class="string">"?page=1"</span>);</span><br><span class="line">history.pushState(&#123;<span class="attr">page</span>: <span class="number">2</span>&#125;, <span class="string">"title 2"</span>, <span class="string">"?page=2"</span>);</span><br><span class="line">history.replaceState(&#123;<span class="attr">page</span>: <span class="number">3</span>&#125;, <span class="string">"title 3"</span>, <span class="string">"?page=3"</span>);</span><br><span class="line">history.back(); <span class="comment">// alerts "location: http://example.com/example.html?page=1, state: &#123;"page":1&#125;"</span></span><br><span class="line">history.back(); <span class="comment">// alerts "location: http://example.com/example.html, state: null</span></span><br><span class="line">history.go(<span class="number">2</span>);  <span class="comment">// alerts "location: http://example.com/example.html?page=3, state: &#123;"page":3&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="preload-vs-Prefetch"><a href="#preload-vs-Prefetch" class="headerlink" title="preload vs Prefetch"></a>preload vs Prefetch</h3><p>preload 是一个声明式 fetch，可以强制浏览器在不阻塞 document 的 onload 事件的情况下请求资源。<br>Prefetch 告诉浏览器这个资源将来可能需要，会在浏览器空闲的时候请求资源。</p>
+<h3 id="H5离线缓存"><a href="#H5离线缓存" class="headerlink" title="H5离线缓存"></a>H5离线缓存</h3><p>ServiceWorker实现离线资源缓存：<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Service_Worker_API/Using_Service_Workers" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/API/Service_Worker_API/Using_Service_Workers</a><br>参考示例<a href="https://github.com/mdn/sw-test" target="_blank" rel="noopener">https://github.com/mdn/sw-test</a><br>caches.open() 方法来创建了一个叫做 v1 的新的缓存，将会是我们的站点资源缓存的第一个版本。它返回了一个创建缓存的 promise，当它 resolved的时候，我们接着会调用在创建的缓存示例上的一个方法  addAll()，这个方法的参数是一个由一组相对于 origin 的 URL 组成的数组，这些 URL 就是你想缓存的资源的列表。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在install事件回调中添加站点资源缓存</span></span><br><span class="line">self.addEventListener(<span class="string">'install'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">event</span>) </span>&#123;</span><br><span class="line">  event.waitUntil(</span><br><span class="line">    caches.open(<span class="string">'v1'</span>).then(<span class="function"><span class="keyword">function</span>(<span class="params">cache</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> cache.addAll([</span><br><span class="line">        <span class="string">'/sw-test/'</span>,</span><br><span class="line">        <span class="string">'/sw-test/index.html'</span>,</span><br><span class="line">        <span class="string">'/sw-test/style.css'</span>,</span><br><span class="line">        <span class="string">'/sw-test/app.js'</span>,</span><br><span class="line">        <span class="string">'/sw-test/image-list.js'</span>,</span><br><span class="line">        <span class="string">'/sw-test/star-wars-logo.jpg'</span>,</span><br><span class="line">        <span class="string">'/sw-test/gallery/bountyHunters.jpg'</span>,</span><br><span class="line">        <span class="string">'/sw-test/gallery/myLittleVader.jpg'</span>,</span><br><span class="line">        <span class="string">'/sw-test/gallery/snowTroopers.jpg'</span></span><br><span class="line">      ]);</span><br><span class="line">    &#125;)</span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// fetch事件监听资源请求</span></span><br><span class="line">self.addEventListener(<span class="string">'fetch'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">event</span>) </span>&#123;</span><br><span class="line">  event.respondWith(</span><br><span class="line">    <span class="comment">// 当命中缓存的时候，直接使用，如果没有命中缓存，去服务器进行网络请求，并把请求回来的资源放到缓存中</span></span><br><span class="line">    caches.match(event.request).then(<span class="function"><span class="keyword">function</span>(<span class="params">resp</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> resp || fetch(event.request).then(<span class="function"><span class="keyword">function</span>(<span class="params">response</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> caches.open(<span class="string">'v1'</span>).then(<span class="function"><span class="keyword">function</span>(<span class="params">cache</span>) </span>&#123;</span><br><span class="line">          cache.put(event.request, response.clone());</span><br><span class="line">          <span class="keyword">return</span> response;</span><br><span class="line">        &#125;);  </span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;).catch(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="comment">// 当请求没有匹配到缓存中的任何资源的时候，以及网络不可用的时候，兜底方案</span></span><br><span class="line">      <span class="keyword">return</span> caches.match(<span class="string">'/sw-test/gallery/myLittleVader.jpg'</span>);</span><br><span class="line">    &#125;)</span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2018/11/18/reading-record/" data-id="clsshtux20022wqrt6q9b281a" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/01/28/lottie实践/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          lottie实践
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/10/09/菜鸟优化之路-前端性能测试工具/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">菜鸟优化之路-前端性能测试工具sitespeed.io</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSR/">SSR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Themis，CMS体验度量方案/">Themis，CMS体验度量方案</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/autobind/">autobind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-decorators/">core-decorators</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decorator/">decorator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decorators源码简析——debounce/">decorators源码简析——debounce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/diff/">diff</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/echarts/">echarts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es7/">es7</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/eventloop/">eventloop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/font-face/">font-face</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hook/">hook</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js/">js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lazyInitialize/">lazyInitialize</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/load/">load</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/loader/">loader</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lottie/">lottie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm包/">npm包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/readonly/">readonly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/require/">require</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sass/">sass</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/setState/">setState</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sitespeed-io/">sitespeed.io</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webp/">webp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webpack/">webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下载/">下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/兼容/">兼容</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端性能优化/">前端性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端打包/">前端打包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/原型链/">原型链</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/总结/">总结</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/插件/">插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/渲染/">渲染</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/组件开发/">组件开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/组合式继承/">组合式继承</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/继承/">继承</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/角度渐变/">角度渐变</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/高阶组件/">高阶组件</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SSR/" style="font-size: 10px;">SSR</a> <a href="/tags/Themis，CMS体验度量方案/" style="font-size: 10px;">Themis，CMS体验度量方案</a> <a href="/tags/autobind/" style="font-size: 10px;">autobind</a> <a href="/tags/core-decorators/" style="font-size: 15.71px;">core-decorators</a> <a href="/tags/css/" style="font-size: 12.86px;">css</a> <a href="/tags/decorator/" style="font-size: 17.14px;">decorator</a> <a href="/tags/decorators源码简析——debounce/" style="font-size: 11.43px;">decorators源码简析——debounce</a> <a href="/tags/diff/" style="font-size: 14.29px;">diff</a> <a href="/tags/echarts/" style="font-size: 10px;">echarts</a> <a href="/tags/es6/" style="font-size: 10px;">es6</a> <a href="/tags/es7/" style="font-size: 10px;">es7</a> <a href="/tags/eventloop/" style="font-size: 11.43px;">eventloop</a> <a href="/tags/font-face/" style="font-size: 10px;">font-face</a> <a href="/tags/hook/" style="font-size: 10px;">hook</a> <a href="/tags/js/" style="font-size: 18.57px;">js</a> <a href="/tags/lazyInitialize/" style="font-size: 10px;">lazyInitialize</a> <a href="/tags/load/" style="font-size: 10px;">load</a> <a href="/tags/loader/" style="font-size: 10px;">loader</a> <a href="/tags/lottie/" style="font-size: 10px;">lottie</a> <a href="/tags/npm包/" style="font-size: 10px;">npm包</a> <a href="/tags/react/" style="font-size: 20px;">react</a> <a href="/tags/readonly/" style="font-size: 10px;">readonly</a> <a href="/tags/require/" style="font-size: 10px;">require</a> <a href="/tags/sass/" style="font-size: 10px;">sass</a> <a href="/tags/setState/" style="font-size: 10px;">setState</a> <a href="/tags/sitespeed-io/" style="font-size: 10px;">sitespeed.io</a> <a href="/tags/webp/" style="font-size: 10px;">webp</a> <a href="/tags/webpack/" style="font-size: 14.29px;">webpack</a> <a href="/tags/下载/" style="font-size: 10px;">下载</a> <a href="/tags/兼容/" style="font-size: 11.43px;">兼容</a> <a href="/tags/函数式编程/" style="font-size: 10px;">函数式编程</a> <a href="/tags/前端性能优化/" style="font-size: 12.86px;">前端性能优化</a> <a href="/tags/前端打包/" style="font-size: 10px;">前端打包</a> <a href="/tags/原型链/" style="font-size: 10px;">原型链</a> <a href="/tags/总结/" style="font-size: 12.86px;">总结</a> <a href="/tags/插件/" style="font-size: 10px;">插件</a> <a href="/tags/渲染/" style="font-size: 12.86px;">渲染</a> <a href="/tags/组件开发/" style="font-size: 10px;">组件开发</a> <a href="/tags/组合式继承/" style="font-size: 10px;">组合式继承</a> <a href="/tags/继承/" style="font-size: 11.43px;">继承</a> <a href="/tags/角度渐变/" style="font-size: 10px;">角度渐变</a> <a href="/tags/高阶组件/" style="font-size: 10px;">高阶组件</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/02/19/rrweb原理&录屏上报实践/">rrweb带你还原问题现场</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/react相关问题V2/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/module引入方式/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/js_roadmap/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/11/02/webpack-loader总结/">webpack-loader总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 Sherry<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

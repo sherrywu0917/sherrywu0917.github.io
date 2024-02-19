@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>animejs动画入门 | lying fox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述anime.js是一个灵活的轻量JavaScript动画库，支持CSS属性、JS对象、DOM属性和SVG。压缩后仅6.2K，且不依赖任何第三方库，加载迅速。在git上Usedby数量8.5k, Star数量为37.5k。此外，anime遵从MIT开源协议,可应用于各种商业网站或app而无需付费。 简单的浮动动画首先看一个简单的示例，实现了气泡的上下浮动动画，效果详见浮动动画。12345678c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="animejs动画入门">
+<meta property="og:url" content="https://sherrywu0917.github.io/2019/12/27/animejs动画/index.html">
+<meta property="og:site_name" content="lying fox">
+<meta property="og:description" content="概述anime.js是一个灵活的轻量JavaScript动画库，支持CSS属性、JS对象、DOM属性和SVG。压缩后仅6.2K，且不依赖任何第三方库，加载迅速。在git上Usedby数量8.5k, Star数量为37.5k。此外，anime遵从MIT开源协议,可应用于各种商业网站或app而无需付费。 简单的浮动动画首先看一个简单的示例，实现了气泡的上下浮动动画，效果详见浮动动画。12345678c">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://sherrywu0917.github.io/image/webkit-anime.png">
+<meta property="og:updated_time" content="2024-02-19T04:51:45.045Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="animejs动画入门">
+<meta name="twitter:description" content="概述anime.js是一个灵活的轻量JavaScript动画库，支持CSS属性、JS对象、DOM属性和SVG。压缩后仅6.2K，且不依赖任何第三方库，加载迅速。在git上Usedby数量8.5k, Star数量为37.5k。此外，anime遵从MIT开源协议,可应用于各种商业网站或app而无需付费。 简单的浮动动画首先看一个简单的示例，实现了气泡的上下浮动动画，效果详见浮动动画。12345678c">
+<meta name="twitter:image" content="https://sherrywu0917.github.io/image/webkit-anime.png">
+  
+    <link rel="alternate" href="/atom.xml" title="lying fox" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">lying fox</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://sherrywu0917.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-animejs动画" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/12/27/animejs动画/" class="article-date">
+  <time datetime="2019-12-27T03:26:12.000Z" itemprop="datePublished">2019-12-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      animejs动画入门
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>anime.js是一个灵活的轻量JavaScript动画库，支持CSS属性、JS对象、DOM属性和SVG。压缩后仅6.2K，且不依赖任何第三方库，加载迅速。在<a href="https://github.com/juliangarnier/anime" target="_blank" rel="noopener">git</a>上Usedby数量8.5k, Star数量为37.5k。此外，anime遵从MIT开源协议,可应用于各种商业网站或app而无需付费。</p>
+<h3 id="简单的浮动动画"><a href="#简单的浮动动画" class="headerlink" title="简单的浮动动画"></a>简单的浮动动画</h3><p>首先看一个简单的示例，实现了气泡的上下浮动动画，效果详见<a href="https://codepen.io/sherrywu0917/pen/yLyoNQj" target="_blank" rel="noopener">浮动动画</a>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> floatAnimation = anime(&#123;</span><br><span class="line">    targets: <span class="string">'.bubble'</span>,</span><br><span class="line">    translateY: <span class="number">20</span>, <span class="comment">// --&gt; '20px'</span></span><br><span class="line">    duration: <span class="number">600</span>,</span><br><span class="line">    loop: <span class="literal">true</span>,</span><br><span class="line">    direction: <span class="string">'alternate'</span>,</span><br><span class="line">    easing: <span class="string">'easeInOutSine'</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>其中各个属性代表的含义如下：</p>
+<ul>
+<li><code>targets</code>代表动画的目标对象，这边的值是css选择器，也可以是dom元素、数组，或是JS对象；</li>
+<li><code>translateY</code>代表将要发生动画的属性，不带单位的时候，默认单位为px，此外还支持其他多种赋值方式：<ol>
+<li>百分比：<code>translateY: &#39;100%&#39;</code></li>
+<li>相对数值：<code>translateY: { value: &#39;*=2.5&#39;,duration: 1000}</code>，相对于translateY的初始值去计算</li>
+<li>设置初始值：<code>translateY: [100, 250]</code>，设置数组的形式，会将translateY的初始值设置为100px，并且从100px移动到250px</li>
+<li>函数：<code>translateY: function(target, index, targetsLength) {return (targetsLength - index) * 50;}</code>, target为当前动画目标元素，index为动画目标的索引，targetsLength为总动画目标数</li>
+</ol>
+</li>
+<li><code>duration</code>代表动画的持续时间，单位为毫秒；</li>
+<li><code>loop</code>定义了动画是否需要循环，默认值为false；</li>
+<li><code>direction</code>的意义和animation-direction属性一致，定义是否应该轮流反向播放动画，可选的值有正向动画<code>normal</code>、反向动画<code>reverse</code>和往返动画<code>alternate</code>；</li>
+<li><code>easing</code>定义了动画缓动函数，和css3中的animation-timing-function意义一致，设置该参数时可以参考该网站<a href="https://easings.net/en" target="_blank" rel="noopener">Easing Functions Cheat Sheet</a>去选择合适的缓动函数。</li>
+</ul>
+<h3 id="点击触发抖动动画，结束后恢复浮动"><a href="#点击触发抖动动画，结束后恢复浮动" class="headerlink" title="点击触发抖动动画，结束后恢复浮动"></a>点击触发抖动动画，结束后恢复浮动</h3><p>基于上面的漂浮动画，新增一个小功能：点击小球的时候，小球左右抖动，抖动结束后，恢复浮动动画。具体效果参见<a href="https://codepen.io/sherrywu0917/pen/yLyoNQj" target="_blank" rel="noopener">抖动动画</a>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> shakeAnimation = anime(&#123;</span><br><span class="line">    targets: <span class="string">'.bubble'</span>,</span><br><span class="line">    keyframes: [</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="string">'25px'</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="number">0</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="string">'-25px'</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="number">0</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="string">'15px'</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="number">0</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="string">'-15px'</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">translateX</span>: <span class="number">0</span> &#125;</span><br><span class="line">    ],</span><br><span class="line">    duration: <span class="number">600</span>,</span><br><span class="line">    delay: <span class="number">300</span>,</span><br><span class="line">    endDelay: <span class="number">500</span>,</span><br><span class="line">    easing: <span class="string">'linear'</span>,</span><br><span class="line">    begin: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        floatAnimation.pause();</span><br><span class="line">    &#125;,</span><br><span class="line">    complete: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        floatAnimation.play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>这组动画的实现有几个关键点，<strong>关键帧</strong>-<code>keyframes</code>、<strong>延迟设置</strong>-<code>delay</code>、<code>endDelay</code>，<strong>事件函数</strong><code>begin</code>、<code>complete</code>以及<strong>动画控制方法</strong><code>play</code>和<code>pause</code>。<br>其中，<code>keyframes</code>是用数组定义的关键帧，和animation中用@keyframes实现动画的方式基本一致，如果关键帧内没有指定duration，则每个关键帧的持续时间将等于动画总持续时间除以关键帧数。<br><code>delay</code>和<code>endDelay</code>用来设置动画的延迟时间，完整的动画过程是：</p>
+<ol>
+<li>先触发begin事件，暂停floatAnimation；</li>
+<li>过了delay设置的300ms后，开始执行keyframes定义的抖动动画，持续时间是600ms；</li>
+<li>抖动动画结束后500ms，会触发complete事件，floatAnimation会恢复执行。<br>从start事件被触发到complete事件被触发，整个动画持续的时间为300 + 600 + 500 = 1400ms。<br><code>play</code>和<code>pause</code>方法用来控制动画的执行和暂停，animejs还提供了<code>restart</code>和<code>reverse</code>方法去控制动画的重新开始和反转，如果期望动画跳转到某个特定时间，可以使用<code>seek</code>方法去设置跳转时间。</li>
+</ol>
+<h3 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h3><p>animejs从3.x版本开始不兼容webkitTransform属性，默认只支持transform属性，在一些低版本的手机上使用，例如ios8手机上，会遇到一些动画不生效的问题。如果需要兼容这些机型，可以给animejs库增加对webkitTrannsform属性的支持，手动修改源码，重新publish一个支持webkitTransform属性的npm包。<br>首先使用了animejs源码提供的<code>getCSSValue</code>方法去检测浏览器是否支持transform属性，对于不支持的，使用webkitTransform属性去替换，具体的修改可以参考下图。<br><img src="/image/webkit-anime.png" width="800px"><br><code>getCSSValue</code>方法的实现如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getCSSValue</span>(<span class="params">el, prop, unit</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (prop <span class="keyword">in</span> el.style) &#123;</span><br><span class="line">    <span class="keyword">var</span> uppercasePropName = prop.replace(<span class="regexp">/([a-z])([A-Z])/g</span>, <span class="string">'$1-$2'</span>).toLowerCase();</span><br><span class="line">    <span class="keyword">var</span> value = el.style[prop] || getComputedStyle(el).getPropertyValue(uppercasePropName) || <span class="string">'0'</span>;</span><br><span class="line">    <span class="keyword">return</span> unit ? convertPxToUnit(el, value, unit) : value;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>关键是<code>prop in el.style</code>的判断，对于不支持transform属性的值，会直接返回undefined，支持该属性的会返回属性值，没有设置过transform值的默认会返回一个字符串’none’或者’0’。<br>修改后重新发布了<a href="https://www.npmjs.com/package/webkit-animejs" target="_blank" rel="noopener">webkit-animejs</a>，有需要的可以直接使用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2019/12/27/animejs动画/" data-id="clsshtuw3000cwqrtrdioex8u" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/07/02/react-Fiber/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          react fiber纤程
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/11/26/表单和post参数总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">表单和post参数总结</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSR/">SSR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Themis，CMS体验度量方案/">Themis，CMS体验度量方案</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/autobind/">autobind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-decorators/">core-decorators</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decorator/">decorator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decorators源码简析——debounce/">decorators源码简析——debounce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/diff/">diff</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/echarts/">echarts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es7/">es7</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/eventloop/">eventloop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/font-face/">font-face</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hook/">hook</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js/">js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lazyInitialize/">lazyInitialize</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/load/">load</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/loader/">loader</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lottie/">lottie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm包/">npm包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/readonly/">readonly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/require/">require</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sass/">sass</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/setState/">setState</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sitespeed-io/">sitespeed.io</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webp/">webp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webpack/">webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下载/">下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/兼容/">兼容</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端性能优化/">前端性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端打包/">前端打包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/原型链/">原型链</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/总结/">总结</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/插件/">插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/渲染/">渲染</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/组件开发/">组件开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/组合式继承/">组合式继承</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/继承/">继承</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/角度渐变/">角度渐变</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/高阶组件/">高阶组件</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SSR/" style="font-size: 10px;">SSR</a> <a href="/tags/Themis，CMS体验度量方案/" style="font-size: 10px;">Themis，CMS体验度量方案</a> <a href="/tags/autobind/" style="font-size: 10px;">autobind</a> <a href="/tags/core-decorators/" style="font-size: 15.71px;">core-decorators</a> <a href="/tags/css/" style="font-size: 12.86px;">css</a> <a href="/tags/decorator/" style="font-size: 17.14px;">decorator</a> <a href="/tags/decorators源码简析——debounce/" style="font-size: 11.43px;">decorators源码简析——debounce</a> <a href="/tags/diff/" style="font-size: 14.29px;">diff</a> <a href="/tags/echarts/" style="font-size: 10px;">echarts</a> <a href="/tags/es6/" style="font-size: 10px;">es6</a> <a href="/tags/es7/" style="font-size: 10px;">es7</a> <a href="/tags/eventloop/" style="font-size: 11.43px;">eventloop</a> <a href="/tags/font-face/" style="font-size: 10px;">font-face</a> <a href="/tags/hook/" style="font-size: 10px;">hook</a> <a href="/tags/js/" style="font-size: 18.57px;">js</a> <a href="/tags/lazyInitialize/" style="font-size: 10px;">lazyInitialize</a> <a href="/tags/load/" style="font-size: 10px;">load</a> <a href="/tags/loader/" style="font-size: 10px;">loader</a> <a href="/tags/lottie/" style="font-size: 10px;">lottie</a> <a href="/tags/npm包/" style="font-size: 10px;">npm包</a> <a href="/tags/react/" style="font-size: 20px;">react</a> <a href="/tags/readonly/" style="font-size: 10px;">readonly</a> <a href="/tags/require/" style="font-size: 10px;">require</a> <a href="/tags/sass/" style="font-size: 10px;">sass</a> <a href="/tags/setState/" style="font-size: 10px;">setState</a> <a href="/tags/sitespeed-io/" style="font-size: 10px;">sitespeed.io</a> <a href="/tags/webp/" style="font-size: 10px;">webp</a> <a href="/tags/webpack/" style="font-size: 14.29px;">webpack</a> <a href="/tags/下载/" style="font-size: 10px;">下载</a> <a href="/tags/兼容/" style="font-size: 11.43px;">兼容</a> <a href="/tags/函数式编程/" style="font-size: 10px;">函数式编程</a> <a href="/tags/前端性能优化/" style="font-size: 12.86px;">前端性能优化</a> <a href="/tags/前端打包/" style="font-size: 10px;">前端打包</a> <a href="/tags/原型链/" style="font-size: 10px;">原型链</a> <a href="/tags/总结/" style="font-size: 12.86px;">总结</a> <a href="/tags/插件/" style="font-size: 10px;">插件</a> <a href="/tags/渲染/" style="font-size: 12.86px;">渲染</a> <a href="/tags/组件开发/" style="font-size: 10px;">组件开发</a> <a href="/tags/组合式继承/" style="font-size: 10px;">组合式继承</a> <a href="/tags/继承/" style="font-size: 11.43px;">继承</a> <a href="/tags/角度渐变/" style="font-size: 10px;">角度渐变</a> <a href="/tags/高阶组件/" style="font-size: 10px;">高阶组件</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/02/19/rrweb原理&录屏上报实践/">rrweb带你还原问题现场</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/react相关问题V2/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/module引入方式/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/js_roadmap/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/11/02/webpack-loader总结/">webpack-loader总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 Sherry<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

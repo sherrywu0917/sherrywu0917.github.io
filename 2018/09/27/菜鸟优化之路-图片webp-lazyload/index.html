@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>菜鸟优化之路-图片webp&amp;lazyload | lying fox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="webp图片优化WebP是由google开发的一种图片格式，优势体现在它具有更优的图像数据压缩算法，能带来更小的图片体积，而且拥有肉眼识别无差异的图像质量；同时具备了无损和有损的压缩模式、Alpha 透明以及动画的特性，在 JPEG 和 PNG 上的转化效果都相当优秀、稳定和统一。webp兼容性见下图其中chrome和opera支持得比较好，safari和firefox目前不支持，但已经在实验阶段">
+<meta name="keywords" content="前端性能优化,webp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="菜鸟优化之路-图片webp&amp;lazyload">
+<meta property="og:url" content="https://sherrywu0917.github.io/2018/09/27/菜鸟优化之路-图片webp-lazyload/index.html">
+<meta property="og:site_name" content="lying fox">
+<meta property="og:description" content="webp图片优化WebP是由google开发的一种图片格式，优势体现在它具有更优的图像数据压缩算法，能带来更小的图片体积，而且拥有肉眼识别无差异的图像质量；同时具备了无损和有损的压缩模式、Alpha 透明以及动画的特性，在 JPEG 和 PNG 上的转化效果都相当优秀、稳定和统一。webp兼容性见下图其中chrome和opera支持得比较好，safari和firefox目前不支持，但已经在实验阶段">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://sherrywu0917.github.io/image/webp_caniuse.png">
+<meta property="og:updated_time" content="2024-02-19T04:51:45.058Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="菜鸟优化之路-图片webp&amp;lazyload">
+<meta name="twitter:description" content="webp图片优化WebP是由google开发的一种图片格式，优势体现在它具有更优的图像数据压缩算法，能带来更小的图片体积，而且拥有肉眼识别无差异的图像质量；同时具备了无损和有损的压缩模式、Alpha 透明以及动画的特性，在 JPEG 和 PNG 上的转化效果都相当优秀、稳定和统一。webp兼容性见下图其中chrome和opera支持得比较好，safari和firefox目前不支持，但已经在实验阶段">
+<meta name="twitter:image" content="https://sherrywu0917.github.io/image/webp_caniuse.png">
+  
+    <link rel="alternate" href="/atom.xml" title="lying fox" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">lying fox</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://sherrywu0917.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-菜鸟优化之路-图片webp-lazyload" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/27/菜鸟优化之路-图片webp-lazyload/" class="article-date">
+  <time datetime="2018-09-27T12:17:29.000Z" itemprop="datePublished">2018-09-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      菜鸟优化之路-图片webp&amp;lazyload
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="webp图片优化"><a href="#webp图片优化" class="headerlink" title="webp图片优化"></a>webp图片优化</h2><p>WebP是由google开发的一种图片格式，优势体现在它具有更优的图像数据压缩算法，能带来更小的图片体积，而且拥有肉眼识别无差异的图像质量；同时具备了无损和有损的压缩模式、Alpha 透明以及动画的特性，在 JPEG 和 PNG 上的转化效果都相当优秀、稳定和统一。<br><a href="https://caniuse.com/#search=webp" target="_blank" rel="noopener">webp兼容性</a>见下图<br><img src="/image/webp_caniuse.png" width="800px"><br>其中chrome和opera支持得比较好，safari和firefox目前不支持，但已经在实验阶段。</p>
+<h2 id="检测浏览器是否支持webp格式"><a href="#检测浏览器是否支持webp格式" class="headerlink" title="检测浏览器是否支持webp格式"></a>检测浏览器是否支持webp格式</h2><h3 id="方法1-canvas的toDataURL"><a href="#方法1-canvas的toDataURL" class="headerlink" title="方法1: canvas的toDataURL"></a>方法1: canvas的toDataURL</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkWebp</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="built_in">document</span>.createElement(<span class="string">'canvas'</span>).toDataURL(<span class="string">'image/webp'</span>).indexOf(<span class="string">'data:image/webp'</span>) == <span class="number">0</span>);</span><br><span class="line">    &#125;<span class="keyword">catch</span>(err) &#123;</span><br><span class="line">        <span class="keyword">return</span>  <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//or</span></span><br><span class="line">    !![].map &amp;&amp; <span class="built_in">document</span>.createElement(<span class="string">'canvas'</span>).toDataURL(<span class="string">'image/webp'</span>).indexOf(<span class="string">'data:image/webp'</span>) == <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对比一下chrome和ie下<code>document.createElement(&#39;canvas&#39;).toDataURL(&#39;image/webp&#39;)</code>下的输出：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ie</span></span><br><span class="line"><span class="string">"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAADGSURBVHhe7cExAQAAAMKg9U9tCF8gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAONUAv9QAAcDhjokAAAAASUVORK5CYII="</span></span><br><span class="line"><span class="comment">//chrome</span></span><br><span class="line"><span class="string">"data:image/webp;base64,UklGRrgAAABXRUJQVlA4WAoAAAAQAAAAKwEAlQAAQUxQSBIAAAABBxARERCQJP7/H0X0P+1/QwBWUDgggAAAAHANAJ0BKiwBlgA+bTaZSaQjIqEgKACADYlpbuF2sRtACewD32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99qwAAP7/1gAAAAAAAAAA"</span></span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>基于<code>toDataURL</code>的特性，如果请求的类型不被支持，默认返回<code>data:image/png</code>。（PS:canvas的默认宽高是300px,150px，如果canvas的宽或者高为0，则<code>toDataURL</code>会返回<code>&quot;data:,&quot;</code>。)<br>所以，只有支持webp格式的浏览器调用<code>toDataURL(&#39;image/webp&#39;)</code>后返回的字符串中才包含<code>&#39;data:image/webp&#39;</code>。上面提供了两种写法，其中<code>!![].map</code>主要是判断是否是IE9+，以免toDataURL方法会报错。</p>
+<h3 id="方法2-图片onload"><a href="#方法2-图片onload" class="headerlink" title="方法2: 图片onload"></a>方法2: 图片onload</h3><p>google官网提供的，通过加载小的webp图片来判断是否支持该格式：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// check_webp_feature:</span></span><br><span class="line"><span class="comment">//   'feature' can be one of 'lossy', 'lossless', 'alpha' or 'animation'.</span></span><br><span class="line"><span class="comment">//   'callback(feature, result)' will be passed back the detection result (in an asynchronous way!)</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check_webp_feature</span>(<span class="params">feature, callback</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> kTestImages = &#123;</span><br><span class="line">        lossy: <span class="string">"UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA"</span>,</span><br><span class="line">        lossless: <span class="string">"UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAEAcQERGIiP4HAA=="</span>,</span><br><span class="line">        alpha: <span class="string">"UklGRkoAAABXRUJQVlA4WAoAAAAQAAAAAAAAAAAAQUxQSAwAAAARBxAR/Q9ERP8DAABWUDggGAAAABQBAJ0BKgEAAQAAAP4AAA3AAP7mtQAAAA=="</span>,</span><br><span class="line">        animation: <span class="string">"UklGRlIAAABXRUJQVlA4WAoAAAASAAAAAAAAAAAAQU5JTQYAAAD/////AABBTk1GJgAAAAAAAAAAAAAAAAAAAGQAAABWUDhMDQAAAC8AAAAQBxAREYiI/gcA"</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">var</span> img = <span class="keyword">new</span> Image();</span><br><span class="line">    img.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> result = (img.width &gt; <span class="number">0</span>) &amp;&amp; (img.height &gt; <span class="number">0</span>);</span><br><span class="line">        callback(feature, result);</span><br><span class="line">    &#125;;</span><br><span class="line">    img.onerror = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        callback(feature, <span class="literal">false</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">    img.src = <span class="string">"data:image/webp;base64,"</span> + kTestImages[feature];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面提供了几种webp的图片模式，如果浏览器支持webp，那么图片的宽高会大于0，从而返回true,否则返回false。<br>调用方法如下，可以在<code>callback</code>方法中得到检测结果，进而去进一步处理：选择动态加载webp格式的图片，或者给全局添加<code>webp</code>相关的class都可以。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">check_webp_feature(<span class="string">'lossless'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">feature,result</span>)</span>&#123;</span><br><span class="line">    alert(result); <span class="comment">//true or false</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<h2 id="使用webp"><a href="#使用webp" class="headerlink" title="使用webp"></a>使用webp</h2><h3 id="处理webp通常有两种方式"><a href="#处理webp通常有两种方式" class="headerlink" title="处理webp通常有两种方式"></a>处理webp通常有两种方式</h3><ul>
+<li>服务端处理，支持webp图片的浏览器会在请求头Accept中加上<code>image/webp</code>，服务器根据头信息返回webp或者其他格式的图片；但图片放在CDN服务器上，处理起来就很麻烦了；</li>
+<li>前端先完成对是否支持webp格式的检测，再根据检测结果去选择请求的资源类型<br>我们产品使用的是网易云提供的服务，通过修改参数就可以去获取不同格式的图片，具体可以参考<a href="https://www.163yun.com/help/documents/114078550521466880。" target="_blank" rel="noopener">https://www.163yun.com/help/documents/114078550521466880。</a><br>其中，通过在url后拼接<code>?imageView&amp;type=webp</code>就可以获得对应的webp图片。</li>
+</ul>
+<h3 id="在线生成"><a href="#在线生成" class="headerlink" title="在线生成"></a>在线生成</h3><ul>
+<li>智图 <a href="https://zhitu.isux.us/" target="_blank" rel="noopener">zhitu.isux.us</a></li>
+<li>又拍云 <a href="https://www.upyun.com/webp" target="_blank" rel="noopener">www.upyun.com/webp</a></li>
+<li>CloudConvert <a href="https://cloudconvert.com/anything-to-webp" target="_blank" rel="noopener">cloudconvert.com/anything-to-webp</a></li>
+<li>iSparta <a href="https://isparta.github.io/index.html" target="_blank" rel="noopener">isparta.github.io/index.html</a></li>
+</ul>
+<h2 id="图片lazyload"><a href="#图片lazyload" class="headerlink" title="图片lazyload"></a>图片lazyload</h2><p>图片lazyload是常见的性能优化的一种方式。如果页面图片数量较多，一次性加载比较耗时，还会导致页面卡顿，所以，建议根据需要去加载部门图片，待页面滚动时再加载下面的图片。<br>可以使用一个轻量级的<a href="https://github.com/verlok/lazyload" target="_blank" rel="noopener">lazyload库</a>，具体使用可以参考GitHub。<br>通过<code>npm</code>安装<code>vanilla-lazyload</code>包，推荐的版本有：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install vanilla-lazyload@8.17.0</span><br><span class="line">npm install vanilla-lazyload@10.19.0</span><br></pre></td></tr></table></figure></p>
+<p>注意：10.x版本使用了<code>IntersectionObserver API</code>，IE和safari不支持，所有图片会一次性加载。<br>简单粘贴一个示例：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">class</span>=<span class="string">"lazy"</span> <span class="attr">alt</span>=<span class="string">"..."</span> </span></span><br><span class="line"><span class="tag">     <span class="attr">data-src</span>=<span class="string">"../img/44721746JJ_15_a.jpg"</span></span></span><br><span class="line"><span class="tag">     <span class="attr">width</span>=<span class="string">"220"</span> <span class="attr">height</span>=<span class="string">"280"</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> LazyLoad <span class="keyword">from</span> <span class="string">"vanilla-lazyload"</span>;</span><br><span class="line"><span class="keyword">var</span> myLazyLoad = <span class="keyword">new</span> LazyLoad(&#123;</span><br><span class="line">    elements_selector: <span class="string">".lazy"</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>在线demo可以访问：<a href="https://www.andreaverlicchi.eu/lazyload/demos/container_single.html" target="_blank" rel="noopener">https://www.andreaverlicchi.eu/lazyload/demos/container_single.html</a><br>REFS:<br><a href="https://github.com/verlok/lazyload" target="_blank" rel="noopener">https://github.com/verlok/lazyload</a><br><a href="https://www.haorooms.com/post/webp_bigpipe" target="_blank" rel="noopener">https://www.haorooms.com/post/webp_bigpipe</a><br><a href="https://www.zhangxinxu.com/php/microCodeDetail?id=3" target="_blank" rel="noopener">https://www.zhangxinxu.com/php/microCodeDetail?id=3</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2018/09/27/菜鸟优化之路-图片webp-lazyload/" data-id="clsshtuxg002xwqrtpxj7uq2e" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webp/">webp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/前端性能优化/">前端性能优化</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/10/09/菜鸟优化之路-前端性能测试工具/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          菜鸟优化之路-前端性能测试工具sitespeed.io
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/08/24/函数式编程的应用/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">函数式编程的应用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSR/">SSR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Themis，CMS体验度量方案/">Themis，CMS体验度量方案</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/autobind/">autobind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-decorators/">core-decorators</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decorator/">decorator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decorators源码简析——debounce/">decorators源码简析——debounce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/diff/">diff</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/echarts/">echarts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es7/">es7</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/eventloop/">eventloop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/font-face/">font-face</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hook/">hook</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js/">js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lazyInitialize/">lazyInitialize</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/load/">load</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/loader/">loader</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lottie/">lottie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm包/">npm包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/readonly/">readonly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/require/">require</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sass/">sass</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/setState/">setState</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sitespeed-io/">sitespeed.io</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webp/">webp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webpack/">webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下载/">下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/兼容/">兼容</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端性能优化/">前端性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端打包/">前端打包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/原型链/">原型链</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/总结/">总结</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/插件/">插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/渲染/">渲染</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/组件开发/">组件开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/组合式继承/">组合式继承</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/继承/">继承</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/角度渐变/">角度渐变</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/高阶组件/">高阶组件</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SSR/" style="font-size: 10px;">SSR</a> <a href="/tags/Themis，CMS体验度量方案/" style="font-size: 10px;">Themis，CMS体验度量方案</a> <a href="/tags/autobind/" style="font-size: 10px;">autobind</a> <a href="/tags/core-decorators/" style="font-size: 15.71px;">core-decorators</a> <a href="/tags/css/" style="font-size: 12.86px;">css</a> <a href="/tags/decorator/" style="font-size: 17.14px;">decorator</a> <a href="/tags/decorators源码简析——debounce/" style="font-size: 11.43px;">decorators源码简析——debounce</a> <a href="/tags/diff/" style="font-size: 14.29px;">diff</a> <a href="/tags/echarts/" style="font-size: 10px;">echarts</a> <a href="/tags/es6/" style="font-size: 10px;">es6</a> <a href="/tags/es7/" style="font-size: 10px;">es7</a> <a href="/tags/eventloop/" style="font-size: 11.43px;">eventloop</a> <a href="/tags/font-face/" style="font-size: 10px;">font-face</a> <a href="/tags/hook/" style="font-size: 10px;">hook</a> <a href="/tags/js/" style="font-size: 18.57px;">js</a> <a href="/tags/lazyInitialize/" style="font-size: 10px;">lazyInitialize</a> <a href="/tags/load/" style="font-size: 10px;">load</a> <a href="/tags/loader/" style="font-size: 10px;">loader</a> <a href="/tags/lottie/" style="font-size: 10px;">lottie</a> <a href="/tags/npm包/" style="font-size: 10px;">npm包</a> <a href="/tags/react/" style="font-size: 20px;">react</a> <a href="/tags/readonly/" style="font-size: 10px;">readonly</a> <a href="/tags/require/" style="font-size: 10px;">require</a> <a href="/tags/sass/" style="font-size: 10px;">sass</a> <a href="/tags/setState/" style="font-size: 10px;">setState</a> <a href="/tags/sitespeed-io/" style="font-size: 10px;">sitespeed.io</a> <a href="/tags/webp/" style="font-size: 10px;">webp</a> <a href="/tags/webpack/" style="font-size: 14.29px;">webpack</a> <a href="/tags/下载/" style="font-size: 10px;">下载</a> <a href="/tags/兼容/" style="font-size: 11.43px;">兼容</a> <a href="/tags/函数式编程/" style="font-size: 10px;">函数式编程</a> <a href="/tags/前端性能优化/" style="font-size: 12.86px;">前端性能优化</a> <a href="/tags/前端打包/" style="font-size: 10px;">前端打包</a> <a href="/tags/原型链/" style="font-size: 10px;">原型链</a> <a href="/tags/总结/" style="font-size: 12.86px;">总结</a> <a href="/tags/插件/" style="font-size: 10px;">插件</a> <a href="/tags/渲染/" style="font-size: 12.86px;">渲染</a> <a href="/tags/组件开发/" style="font-size: 10px;">组件开发</a> <a href="/tags/组合式继承/" style="font-size: 10px;">组合式继承</a> <a href="/tags/继承/" style="font-size: 11.43px;">继承</a> <a href="/tags/角度渐变/" style="font-size: 10px;">角度渐变</a> <a href="/tags/高阶组件/" style="font-size: 10px;">高阶组件</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/02/19/rrweb原理&录屏上报实践/">rrweb带你还原问题现场</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/react相关问题V2/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/module引入方式/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/js_roadmap/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/11/02/webpack-loader总结/">webpack-loader总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 Sherry<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

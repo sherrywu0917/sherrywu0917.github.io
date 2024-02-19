@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>项目开发record | lying fox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="业务背景 已有的阅读产品经过多年的发展，功能已经稳定，但整体用户体量不高、用户活跃度不够，且存在UV和收益下降的趋势，无法达到部门收益的KPI；短期内，无法找到新的增长点，是为了提高收益，达成部门的KPI，迫切需要扩展新的业务线。 在当时公众号兴起繁荣的大环境下，渠道分销是一个很火的模式，公众号有着大量的用户流量，而我们可以提供海量的阅读资源，所以要解决的问题是如何通过公共号引流，所以我们期望有这">
+<meta name="keywords" content="总结,react,webpack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="项目开发record">
+<meta property="og:url" content="https://sherrywu0917.github.io/2017/07/27/分站开发总结/index.html">
+<meta property="og:site_name" content="lying fox">
+<meta property="og:description" content="业务背景 已有的阅读产品经过多年的发展，功能已经稳定，但整体用户体量不高、用户活跃度不够，且存在UV和收益下降的趋势，无法达到部门收益的KPI；短期内，无法找到新的增长点，是为了提高收益，达成部门的KPI，迫切需要扩展新的业务线。 在当时公众号兴起繁荣的大环境下，渠道分销是一个很火的模式，公众号有着大量的用户流量，而我们可以提供海量的阅读资源，所以要解决的问题是如何通过公共号引流，所以我们期望有这">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2024-02-19T04:51:45.056Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="项目开发record">
+<meta name="twitter:description" content="业务背景 已有的阅读产品经过多年的发展，功能已经稳定，但整体用户体量不高、用户活跃度不够，且存在UV和收益下降的趋势，无法达到部门收益的KPI；短期内，无法找到新的增长点，是为了提高收益，达成部门的KPI，迫切需要扩展新的业务线。 在当时公众号兴起繁荣的大环境下，渠道分销是一个很火的模式，公众号有着大量的用户流量，而我们可以提供海量的阅读资源，所以要解决的问题是如何通过公共号引流，所以我们期望有这">
+  
+    <link rel="alternate" href="/atom.xml" title="lying fox" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">lying fox</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://sherrywu0917.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-分站开发总结" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/07/27/分站开发总结/" class="article-date">
+  <time datetime="2017-07-27T01:38:34.000Z" itemprop="datePublished">2017-07-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      项目开发record
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="业务背景"><a href="#业务背景" class="headerlink" title="业务背景"></a>业务背景</h2><ol>
+<li>已有的阅读产品经过多年的发展，功能已经稳定，但整体用户体量不高、用户活跃度不够，且存在UV和收益下降的趋势，无法达到部门收益的KPI；短期内，无法找到新的增长点，是为了提高收益，达成部门的KPI，迫切需要扩展新的业务线。</li>
+<li>在当时公众号兴起繁荣的大环境下，渠道分销是一个很火的模式，公众号有着大量的用户流量，而我们可以提供海量的阅读资源，所以要解决的问题是如何通过公共号引流，所以我们期望有这样一个平台将资源和用户打通，可以给公众号的用户提供书籍阅读的功能，同时可以实现收益，最终实现和公众号平台的互利共生，这样公众号也乐于和我们合作，继而有一个累积的正向收益。<br>基于上面两点，我们计划开发渠道小说分站，分站的整体包括：</li>
+</ol>
+<ul>
+<li>toA的内部结算系统、书籍编辑器等</li>
+<li>toB的公众号平台</li>
+<li>toC的H5阅读分站</li>
+</ul>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="前端目录结构"><a href="#前端目录结构" class="headerlink" title="前端目录结构"></a>前端目录结构</h3><p>基于React + React-Router + Sass开发的webpack打包的多页面应用，其中正文页面和搜索页面是基于React-Router开发的单页面应用。路由类型采用的是BrowserRouter，在移动端pushState/replaceState没有兼容问题，可以放心使用。如果是要兼容IE9及以下，则不能使用BrowserRouter，建议使用HashRouter。此外，使用BrowserRouter后，可以借助history的特性帮助我们实现记录每个页面的历史停留位置。</p>
+<h4 id="BrowserRouter与HashRouter主要区别"><a href="#BrowserRouter与HashRouter主要区别" class="headerlink" title="BrowserRouter与HashRouter主要区别"></a>BrowserRouter与HashRouter主要区别</h4><ul>
+<li>hashRouter不支持location.key 、location.state：刷新页面或者直接浏览器回退一步，再前进时，BrowserRouter的页面依然可以获取到state中的值，而在HashRouter页面中无法获取到state的值，因为HashRouter没有使用HTML5的History API，所以刷新路由后导致state值丢失。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">|-- assets</span><br><span class="line">  |</span><br><span class="line">  |-- config //webpack编译</span><br><span class="line">  |    |-- base.js //基础编译配置</span><br><span class="line">  |    |-- dev.js  //开发环境编译配置</span><br><span class="line">  |    |-- dll.js  //动态链接库编译配置</span><br><span class="line">  |    |-- hot.js  //热替换编译配置</span><br><span class="line">  |    |-- prod.js //开发环境编译配置</span><br><span class="line">  |    |-- util.js //定义配置相关的通用方法和变量</span><br><span class="line">  |</span><br><span class="line">  |-- src                //源码目录</span><br><span class="line">  |    |-- component        // 组件</span><br><span class="line">  |    |      |-- common      //公共组件</span><br><span class="line">  |    |      |--             //其他子组件</span><br><span class="line">  |    |-- entry              //入口js，与静态html文件相对应</span><br><span class="line">  |    |-- util               //通用方法</span><br><span class="line">  |    |-- image            //图片资源</span><br><span class="line">  |    |-- style            //样式</span><br><span class="line">  |</span><br><span class="line">  |-- template              //html模板，动态生成html文件</span><br><span class="line">  |</span><br><span class="line">  |-- mock.json      // mock数据</span><br><span class="line">  |-- server_hot.js  //实现热更新、拦截并处理前端请求(返回本地页面、mock数据，其他请求转发到服务端处理)  </span><br><span class="line">  |</span><br><span class="line">|-- dist //构建目录</span><br></pre></td></tr></table></figure>
+<p>其中，模板中是静态html文件，在没有添加后端路由的情况下，通过server_hot.js中的页面映射去访问前端页面，例如当匹配到路径/index时，返回index.html页面，结合mock数据，真正实现了前后端分离。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> templateMap = &#123;</span><br><span class="line">    <span class="string">'/search'</span>: <span class="string">'search.html'</span>,</span><br><span class="line">    <span class="string">'/search/book'</span>: <span class="string">'search.html'</span>,</span><br><span class="line">    <span class="string">'/index'</span>: <span class="string">'index.html'</span>,</span><br><span class="line">    <span class="string">'/history'</span>: <span class="string">'history.html'</span>,</span><br><span class="line">    <span class="string">'/rank'</span>: <span class="string">'rank.html'</span>,</span><br><span class="line">    <span class="string">'/home/more'</span>: <span class="string">'more.html'</span>,</span><br><span class="line">    <span class="string">'/category'</span>: <span class="string">'category.html'</span>,</span><br><span class="line">    <span class="string">'/info'</span>: <span class="string">'info.html'</span>,</span><br><span class="line">    <span class="string">'/detail'</span>: <span class="string">'detail.html'</span>,</span><br><span class="line">    <span class="string">'/book/reader'</span>: <span class="string">'reader.html'</span>,</span><br><span class="line">    <span class="string">'/recharge'</span>: <span class="string">'recharge.html'</span>,</span><br><span class="line">    <span class="string">'/catalog'</span>: <span class="string">'catalog.html'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> mapItem <span class="keyword">in</span> templateMap) &#123;</span><br><span class="line">    app.get(mapItem, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">        res.sendFile(__dirname + <span class="string">'/template/'</span> + templateMap[mapItem]);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="API转发后获取服务端数据失败的问题"><a href="#API转发后获取服务端数据失败的问题" class="headerlink" title="API转发后获取服务端数据失败的问题"></a>API转发后获取服务端数据失败的问题</h4><p>在使用http-proxy-middleware转发请求到后端时，发现有部分请求无法获得返回数据，首先可以确定的是请求被转发到后端了。调试发现后端会验证站点相关信息，在验证host的时候报错。猜测可能是请求转发后header里的host信息丢失，查询<a href="https://www.npmjs.com/package/http-proxy-middleware#http-proxy-middleware-options" target="_blank" rel="noopener">API</a>发现可以设置option.headers，如下所示。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> proxyMiddleware = <span class="built_in">require</span>(<span class="string">'http-proxy-middleware'</span>);</span><br><span class="line"><span class="keyword">var</span> apiProxy = proxyMiddleware(<span class="string">'/api'</span>, &#123; <span class="attr">target</span>: <span class="string">'http://ypxst.kuxuanbook.yuedu.163.com'</span>, <span class="attr">headers</span>: &#123;<span class="attr">host</span>: <span class="string">'ypxst.kuxuanbook.yuedu.163.com'</span>&#125;&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>设置好host后，就可以正常获取接口返回数据了。</p>
+<h4 id="POST请求验证XSRF-TOKEN"><a href="#POST请求验证XSRF-TOKEN" class="headerlink" title="POST请求验证XSRF-TOKEN"></a>POST请求验证XSRF-TOKEN</h4><p>之前阅读常用的方式是后端写入freemarker模板或者通过异步接口获得，这次和后端约定统一放在cookie中。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">headers: &#123;</span><br><span class="line">    <span class="string">'Content-Type'</span>: <span class="string">'application/x-www-form-urlencoded'</span>,</span><br><span class="line">    <span class="string">'X-XSRF-TOKEN'</span>: csrf_token</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从cookie中读取token后封装在post接口中，写在headers里面，这样在使用的时候就直接调用post方法，无需关注token验证。</p>
+<h4 id="使用git-subtree同步assets工程"><a href="#使用git-subtree同步assets工程" class="headerlink" title="使用git subtree同步assets工程"></a>使用git subtree同步assets工程</h4><p>assets资源存在于novel-webapp-wap和novel-webapp-recharge两个工程下面，recharge工程下面用到的是充值页面，其他页面都在wap工程下，之所以分开为两个工程是因为涉及到支付，充值的域名需要是唯一的，而分站的域名很多。为了保证二者资源的同步，可以使用git subtree实现子工程的同步。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取远端novel-webapp-assets的更新</span></span><br><span class="line">git subtree pull --prefix=src/main/webapp/assets ssh://git@g.hz.netease.com:22222/novel/novel-webapp-assets.git master --squash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将本地assets更新推送到远端novel-webapp-assets</span></span><br><span class="line">git subtree push --prefix=src/main/webapp/assets ssh://git@g.hz.netease.com:22222/novel/novel-webapp-assets.git master --squash</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<h4 id="webpack替换文件链接的资源"><a href="#webpack替换文件链接的资源" class="headerlink" title="webpack替换文件链接的资源"></a>webpack替换文件链接的资源</h4><p>通过给chunk filename添加[chunkhash]去有效地缓存文件，每次修改后生成新的chunkhash值，手动替换很麻烦，所以结合done plugin去完成html文件中资源名字的自动替换。<br>stats记录了打包信息和相应的chunkhash值，其中assetsByChunkName包含了以chunkname作为key，filename作为值的对象，结构如下：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">"assetsByChunkName": &#123;</span><br><span class="line">  "reader": [</span><br><span class="line">    "js/reader-60b54d52.js",</span><br><span class="line">    <span class="string">"css/reader-60b54d52.css"</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  "common": [</span><br><span class="line">    "js/common-a814792a.bundle.js",</span><br><span class="line">    <span class="string">"css/common-a814792a.css"</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>遍历stats对象中的entrypoints，这里的entrypoints的key值和html文件名一致、且一一对应的，根据key值读取可以读取对应的html文件，通过正则匹配的方式将对应的js、css文件替换为本次打包生成的文件。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.plugin(<span class="string">'done'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">stats</span>) </span>&#123;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">var</span> key <span class="keyword">in</span> stats.toJson().entrypoints) &#123;</span><br><span class="line">          <span class="keyword">var</span> htmlPath = path.join(ROOT_PATH, <span class="string">'template'</span>, key + <span class="string">'.html'</span>);</span><br><span class="line">          <span class="keyword">var</span> htmlContent = fs.readFileSync(htmlPath, <span class="string">'utf8'</span>);</span><br><span class="line">          <span class="keyword">var</span> keyJSRegExp = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">'js\/'</span> + key + <span class="string">'(.*?)\.js'</span>);</span><br><span class="line">          <span class="keyword">var</span> keyCSSRegExp = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">'css\/'</span> + key + <span class="string">'(.*?)\.css'</span>);</span><br><span class="line">          <span class="keyword">var</span> keyAssets = [].concat(stats.toJson().assetsByChunkName[key]);</span><br><span class="line">          <span class="keyword">var</span> commonAssets = [].concat(stats.toJson().assetsByChunkName[<span class="string">'common'</span>]);</span><br><span class="line">          <span class="keyword">var</span> htmlOutput = <span class="string">''</span>;</span><br><span class="line">          <span class="keyword">var</span> keyJS = keyAssets.filter(<span class="function"><span class="params">path</span> =&gt;</span> path.endsWith(<span class="string">'.js'</span>))[<span class="number">0</span>];</span><br><span class="line">          <span class="keyword">var</span> keyCSS = keyAssets.filter(<span class="function"><span class="params">path</span> =&gt;</span> path.endsWith(<span class="string">'.css'</span>))[<span class="number">0</span>];</span><br><span class="line">          <span class="keyword">if</span>(keyJS) &#123;</span><br><span class="line">               htmlOutput = htmlContent.replace(keyJSRegExp, keyJS);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">if</span>(keyCSS) &#123;</span><br><span class="line">               htmlOutput = htmlOutput.replace(keyCSSRegExp, keyCSS);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">var</span> commonJS = commonAssets.filter(<span class="function"><span class="params">path</span> =&gt;</span> path.endsWith(<span class="string">'.js'</span>))[<span class="number">0</span>];</span><br><span class="line">          <span class="keyword">var</span> commonCSS = commonAssets.filter(<span class="function"><span class="params">path</span> =&gt;</span> path.endsWith(<span class="string">'.css'</span>))[<span class="number">0</span>];</span><br><span class="line">          <span class="keyword">if</span>(commonJS) &#123;</span><br><span class="line">               htmlOutput = htmlOutput.replace(<span class="regexp">/js\/common(.*?)\.js/g</span>, commonJS);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">if</span>(commonCSS) &#123;</span><br><span class="line">               htmlOutput = htmlOutput.replace(<span class="regexp">/css\/common(.*?)\.css/g</span>, commonCSS);</span><br><span class="line">          &#125;</span><br><span class="line">          fs.writeFileSync(htmlPath, htmlOutput);</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>Refs:</strong><br><a href="http://www.weicon9.com/2016/11/Loading-Webpack-Bundles-With-Hash-Value/" target="_blank" rel="noopener">LOADING WEBPACK BUNDLES WITH HASH VALUE</a></p>
+<h3 id="polyfill引入方式比较"><a href="#polyfill引入方式比较" class="headerlink" title="polyfill引入方式比较"></a>polyfill引入方式比较</h3><p>babel-core/babel-preset-*等插件可以将语法从 es6 转成 es5，但没有提供 api 的转码功能，如 Promise、Set、Map 等新增对象，Object.assign、Object.entries 等全局对象上的新增方法都不会转码， babel-runtime 和 babel-polyfill 就是为此而生。这两个模块功能几乎相同，就是转码新增 api，模拟 es6 环境，但实现方法完全不同。</p>
+<h4 id="babel-polyfill库"><a href="#babel-polyfill库" class="headerlink" title="babel-polyfill库"></a>babel-polyfill库</h4><p>babel-polyfill 的做法是将全局对象通通污染一遍，比如相应使用includes方法，会通过Array.prototype.includes() 的方式去注入污染原型。对于普通的业务代码没有关系，如果不在意略大的体积（min后86kb），推荐使用；但如果用在开发library，则不推荐使用，会污染该library使用者的环境。</p>
+<h4 id="babel-runtime库和babel-plugin-transform-runtime-插件"><a href="#babel-runtime库和babel-plugin-transform-runtime-插件" class="headerlink" title="babel-runtime库和babel-plugin-transform-runtime 插件"></a>babel-runtime库和babel-plugin-transform-runtime 插件</h4><p>babel-runtime 的做法是自己手动引入 helper 函数，const Promise = require(‘babel-runtime/core-js/promise’) 就可以引入 Promise，但是很不方便。<br>借助babel-plugin-transform-runtime插件，可以帮助我们按需加载polyfill，这个模块会将我们的代码重写，如将 Promise 重写成 _Promise（只是打比方），然后引入_Promise helper 函数。此外，babel-runtime 不能转码实例方法，比如这样的代码：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'!!!'</span>.repeat(<span class="number">3</span>);</span><br><span class="line"><span class="string">'hello'</span>.includes(<span class="string">'h'</span>);</span><br></pre></td></tr></table></figure></p>
+<p>这只能通过 babel-polyfill 来转码，因为 babel-polyfill 是直接在原型链上增加方法。</p>
+<p>如果在开发library，为了避免污染使用者的环境，只能用 babel-runtime + babel-plugin-transform-runtime。虽然是业务开发，但是因为移动端比较介意babel-polyfill的体积，所以我还是选择了babel-runtime。</p>
+<h5 id="babelrc中的相关配置"><a href="#babelrc中的相关配置" class="headerlink" title=".babelrc中的相关配置"></a>.babelrc中的相关配置</h5><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"plugins"</span>: [</span><br><span class="line">        [<span class="string">"transform-runtime"</span>, &#123;</span><br><span class="line">            <span class="attr">"helper"</span>: <span class="literal">false</span>,  <span class="comment">//开启helper后，统一引用了helper</span></span><br><span class="line">            <span class="attr">"polyfill"</span>: <span class="literal">true</span>,  <span class="comment">//Map, Set, Promise,Object.assign等</span></span><br><span class="line">            <span class="attr">"regenerator"</span>: <span class="literal">true</span>, <span class="comment">//主要是实现generator/yeild，async/await</span></span><br><span class="line">            <span class="attr">"moduleName"</span>: <span class="string">"babel-runtime"</span></span><br><span class="line">        &#125;]</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>helper</code>设为true时，会引入一些 helper 来代替每次都生成的通用函数，原来构建好的代码每个模块都有类似这种代码：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">_classCallCheck</span>(<span class="params">instance, Constructor</span>)...</span></span><br><span class="line"><span class="function"><span class="title">function</span> <span class="title">_possibleConstructorReturn</span>(<span class="params">self, call</span>)...</span></span><br><span class="line"><span class="function"><span class="title">function</span> <span class="title">_inherits</span>(<span class="params">subClass, superClass</span>)...</span></span><br></pre></td></tr></table></figure></p>
+<p><code>开启helper后</code><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _classCallCheck2 = <span class="built_in">require</span>(<span class="string">'babel-runtime/helpers/classCallCheck'</span>);</span><br><span class="line"><span class="keyword">var</span> _possibleConstructorReturn2 = <span class="built_in">require</span>(<span class="string">'babel-runtime/helpers/possibleConstructorReturn'</span>);</span><br><span class="line"><span class="keyword">var</span> _inherits2 = <span class="built_in">require</span>(<span class="string">'babel-runtime/helpers/inherits'</span>);</span><br></pre></td></tr></table></figure></p>
+<p>在v6.12.0 (2016-07-27) 后增加了 helper 的配置，原因是从 babel-runtime 里引入的 helper 依赖很多，全部都是兼容最底层的。比如 Object.create typeof 这种方法全部被重写了，会导致构建模块变大。<br><code>开启polyfill后</code>，Object.assign方法会被改写为<code>__WEBPACK_IMPORTED_MODULE_1_babel_runtime_core_js_object_assign___default()</code>。<br><code>regenerator设为true</code>，使我们可以使用generator/yeild，async/await。如果你只需要用 regenerator，不需要 core-js 里面的 polyfill 那你就可以在 options 中把 polyfill 设为 false。</p>
+<h4 id="babel-preset-env插件"><a href="#babel-preset-env插件" class="headerlink" title="babel-preset-env插件"></a>babel-preset-env插件</h4><blockquote>
+<p>版本支持：babel 7.0beta版、babel-loader 8.0 beta版和babel-preset-env 2.0beta版<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install babel-loader@8.0.0-beta.0 @babel/core @babel/preset-env  --save-dev</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>首先需要安装babel-polyfill<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install @babel/polyfill --save</span><br></pre></td></tr></table></figure></p>
+<p>配置”useBuiltIns”: </p>
+<ul>
+<li>false: 不对polyfills做任何操作</li>
+<li>entry: 根据target中浏览器版本的支持，将polyfills拆分引入，仅引入有浏览器不支持的polyfill，通过<code>import &#39;babel-polyfill&#39;</code>方式在代码中一次性引入</li>
+<li>usage(新)：检测代码中ES6/7/8等的使用情况，仅仅加载代码中用到的polyfills</li>
+</ul>
+<p>这种方式配置非常方便，并且可以按需加载，后续会替换成该插件。</p>
+<p><strong>Refs:</strong><br><a href="https://github.com/babel/babel/tree/master/experimental/babel-preset-env" target="_blank" rel="noopener">babel-preset-env</a><br><a href="https://erasermeng.github.io/2017/11/02/%E6%8C%89%E9%9C%80%E5%8A%A0%E8%BD%BDpolyfill%E2%80%94%E2%80%94babel7%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%89%93%E5%BC%80%E6%96%B9%E5%BC%8F/" target="_blank" rel="noopener">按需加载polyfill——babel7的正确打开方式</a><br><a href="http://blog.csdn.net/a324539017/article/details/52824189" target="_blank" rel="noopener">ES6 + Webpack + React + Babel 如何在低版本浏览器上愉快的玩耍</a><br><a href="https://zhuanlan.zhihu.com/p/29506685" target="_blank" rel="noopener">再见，babel-preset-2015</a></p>
+<h3 id="记录正文页历史滚动位置"><a href="#记录正文页历史滚动位置" class="headerlink" title="记录正文页历史滚动位置"></a>记录正文页历史滚动位置</h3><p>在开发过程中，发现每次返回到历史页面时，都不是上次访问到的页面位置，而是重置到了顶部，react并没有去维护历史页面的滚动位置。所以我们需要手动去记录页面的历史滚动位置。</p>
+<h5 id="可能的方案"><a href="#可能的方案" class="headerlink" title="可能的方案"></a>可能的方案</h5><ol>
+<li>使用window的onpopstate、onload、onunload事件监听页面的前进、返回，利用command模式维护posUndoStack和posRedoStack栈，记录并保存页面的历史位置<br>问题：结合了history.length去判断页面是前进、返回or新进了一个页面，但是当从b页面返回到a页面后，又点击进入了b页面后，history.length不变，链接不变，这个时候无法辨别浏览器的行为</li>
+<li><a href="http://npm.taobao.org/package/react-router-scroll" target="_blank" rel="noopener">react-router-scroll组件</a><br>问题：基于react-router，基于router middleware实现的，使用的Router V4没有中间件的概念</li>
+<li>基于history.location.key属性的实现<br>问题：基于react-router</li>
+</ol>
+<h5 id="最终方案"><a href="#最终方案" class="headerlink" title="最终方案"></a>最终方案</h5><p>由于目前没有好的办法去记录所有页面的位置，而记录正文页阅读位置的需求最为必要，所以使用第三个方案，暂时忽略其他页面。使用BrowserRouter的页面支持location.key属性，这个location是react-router引用的history库中的location对象，每个页面有唯一标识的key值。</p>
+<blockquote>
+<p>React-router官网: 使用 hash 的方式记录导航历史不支持 location.key，在以前的版本中，我们为这种行为提供了shim，但是仍有一些问题我们无法解决。</p>
+</blockquote>
+<p>react-router使用的history库在createBrowserHistory时，会调用createKey方法创建页面的key值，key的长度默认为6，可以设置。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> createKey = <span class="function"><span class="keyword">function</span> <span class="title">createKey</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Math</span>.random().toString(<span class="number">36</span>).substr(<span class="number">2</span>, keyLength);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>createBrowserHistory类中维护了一个数组allkeys，里面记录了所有页面的location.key。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> allKeys = [initialLocation.key];</span><br></pre></td></tr></table></figure></p>
+<p>在SPA中的每个页面的history的state中则记录了该页面的key。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">globalHistory.pushState(&#123; <span class="attr">key</span>: key, <span class="attr">state</span>: state &#125;, <span class="literal">null</span>, href);</span><br></pre></td></tr></table></figure></p>
+<p>在监听到popState事件后，会通过event拿到进入页面的state，里面记录了key值。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.onpopstate = <span class="function"><span class="keyword">function</span>(<span class="params">event</span>) </span>&#123;</span><br><span class="line">  alert(state: <span class="string">" + JSON.stringify(event.state));</span></span><br><span class="line"><span class="string">&#125;;</span></span><br></pre></td></tr></table></figure></p>
+<p>所以在页面返回、前进的时候，同一页面的location.key不变，据此可以在页面离开的时候，用key-value的形式保存当前key值和对应的滚动位置在sessionStorage中。页面离开的情况有：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SPA页面内路由到其他章节</span></span><br><span class="line">componentWillReceiveProps(nextProps) &#123;</span><br><span class="line">    posReserve.onLeave(<span class="keyword">this</span>.props.location.key);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//页面unload</span></span><br><span class="line"><span class="built_in">window</span>.onunload = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    posReserve.onLeave(<span class="keyword">this</span>.props.location.key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在页面前进、返回的时候，去sessionStorage中读取历史位置，并滚动页面到对应位置。</p>
+<h3 id="ios微信中SPA正文页返回问题"><a href="#ios微信中SPA正文页返回问题" class="headerlink" title="ios微信中SPA正文页返回问题"></a>ios微信中SPA正文页返回问题</h3><h4 id="问题1：正文内部返回白屏"><a href="#问题1：正文内部返回白屏" class="headerlink" title="问题1：正文内部返回白屏"></a>问题1：正文内部返回白屏</h4><p>在IOS微信浏览器中阅读正文，返回上一章的时候期望显示上一章内容，但是会出现白屏的问题，需要上滑或者下滑页面，正文才会出现。<br>在寻找解决方案的时候，发现Vue存在相似的问题：<br>  <a href="https://github.com/vuejs/vue/issues/5533" target="_blank" rel="noopener">iOS Safari renders blank page</a><br>  <a href="https://github.com/ElemeFE/mint-ui/issues/937" target="_blank" rel="noopener">ios 组件点返回白屏遮挡问题</a><br>参考了其中的解决方案，在正文内容加载完成后通过js去触发scroll滚动，正文显示就恢复正常了。代码如下所示，尝试了下面两种方式，都可以解决问题。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">componentDidMount() &#123;</span><br><span class="line">    <span class="built_in">window</span>.scrollTo(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="built_in">window</span>.scrollTo(<span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="comment">//或者</span></span><br><span class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">window</span>.scrollTo(<span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">    &#125;, <span class="number">100</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="问题2-从其他页面返回正文问题"><a href="#问题2-从其他页面返回正文问题" class="headerlink" title="问题2: 从其他页面返回正文问题"></a>问题2: 从其他页面返回正文问题</h4><p>使用<code>Preact</code>的时候，从其他页面返回到正文页后，部分请求没有发出。<br>在debug的时候发现正文页setState没有触发componentWillUpdate，不会rerender，setState的callback不被执行。当从Preact替换为React的时候，页面显示正常。</p>
+<ul>
+<li>猜测1: 可能和preact的diff机制有关。因为’对一个虚拟DOM子树是否继续更新下去，如果它们的type, props,key都一样，或者它们的引用也一样，可能也会继续diff，官方还会比较context!!!!这个许多react-like没有考虑到。<code>React-Router就非常依赖context对象进行多层的组件间传递</code>‘。</li>
+<li>猜测2: setState回调延后<br>知乎问答‘<a href="https://www.zhihu.com/question/65479147/answer/231505912?utm_source=wechat_session&amp;utm_medium=social&amp;utm_campaign=ge13_2&amp;utm_division=ge13_3" target="_blank" rel="noopener">如何看待 React 的替代框架 Preact</a>’中蓝面小生和司徒正美的回答中列出了Preact存在的一些问题。</li>
+</ul>
+<h5 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h5><p>如果继续使用Preact可以通过reload页面解决问题，当从正文页跳转到其他页面时候，记录下当前页面的<code>location.key</code>在sessionStorage中，返回页面时在componentWillMount方法中判断当前key值是否存储在’N_reader_locKeys’，若存在，则说明是页面返回，reload页面，并且从’N_reader_locKeys’中删掉对应的key值。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">componentWillMount() &#123;</span><br><span class="line">    <span class="keyword">let</span> _key = <span class="keyword">this</span>.props.location.key;</span><br><span class="line">    <span class="keyword">let</span> locKeys = sessionStorage.getItem(<span class="string">'N_reader_locKeys'</span>);</span><br><span class="line">    <span class="keyword">if</span>(isIos &amp;&amp; _key &amp;&amp; locKeys)&#123;</span><br><span class="line">        sessionStorage.removeItem(<span class="string">'N_reader_locKey'</span>)</span><br><span class="line">        <span class="keyword">let</span> index = locKeys.indexOf(_key);</span><br><span class="line">        <span class="keyword">if</span>(~index &amp;&amp; <span class="keyword">this</span>.props.history.action === <span class="string">'POP'</span>) &#123;</span><br><span class="line">            sessionStorage.setItem(<span class="string">'N_reader_locKeys'</span>, locKeys.slice(<span class="number">0</span>, index) + locKeys.slice(index + _key.length + <span class="number">1</span>));</span><br><span class="line">            location.reload();</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//[IOS微信返回bug处理]记录所有点击跳到其他页面(结合href和isexternal值)</span></span><br><span class="line">bindEvent() &#123;</span><br><span class="line">    <span class="built_in">document</span>.addEventListener(<span class="string">'click'</span>, e =&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> targetEle = e.target;</span><br><span class="line">        <span class="keyword">if</span>(targetEle.tagName.toLowerCase() === <span class="string">'a'</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>(targetEle.href.indexOf(<span class="string">'.do'</span>) !== <span class="number">-1</span> || (targetEle.getAttribute(<span class="string">'isexternal'</span>) === <span class="string">'true'</span>)) &#123;</span><br><span class="line">                e.preventDefault();</span><br><span class="line">                <span class="keyword">let</span> _key = <span class="keyword">this</span>.props.location.key;</span><br><span class="line">                <span class="keyword">let</span> keys = sessionStorage.getItem(<span class="string">'N_reader_locKeys'</span>) || <span class="string">''</span>;</span><br><span class="line">                <span class="keyword">if</span>(_key &amp;&amp; keys.indexOf(_key) === <span class="number">-1</span>) &#123;</span><br><span class="line">                    keys += _key + <span class="string">','</span></span><br><span class="line">                    sessionStorage.setItem(<span class="string">'N_reader_locKeys'</span>, keys);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span>(targetEle.href.indexOf(<span class="string">'.do'</span>) !== <span class="number">-1</span>) &#123;</span><br><span class="line">                    location.href = targetEle.href;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>鉴于在某ios9版本的iphone5s上正常打开正文一直会出现上述问题，且考虑逻辑的复杂性、未来的需求扩展，最终还是<strong><code>使用React替换了Preact</code></strong>。逻辑越复杂，Preact暴露的问题越多。</p>
+<h4 id="问题3：微信url地址问题"><a href="#问题3：微信url地址问题" class="headerlink" title="问题3：微信url地址问题"></a>问题3：微信url地址问题</h4><p>在IOS微信中，使用history的replaceState、pushState，url栏不变，分享或者通过浏览器打开都还是之前的url。</p>
+<h5 id="详情"><a href="#详情" class="headerlink" title="详情"></a>详情</h5><p>从首页进入正文，通常只带sourceUuid不带articleUuid，在加载当前章节的时候期望通过history.replaceState去更新当前url为带articleUuid，这样当从下一章返回的时候，可以正确显示当前内容，不然会自动获取当前进度，无法显示正确章节。安卓可以正常返回，但ios微信返回的时候url还是不带articleUuid。</p>
+<h5 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h5><p>原因是使用H5的history API并不能改变url栏地址内容，分享或通过浏览器打开都是旧的地址，是ios微信的一个bug。改用react-router的history.replace去更新章节可以解决返回问题。<br>原理是虽然地址栏不变，但通过location.href获得的是正确的地址，BrowserRouter单页面应用在切换页面的时候会从window.location中读取<code>{pathname,search,hash}</code>，创建自己的location对象，依据location对象去渲染页面。</p>
+<p><strong>Refs: </strong><br><a href="https://github.com/Tencent/weui/issues/125" target="_blank" rel="noopener">H5 history.pushState 在微信内修改url后点击用safari打开/复制链接是修改之前的页面</a></p>
+<h3 id="lib-flexible方案"><a href="#lib-flexible方案" class="headerlink" title="lib.flexible方案"></a>lib.flexible方案</h3><p>使用淘宝<code>lib.flexible</code>的rem方案，会遇到一个<strong>问题</strong>：在ios微信内长按扫描二维码，会有无法识别二维码的问题。[微信已修复该问题]</p>
+<blockquote>
+<p><a href="http://mp.weixin.qq.com/s?__biz=NzA3OTQ2OTgw&amp;mid=205918916&amp;idx=1&amp;sn=d729ef70ea1e7fc50e649352a63a2564&amp;scene=1&amp;key=c76941211a49ab586ba4831f2f6fa42fbb2525460003fa8e19bc205b9b25facbf60da78977da071ddbc41a5be6a7b9fa&amp;ascene=0&amp;uin=NTE3ODg0NjE1&amp;devicetype=iMac%20MacBookPro12,1%20OSX%20OSX%2010.10.3%20build%2814D136%29&amp;version=11020012&amp;pass_ticket=WPa8XnvIzBrBOA6RHy2RMECcrsuN2QiksK8Y1Z/D3Odk49uIsXOex7EV2NXN9m5X" target="_blank" rel="noopener">微信识别二维码的原理机制</a><br>这里采用的逻辑是截屏识别，当客户端发现用户在网页的img标签内进行长按操作时，会立刻截屏并且启动二维码识别算法。所以这里用于二维码识别的图片是截屏，而不是之前有人提到的img标签中的图片。</p>
+</blockquote>
+<p>实践发现meta scale指定为1的时候，无该问题。<code>问题产生的原因</code>应该是：在iOS下，对于dpr(设备像素比)2和3的屏，用2倍和3倍的方案，其余的用1倍方案。使用高清屏方案后，viewport的scale值会设为1/dpr，页面发生了缩放，二维码的位置实际发生了偏移，因而微信无法准确识别出二维码。<br>设备像素比 = 物理像素 / 设备独立像素；</p>
+<ul>
+<li>物理像素：一个物理像素是显示器(手机屏幕)上最小的物理显示单元；</li>
+<li>设备独立像素：设备独立像素(也叫密度无关像素)，可以认为是计算机坐标系统中得一个点，这个点代表一个可以由程序使用的虚拟像素(比如: css像素)，然后由相关系统转换为物理像素。<br>在普通屏幕下，1个css像素 对应 1个物理像素(1:1)。 在retina 屏幕下，1个css像素对应 4个物理像素(1:4)。</li>
+</ul>
+<p>为了解决二维码识别问题，在html中手动添加viewport的meta标签，这样页面就会根据已有的meta标签设置缩放比例，不会使用高清方案。不使用高清方案一个不好的地方是1px边框问题，不过可以通过伪元素搭配transform:scale(0.5)解决。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> metaEl = doc.querySelector(<span class="string">'meta[name="viewport"]'</span>);</span><br><span class="line"><span class="keyword">if</span> (metaEl) &#123;</span><br><span class="line">    <span class="built_in">console</span>.warn(<span class="string">'将根据已有的meta标签来设置缩放比例'</span>);</span><br><span class="line">    <span class="keyword">var</span> match = metaEl.getAttribute(<span class="string">'content'</span>).match(<span class="regexp">/initial\-scale=([\d\.]+)/</span>);</span><br><span class="line">    <span class="keyword">if</span> (match) &#123;</span><br><span class="line">        scale = <span class="built_in">parseFloat</span>(match[<span class="number">1</span>]);</span><br><span class="line">        dpr = <span class="built_in">parseInt</span>(<span class="number">1</span> / scale);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.method-list</span><span class="selector-pseudo">:after</span>&#123;</span><br><span class="line">    <span class="attribute">content</span>: <span class="string">''</span>;</span><br><span class="line">    <span class="attribute">position</span>: absolute;</span><br><span class="line">    <span class="attribute">top</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">left</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">200%</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">200%</span>;</span><br><span class="line">    <span class="attribute">border-bottom</span>: <span class="number">1px</span> solid <span class="number">#E1E1E1</span>;</span><br><span class="line">    <span class="attribute">-webkit-transform</span>: <span class="built_in">scale</span>(<span class="number">0.5</span>);</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">0.5</span>);</span><br><span class="line">    <span class="attribute">-webkit-transform-origin</span>: <span class="number">0</span> <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">transform-origin</span>: <span class="number">0</span> <span class="number">0</span>;</span><br><span class="line">    box-sizing: border-box;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2017/07/27/分站开发总结/" data-id="clsshtux6002cwqrty0rzvugb" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/react/">react</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webpack/">webpack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/总结/">总结</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/08/28/sass应用/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          SASS使用二三事
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/06/30/css效果/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">css效果</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSR/">SSR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Themis，CMS体验度量方案/">Themis，CMS体验度量方案</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/autobind/">autobind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-decorators/">core-decorators</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decorator/">decorator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decorators源码简析——debounce/">decorators源码简析——debounce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/diff/">diff</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/echarts/">echarts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es7/">es7</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/eventloop/">eventloop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/font-face/">font-face</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hook/">hook</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js/">js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lazyInitialize/">lazyInitialize</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/load/">load</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/loader/">loader</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lottie/">lottie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm包/">npm包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/readonly/">readonly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/require/">require</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sass/">sass</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/setState/">setState</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sitespeed-io/">sitespeed.io</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webp/">webp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webpack/">webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下载/">下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/兼容/">兼容</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端性能优化/">前端性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端打包/">前端打包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/原型链/">原型链</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/总结/">总结</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/插件/">插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/渲染/">渲染</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/组件开发/">组件开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/组合式继承/">组合式继承</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/继承/">继承</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/角度渐变/">角度渐变</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/高阶组件/">高阶组件</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SSR/" style="font-size: 10px;">SSR</a> <a href="/tags/Themis，CMS体验度量方案/" style="font-size: 10px;">Themis，CMS体验度量方案</a> <a href="/tags/autobind/" style="font-size: 10px;">autobind</a> <a href="/tags/core-decorators/" style="font-size: 15.71px;">core-decorators</a> <a href="/tags/css/" style="font-size: 12.86px;">css</a> <a href="/tags/decorator/" style="font-size: 17.14px;">decorator</a> <a href="/tags/decorators源码简析——debounce/" style="font-size: 11.43px;">decorators源码简析——debounce</a> <a href="/tags/diff/" style="font-size: 14.29px;">diff</a> <a href="/tags/echarts/" style="font-size: 10px;">echarts</a> <a href="/tags/es6/" style="font-size: 10px;">es6</a> <a href="/tags/es7/" style="font-size: 10px;">es7</a> <a href="/tags/eventloop/" style="font-size: 11.43px;">eventloop</a> <a href="/tags/font-face/" style="font-size: 10px;">font-face</a> <a href="/tags/hook/" style="font-size: 10px;">hook</a> <a href="/tags/js/" style="font-size: 18.57px;">js</a> <a href="/tags/lazyInitialize/" style="font-size: 10px;">lazyInitialize</a> <a href="/tags/load/" style="font-size: 10px;">load</a> <a href="/tags/loader/" style="font-size: 10px;">loader</a> <a href="/tags/lottie/" style="font-size: 10px;">lottie</a> <a href="/tags/npm包/" style="font-size: 10px;">npm包</a> <a href="/tags/react/" style="font-size: 20px;">react</a> <a href="/tags/readonly/" style="font-size: 10px;">readonly</a> <a href="/tags/require/" style="font-size: 10px;">require</a> <a href="/tags/sass/" style="font-size: 10px;">sass</a> <a href="/tags/setState/" style="font-size: 10px;">setState</a> <a href="/tags/sitespeed-io/" style="font-size: 10px;">sitespeed.io</a> <a href="/tags/webp/" style="font-size: 10px;">webp</a> <a href="/tags/webpack/" style="font-size: 14.29px;">webpack</a> <a href="/tags/下载/" style="font-size: 10px;">下载</a> <a href="/tags/兼容/" style="font-size: 11.43px;">兼容</a> <a href="/tags/函数式编程/" style="font-size: 10px;">函数式编程</a> <a href="/tags/前端性能优化/" style="font-size: 12.86px;">前端性能优化</a> <a href="/tags/前端打包/" style="font-size: 10px;">前端打包</a> <a href="/tags/原型链/" style="font-size: 10px;">原型链</a> <a href="/tags/总结/" style="font-size: 12.86px;">总结</a> <a href="/tags/插件/" style="font-size: 10px;">插件</a> <a href="/tags/渲染/" style="font-size: 12.86px;">渲染</a> <a href="/tags/组件开发/" style="font-size: 10px;">组件开发</a> <a href="/tags/组合式继承/" style="font-size: 10px;">组合式继承</a> <a href="/tags/继承/" style="font-size: 11.43px;">继承</a> <a href="/tags/角度渐变/" style="font-size: 10px;">角度渐变</a> <a href="/tags/高阶组件/" style="font-size: 10px;">高阶组件</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/02/19/rrweb原理&录屏上报实践/">rrweb带你还原问题现场</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/react相关问题V2/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/module引入方式/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/js_roadmap/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/11/02/webpack-loader总结/">webpack-loader总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 Sherry<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

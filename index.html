@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>lying fox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="lying fox">
+<meta property="og:url" content="https://sherrywu0917.github.io/index.html">
+<meta property="og:site_name" content="lying fox">
+<meta property="og:locale" content="default">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="lying fox">
+  
+    <link rel="alternate" href="/atom.xml" title="lying fox" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">lying fox</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://sherrywu0917.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-rrweb原理&amp;录屏上报实践" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2024/02/19/rrweb原理&录屏上报实践/" class="article-date">
+  <time datetime="2024-02-19T04:51:45.054Z" itemprop="datePublished">2024-02-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2024/02/19/rrweb原理&录屏上报实践/">rrweb带你还原问题现场</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/12204956629/603d/3a1b/3855/f840616524854851802a795016600354.jpg" alt="Baker_Street"></p>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>云音乐内部有许多内容管理系统 (Content Management System，CMS)，用来支撑业务的运营配置等工作，运营同学在使用过程中遇到问题时，期望开发人员可以及时给予反馈并解决问题；痛点是开发人员没有问题现场，很难去快速定位到问题，通常的场景是：</p>
+<ul>
+<li>运营同学 Watson：「Sherlock，我在配置 mlog 标签的时候提示该标签不存在，快帮我看下，急。」</li>
+<li>开发同学 Sherlock：「不慌，我看看。」<em>（打开测试环境的运营管理后台，一顿操作，一切非常的正常…）</em></li>
+<li>开发同学 Sherlock：「我这儿正常的啊，你的工位在哪，我去你那看看」</li>
+<li>运营同学 Watson：「我在北京…」</li>
+<li>开发同学 Sherlock：「我在杭州…」</li>
+</ul>
+<p>为了对运营同学在使用中遇到的相关问题及时给予反馈，尽快定位并解决 CMS 用户遇到的使用问题，设计实现了问题一键上报插件，用于还原问题现场，主要包括录制和展示两部分：</p>
+<ul>
+<li>ThemisRecord 插件：上报用户 uid、用户权限、API 请求 &amp; 结果、错误堆栈、录屏</li>
+<li>倾听平台承接展示：显示录屏回放、用户、请求和错误堆栈信息</li>
+</ul>
+<h1 id="上报流程"><a href="#上报流程" class="headerlink" title="上报流程"></a>上报流程</h1><p>问题一键上报插件设计的主要流程如下图所示，在录屏期间，插件需要分别收集用户基础信息、API 请求数据、错误堆栈信息和录屏信息，并将数据上传到 NOS 云端和倾听平台。<br><img src="https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/12204634442/66d0/2f60/b77e/b1ab6c69b7f554f502cbe452c12a3dc0.png" alt="插件设计"><br>在整个上报的流程中，如何实现操作录屏和回放是一个难点，经过调研，发现 <a href="https://github.com/rrweb-io/rrweb" target="_blank" rel="noopener">rrweb</a> 开源库可以很好的满足我们的需求。<br>本文主要介绍的是 rrweb 库的录屏回放实现原理。</p>
+<h1 id="rrweb-库"><a href="#rrweb-库" class="headerlink" title="rrweb 库"></a>rrweb 库</h1><p>rrweb 主要由 <code>rrweb</code> 、 <code>rrweb-player</code> 和 <code>rrweb-snapshot</code> 三个库组成：</p>
+<ul>
+<li>rrweb：提供了 record 和 replay 两个方法；record 方法用来记录页面上 DOM 的变化，replay 方法支持根据时间戳去还原 DOM 的变化。</li>
+<li>rrweb-player：基于 svelte 模板实现，为 rrweb 提供了回放的 GUI 工具，支持暂停、倍速播放、拖拽时间轴等功能。内部调用了 rrweb 的提供的 replay 等方法。</li>
+<li>rrweb-snapshot：包括 snapshot 和 rebuilding 两大特性，snapshot 用来序列化 DOM 和 DOM 的状态，rebuilding 负责将 snapshot 还原为 DOM。</li>
+</ul>
+<p>了解 rrweb 库的原理，可以从下面几个关键问题入手：</p>
+<ul>
+<li>如何实现事件监听</li>
+<li>如何序列化 DOM</li>
+<li>如何实现自定义计时器</li>
+</ul>
+<h2 id="如何实现事件监听"><a href="#如何实现事件监听" class="headerlink" title="如何实现事件监听"></a>如何实现事件监听</h2><p>基于 rrweb 去实现录屏，通常会使用下面的方式去记录 event，emit 必传，通过该方法可以拿到 DOM 变化对应所有 event。拿到 event 后，可以根据业务需求去做处理，例如我们的一键上报插件会上传到云端，开发者可以在倾听平台拉取云端的数据并回放。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> events = [];</span><br><span class="line"></span><br><span class="line">rrweb.record(&#123;</span><br><span class="line">  emit(event) &#123;</span><br><span class="line">    <span class="comment">// push event into the events array</span></span><br><span class="line">    events.push(event);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><code>record</code> 方法内部会根据事件类型去初始化事件的监听，例如 DOM 元素变化、鼠标移动、鼠标交互、滚动等都有各自专属的事件监听方法，本文主要关注的是 DOM 元素变化的监听和处理流程。<br>要实现对 DOM 元素变化的监听，离不开浏览器提供的 <code>MutationObserver</code> API，该 API 会在一系列 DOM 变化后，通过<strong>批量异步</strong>的方式去触发回调，并将 DOM 变化通过 <code>MutationRecord</code> 数组传给回调方法。<br>rrweb 内部也是基于该 API 去实现监听，回调方法为 <code>MutationBuffer</code> 类提供的 <code>processMutations</code> 方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> observer = <span class="keyword">new</span> MutationObserver(</span><br><span class="line">  mutationBuffer.processMutations.bind(mutationBuffer),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p><code>mutationBuffer.processMutations</code> 方法会根据 <code>MutationRecord.type</code> 值做不同的处理：</p>
+<ul>
+<li><code>type === &#39;attributes&#39;</code>: 代表 DOM 属性变化，所有属性变化的节点会记录在 <code>this.attributes</code> 数组中，结构为 <code>{ node: Node, attributes: {} }</code>，attributes 中仅记录本次变化涉及到的属性；</li>
+<li><code>type === &#39;characterData&#39;</code>: 代表 characterData 节点变化，会记录在 <code>this.texts</code> 数组中，结构为 <code>{ node: Node, value: string }</code>，value 为 characterData 节点的最新值；</li>
+<li><code>type === &#39;childList&#39;</code>: 代表子节点树 childList 变化，比起前面两种类型，处理会较为复杂。</li>
+</ul>
+<h3 id="childList-增量快照"><a href="#childList-增量快照" class="headerlink" title="childList 增量快照"></a>childList 增量快照</h3><p>childList 发生变化时，若每次都完整记录整个 DOM 树，数据会非常庞大，显然不是一个可行的方案，所以，rrweb 采用了增量快照的处理方式。<br>有三个关键的 Set：<code>addedSet</code>、 <code>movedSet</code>、 <code>droppedSet</code>，对应三种节点操作：新增、移动、删除，这点和 <code>React diff</code> 机制相似。此处使用 Set 结构，实现了对 DOM 节点的去重处理。</p>
+<h3 id="节点新增"><a href="#节点新增" class="headerlink" title="节点新增"></a>节点新增</h3><p>遍历 <code>MutationRecord.addedNodes</code> 节点，将未被序列化的节点添加到 <code>addedSet</code> 中，并且若该节点存在于被删除集合 <code>droppedSet</code> 中，则从 <code>droppedSet</code> 中移除。</p>
+<p>示例：创建节点 n1、n2，将 n2 append 在 n1 中，再将 n1 append 在 body 中。</p>
+<pre><code>body
+  n1
+    n2
+</code></pre><p>只会生成一条 <code>MutationRecord</code> 记录，即增加 n1，所以在遍历 <code>MutationRecord.addedNodes</code> 节点，也需要遍历其子节点，不然 n2 节点就会被遗漏。</p>
+<p>遍历完所有 <code>MutationRecord</code> 记录数组，会统一对 <code>addedSet</code> 中的节点做序列化处理，每个节点序列化处理的结果是：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> type addedNodeMutation = &#123;</span><br><span class="line">  parentId: number;</span><br><span class="line">  nextId: number | <span class="literal">null</span>;</span><br><span class="line">  node: serializedNodeWithId;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过 <code>parentId</code> 和 <code>nextId</code> 建立起 DOM 的关联关系，所以若某节点的父节点、或下一个兄弟节点尚未被序列化，需要先将其存储下来，最后处理。这边使用了一个双向链表 <code>addList</code> 用来存储父节点尚未被添加的节点。<br><img src="https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/12204726077/a5b3/d9db/a0b3/e15da6d76c10db3e0fedf304af4a2e54.png" alt="双向链表"></p>
+<p>向 <code>addList</code> 中插入节点时：</p>
+<ol>
+<li>若 DOM 节点的 previousSibling 已存在于链表中，则插入在 <code>node.previousSibling</code> 节点后</li>
+<li>若 DOM 节点的 nextSibling 已存在于链表中，则插入在 <code>node.nextSibling</code> 节点前</li>
+<li>都不在，则插入链表的头部</li>
+</ol>
+<h3 id="节点移动"><a href="#节点移动" class="headerlink" title="节点移动"></a>节点移动</h3><p>遍历 <code>MutationRecord.addedNodes</code> 节点，若记录的节点有 <code>__sn</code> 属性，则添加到 <code>movedSet</code> 中。有 <code>__sn</code> 属性代表是已经被序列化处理过的 DOM 节点，即意味着是对节点的移动。</p>
+<p>在对 <code>movedSet</code> 中的节点序列化处理之前，会判断其父节点是否已被移除：</p>
+<ol>
+<li>父节点被移除，则无需处理，跳过；</li>
+<li>父节点未被移除，对该节点进行序列化。</li>
+</ol>
+<h3 id="节点删除"><a href="#节点删除" class="headerlink" title="节点删除"></a>节点删除</h3><p>遍历 <code>MutationRecord.removedNodes</code> 节点：</p>
+<ol>
+<li>若该节点是本次新增节点，则忽略该节点，并且从 <code>addedSet</code> 中移除该节点，同时记录到 <code>droppedSet</code> 中，在处理新增节点的时候需要用到：虽然我们移除了该节点，但其子节点可能还存在于 <code>addedSet</code> 中，在处理 <code>addedSet</code> 节点时，会判断其祖先节点是否已被移除；</li>
+<li>需要删除的节点记录在 <code>this.removes</code> 中，记录了 parentId 和节点 id。</li>
+</ol>
+<h2 id="如何序列化-DOM"><a href="#如何序列化-DOM" class="headerlink" title="如何序列化 DOM"></a>如何序列化 DOM</h2><p><code>MutationBuffer</code> 实例会调用 <code>snapshot</code> 的 <code>serializeNodeWithId</code> 方法对 DOM 节点进行序列化处理。<br><code>serializeNodeWithId</code> 内部调用 <code>serializeNode</code> 方法，根据 <code>nodeType</code> 对 Document、Doctype、Element、Text、CDATASection、Comment 等不同类型的 node 进行序列化处理，其中的关键是对 Element 的序列化处理:</p>
+<ul>
+<li>遍历元素的 <code>attributes</code> 属性，并且调用 <code>transformAttribute</code> 方法将资源路径处理为绝对路径；</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> &#123; name, value &#125; <span class="keyword">of</span> <span class="built_in">Array</span>.from((n <span class="keyword">as</span> HTMLElement).attributes)) &#123;</span><br><span class="line">    attributes[name] = transformAttribute(doc, tagName, name, value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>通过检查元素是否包含 <code>blockClass</code> 类名，或是否匹配 <code>blockSelector</code> 选择器，去判断元素是否需要被隐藏；为了保证元素隐藏不会影响页面布局，会给返回一个同等宽高的空元素；</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> needBlock = _isBlockedElement(</span><br><span class="line">    n <span class="keyword">as</span> HTMLElement,</span><br><span class="line">    blockClass,</span><br><span class="line">    blockSelector,</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>区分外链 style 文件和内联 style，对 CSS 样式序列化，并对 css 样式中引用资源的相对路径转换为绝对路径；对于外链文件，通过 CSSStyleSheet 实例的 cssRules 读取所有的样式，拼接成一个字符串，放到 <code>_cssText</code> 属性中；</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (tagName === <span class="string">'link'</span> &amp;&amp; inlineStylesheet) &#123;</span><br><span class="line">    <span class="comment">// document.styleSheets 获取所有的外链style</span></span><br><span class="line">    <span class="keyword">const</span> stylesheet = <span class="built_in">Array</span>.from(doc.styleSheets).find(<span class="function">(<span class="params">s</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> s.href === (n <span class="keyword">as</span> HTMLLinkElement).href;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="comment">// 获取该条css文件对应的所有rule的字符串</span></span><br><span class="line">    <span class="keyword">const</span> cssText = getCssRulesString(stylesheet <span class="keyword">as</span> CSSStyleSheet);</span><br><span class="line">    <span class="keyword">if</span> (cssText) &#123;</span><br><span class="line">        <span class="keyword">delete</span> attributes.rel;</span><br><span class="line">        <span class="keyword">delete</span> attributes.href;</span><br><span class="line">        <span class="comment">// 将css文件中资源路径转换为绝对路径</span></span><br><span class="line">        attributes._cssText = absoluteToStylesheet( </span><br><span class="line">            cssText,</span><br><span class="line">            stylesheet!.href!,</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>对用户输入数据调用 <code>maskInputValue</code> 方法进行加密处理；</li>
+<li>将 canvas 转换为 base64 图片保存，记录 media 当前播放的时间、元素的滚动位置等；</li>
+<li>返回一个序列化后的对象 <code>serializedNode</code>，其中包含前面处理过的 attributes 属性，序列化的关键是每个节点都会有唯一的 id，其中 <code>rootId</code> 代表所属 document 的 id，帮助我们在回放的时候识别根节点。</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> &#123;</span><br><span class="line">    type: NodeType.Element,</span><br><span class="line">    tagName,</span><br><span class="line">    attributes,</span><br><span class="line">    childNodes: [],</span><br><span class="line">    isSVG,</span><br><span class="line">    needBlock,</span><br><span class="line">    rootId,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="Event-时间戳"><a href="#Event-时间戳" class="headerlink" title="Event 时间戳"></a>Event 时间戳</h3><p>拿到序列化后的 DOM 节点，会统一调用<code>wrapEvent</code>方法给事件添加上时间戳，在回放的时候需要用到。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">wrapEvent</span>(<span class="params">e: event</span>): <span class="title">eventWithTime</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    ...e,</span><br><span class="line">    timestamp: <span class="built_in">Date</span>.now(),</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="序列化-id"><a href="#序列化-id" class="headerlink" title="序列化 id"></a>序列化 id</h3><p><code>serializeNodeWithId</code> 方法在序列化的时候会从 DOM 节点的 <code>__sn.id</code> 属性中读取 id，若不存在，就调用 genId 生成新的 id，并赋值给 <code>__sn.id</code> 属性，该 id 是用来唯一标识 DOM 节点，通过 id 建立起 <code>id -&gt; DOM</code> 的映射关系，帮助我们在回放的时候找到对应的 DOM 节点。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">genId</span>(<span class="params"></span>): <span class="title">number</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> _id++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> serializedNode = <span class="built_in">Object</span>.assign(_serializedNode, &#123; id &#125;);</span><br></pre></td></tr></table></figure>
+<p>若 DOM 节点存在子节点，则会递归调用 <code>serializeNodeWithId</code> 方法，最后会返回一个下面这样的 tree 数据结构：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    type: NodeType.Document,</span><br><span class="line">    childNodes: [&#123;</span><br><span class="line">        &#123;</span><br><span class="line">            type: NodeType.Element,</span><br><span class="line">            tagName,</span><br><span class="line">            attributes,</span><br><span class="line">            childNodes: [&#123;</span><br><span class="line">                <span class="comment">//...</span></span><br><span class="line">            &#125;],</span><br><span class="line">            isSVG,</span><br><span class="line">            needBlock,</span><br><span class="line">            rootId,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;],</span><br><span class="line">    rootId,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="如何实现自定义计时器"><a href="#如何实现自定义计时器" class="headerlink" title="如何实现自定义计时器"></a>如何实现自定义计时器</h2><p>回放的过程中为了支持进度条的随意拖拽，以及回放速度的设置，自定义实现了高精度计时器 Timer ，关键属性和方法为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> declare <span class="class"><span class="keyword">class</span> <span class="title">Timer</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 回放初始位置，对应进度条拖拽到的任意时间点</span></span><br><span class="line">    timeOffset: number;</span><br><span class="line">    <span class="comment">// 回放的速度</span></span><br><span class="line">    speed: number;</span><br><span class="line">    <span class="comment">// 回放Action队列</span></span><br><span class="line">    private actions;</span><br><span class="line">    <span class="comment">// 添加回放Action队列</span></span><br><span class="line">    addActions(actions: actionWithDelay[]): <span class="keyword">void</span>;</span><br><span class="line">    <span class="comment">// 开始回放</span></span><br><span class="line">    start(): <span class="keyword">void</span>;</span><br><span class="line">    <span class="comment">// 设置回放速度</span></span><br><span class="line">    setSpeed(speed: number): <span class="keyword">void</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="回放入口"><a href="#回放入口" class="headerlink" title="回放入口"></a>回放入口</h3><p>通过 Replayer 提供的 <code>play</code> 方法可以将上文记录的事件在 iframe 中进行回放。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> replayer = <span class="keyword">new</span> rrweb.Replayer(events);</span><br><span class="line">replayer.play();</span><br></pre></td></tr></table></figure>
+<p>第一步，初始化 <code>rrweb.Replayer</code> 实例时，会创建一个 iframe 作为承载事件回放的容器，再分别调用创建两个 service： <code>createPlayerService</code> 用于处理事件回放的逻辑，<code>createSpeedService</code> 用于控制回放的速度。</p>
+<p>第二步，会调用 <code>replayer.play()</code> 方法，去触发 <code>PLAY</code> 事件类型，开始事件回放的处理流程。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// this.service 为 createPlayerService 创建的回放控制service实例</span></span><br><span class="line"><span class="comment">// timeOffset 值为鼠标拖拽后的时间偏移量</span></span><br><span class="line"><span class="keyword">this</span>.service.send(&#123; <span class="attr">type</span>: <span class="string">'PLAY'</span>, <span class="attr">payload</span>: &#123; timeOffset &#125; &#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="基线时间戳生成"><a href="#基线时间戳生成" class="headerlink" title="基线时间戳生成"></a>基线时间戳生成</h3><p><img src="https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/12204711165/3e3f/fd0a/61d4/96c6b64a1357f664ef04497b4dd30ba7.png" alt="时间轴"></p>
+<p>回放支持随意拖拽的关键在于传入时间偏移量 <code>timeOffset</code> 参数：</p>
+<ul>
+<li>回放的总时长 = events[n].timestamp - events[0].timestamp，<code>n</code> 为事件队列总长度减一；</li>
+<li>时间轴的总时长为回放的总时长，鼠标拖拽的起始位置对应时间轴上的坐标为<code>timeOffset</code>；</li>
+<li>根据初始事件的 <code>timestamp</code> 和 <code>timeOffset</code> 计算出拖拽后的 <code>基线时间戳(baselineTime)</code>；</li>
+<li>再从所有的事件队列中根据事件的 <code>timestamp</code> 截取 <code>基线时间戳(baselineTime)</code> 后的事件队列，即需要回放的事件队列。</li>
+</ul>
+<h3 id="回放-Action-队列转换"><a href="#回放-Action-队列转换" class="headerlink" title="回放 Action 队列转换"></a>回放 Action 队列转换</h3><p>拿到事件队列后，需要遍历事件队列，根据事件类型转换为对应的回放 Action，并且添加到自定义计时器 Timer 的 Action 队列中。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">actions.push(&#123;</span><br><span class="line">    doAction: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        castFn();</span><br><span class="line">    &#125;,</span><br><span class="line">    delay: event.delay!,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><code>doAction</code> 为回放的时候要调用的方法，会根据不同的 <code>EventType</code> 去做回放处理，例如 DOM 元素的变化对应增量事件 <code>EventType.IncrementalSnapshot</code>。若是增量事件类型，回放 Action 会调用 <code>applyIncremental</code> 方法去应用增量快照，根据序列化后的节点数据构建出实际的 DOM 节点，为前面序列化 DOM 的反过程，并且添加到iframe容器中。</li>
+<li><code>delay</code> = event.timestamp - baselineTime，为当前事件的时间戳相对于<code>基线时间戳</code>的差值</li>
+</ul>
+<h3 id="requestAnimationFrame-定时回放"><a href="#requestAnimationFrame-定时回放" class="headerlink" title="requestAnimationFrame 定时回放"></a>requestAnimationFrame 定时回放</h3><p>Timer 自定义计时器是一个<strong>高精度</strong>计时器，主要是因为 <code>start</code> 方法内部使用了 <code>requestAnimationFrame</code> 去异步处理队列的定时回放；与浏览器原生的 <code>setTimeout</code> 和 <code>setInterval</code> 相比，<code>requestAnimationFrame</code> 不会被主线程任务阻塞，而执行 <code>setTimeout</code> 、 <code>setInterval</code> 都有可能会有被阻塞。</p>
+<p>其次，使用了 <code>performance.now()</code> 时间函数去计算当前已播放时长；<code>performance.now()</code>会返回一个用浮点数表示的、精度高达微秒级的时间戳，精度高于其他可用的时间类函数，例如 <code>Date.now()</code>只能返回毫秒级别。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public start() &#123;</span><br><span class="line">   <span class="keyword">this</span>.timeOffset = <span class="number">0</span>;</span><br><span class="line">   <span class="comment">// performance.timing.navigationStart + performance.now() 约等于 Date.now()</span></span><br><span class="line">   <span class="keyword">let</span> lastTimestamp = performance.now();</span><br><span class="line">   <span class="comment">// Action 队列</span></span><br><span class="line">   <span class="keyword">const</span> &#123; actions &#125; = <span class="keyword">this</span>;</span><br><span class="line">   <span class="keyword">const</span> self = <span class="keyword">this</span>;</span><br><span class="line">   <span class="function"><span class="keyword">function</span> <span class="title">check</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">     <span class="keyword">const</span> time = performance.now();</span><br><span class="line">     <span class="comment">// self.timeOffset为当前播放时长：已播放时长 * 播放速度(speed) 累加而来</span></span><br><span class="line">     <span class="comment">// 之所以是累加，因为在播放的过程中，速度可能会更改多次</span></span><br><span class="line">     self.timeOffset += (time - lastTimestamp) * self.speed;</span><br><span class="line">     lastTimestamp = time;</span><br><span class="line">     <span class="comment">// 遍历 Action 队列</span></span><br><span class="line">     <span class="keyword">while</span> (actions.length) &#123;</span><br><span class="line">       <span class="keyword">const</span> action = actions[<span class="number">0</span>];</span><br><span class="line">       <span class="comment">// 差值是相对于`基线时间戳`的，当前已播放 &#123;timeOffset&#125;ms</span></span><br><span class="line">       <span class="comment">// 所以需要播放所有「差值 &lt;= 当前播放时长」的 action</span></span><br><span class="line">       <span class="keyword">if</span> (self.timeOffset &gt;= action.delay) &#123;</span><br><span class="line">         actions.shift();</span><br><span class="line">         action.doAction();</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">         <span class="keyword">break</span>;</span><br><span class="line">       &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span> (actions.length &gt; <span class="number">0</span> || self.liveMode) &#123;</span><br><span class="line">       self.raf = requestAnimationFrame(check);</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">this</span>.raf = requestAnimationFrame(check);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>完成回放 Action 队列转换后，会调用 <code>timer.start()</code> 方法去按照正确的时间间隔依次执行回放，从头部开始遍历 Action 队列，若 Action 的差值小于当前的播放时长，则说明该 Action 需要会触发，需要调用 <code>action.doAction</code> 方法去实现本次增量快照的回放。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>在了解了「如何实现事件监听」、「如何序列化 DOM」、「如何实现自定义计时器」这几个关键问题后，我们基本掌握了 rrweb 的工作流程，除此之外，rrweb 在回放的时候还使用的 iframe 的沙盒模式，去实现对一些 JS 行为的限制，感兴趣的同学可以进一步去了解。<br>总之，基于 rrweb 可以方便地帮助我们开发定制化的录屏回放功能，例如现在在 CMS 业务中落地使用的一键上报功能，通过结合 API 请求、错误堆栈信息和录屏回放功能，可以帮助开发对问题进行定位并解决，让你也成为一个 Sherlock。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2024/02/19/rrweb原理&录屏上报实践/" data-id="clsshtuwt001qwqrtxmhozq1d" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-react相关问题V2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2024/02/19/react相关问题V2/" class="article-date">
+  <time datetime="2024-02-19T04:51:45.051Z" itemprop="datePublished">2024-02-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="函数式组件和class组件的区别"><a href="#函数式组件和class组件的区别" class="headerlink" title="函数式组件和class组件的区别"></a>函数式组件和class组件的区别</h2><blockquote>
+<p>函数式组件捕获了渲染所使用的值。</p>
+<ul>
+<li>像调用函数一样，每次渲染的函数式组件有属于自己的变量，原理是闭包捕获了当前的props值;</li>
+<li>在函数式组件中，你也可以拥有一个在所有的组件渲染帧中<strong>共享</strong>的可变变量，useRef(null);</li>
+<li><a href="https://overreacted.io/zh-hans/how-are-function-components-different-from-classes/" target="_blank" rel="noopener">函数式组件与类组件有何不同？</a></li>
+</ul>
+</blockquote>
+<blockquote>
+<p>相比class组件，可以自定义hooks，在不同组件间共享逻辑</p>
+<ul>
+<li>复用逻辑，但内部的state和effects是完全隔离的<ul>
+<li>组件内的每一个函数（包括事件处理函数，effects，定时器或者API调用等等）会捕获定义它们的那次渲染中的props和state。<a href="https://overreacted.io/zh-hans/a-complete-guide-to-useeffect/" target="_blank" rel="noopener">useEffect 完整指南</a></li>
+</ul>
+</li>
+<li>hooks中目前还不支持getSnapshotBeforeUpdate生命周期</li>
+<li>hooks支持HOC、renderProps</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>class组件容易阻断数据源</p>
+<ul>
+<li>class组件在生命周期方法中使用props和state时很容易忘记更新</li>
+<li>Hooks可以方便实现数据源的更新和相应，即hooks推动你做正确的事情</li>
+<li><a href="https://overreacted.io/zh-hans/writing-resilient-components/" target="_blank" rel="noopener">编写有弹性的组件</a></li>
+</ul>
+</blockquote>
+<p>TODO: 尝试自定义hooks</p>
+<ul>
+<li><a href="https://blog.logrocket.com/how-to-migrate-from-hocs-to-hooks-d0f7675fd600/" target="_blank" rel="noopener">https://blog.logrocket.com/how-to-migrate-from-hocs-to-hooks-d0f7675fd600/</a></li>
+<li><a href="https://kentcdodds.com/blog/react-hooks-whats-going-to-happen-to-render-props" target="_blank" rel="noopener">https://kentcdodds.com/blog/react-hooks-whats-going-to-happen-to-render-props</a></li>
+</ul>
+<h2 id="render-props"><a href="#render-props" class="headerlink" title="render props"></a>render props</h2><ul>
+<li>render props是给子组件传入一个function类型的prop用作render</li>
+<li><p>可以使用children prop字段，或者直接内嵌children的形式</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;Mouse&gt;</span><br><span class="line">  &#123;mouse =&gt; (</span><br><span class="line">    &lt;p&gt;The mouse position is &#123;mouse.x&#125;, &#123;mouse.y&#125;&lt;<span class="regexp">/p&gt;</span></span><br><span class="line"><span class="regexp">  )&#125;</span></span><br><span class="line"><span class="regexp">&lt;/</span>Mouse&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注意事项：当和PureComponent使用的时候, shallowEqual始终返回false，因为每次传入的function prop都是新创建的，可以将function prop定义在一个实例方法中，例如</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MouseTracker</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Defined as an instance method, `this.renderTheCat` always</span></span><br><span class="line">  <span class="comment">// refers to *same* function when we use it in render</span></span><br><span class="line">  renderTheCat(mouse) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Cat</span> <span class="attr">mouse</span>=<span class="string">&#123;mouse&#125;</span> /&gt;</span></span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;h1&gt;Move the mouse around!&lt;<span class="regexp">/h1&gt;</span></span><br><span class="line"><span class="regexp">        &lt;Mouse render=&#123;this.renderTheCat&#125; /</span>&gt;</span><br><span class="line">      &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>与HOC比较</p>
+<ul>
+<li>只能使用指定传入的props|state参数</li>
+<li>可以传入多个render props</li>
+</ul>
+</li>
+</ul>
+<h2 id="React-hooks"><a href="#React-hooks" class="headerlink" title="React hooks"></a>React hooks</h2><ol>
+<li>为什么需要hooks<br>React很受欢迎，但class组件存在一些问题：</li>
+</ol>
+<ul>
+<li>使用super(props)是很烦人的</li>
+<li>this指向的绑定比较麻烦</li>
+<li>通过生命周期方法组织组件，迫使我们将互相关联的逻辑分散到不同的函数中</li>
+<li>同一个生命周期函数放置很多互不关联的side effect逻辑</li>
+<li>class组件对于共享非可视逻辑没有很好的原始支持</li>
+</ul>
+<ol>
+<li>hooks可以解决什么问题</li>
+</ol>
+<ul>
+<li>首先function组件没有super和this绑定问题</li>
+<li>hooks可以解决function组件缺失的state管理、模拟生命周期、自定义hooks共享非可视逻辑(例如需要用HOC实现的签到弹窗逻辑可以改成自定义hooks，HOC开发不友好、props传递丢失、陷入嵌套Hell)</li>
+<li>提供数据和方法缓存减少渲染范围、提供全局变量</li>
+</ul>
+<h3 id="react-hooks原理"><a href="#react-hooks原理" class="headerlink" title="react hooks原理"></a>react hooks原理</h3><ul>
+<li>初次渲染的时候，按照 useState，useEffect 的顺序，把 state，deps 等按顺序塞到 memoizedState 队列中。</li>
+<li>更新的时候，按照顺序，从 memoizedState 中把上次记录的值拿出来。</li>
+</ul>
+<p>Q：为什么只能在函数最外层调用 Hook？为什么不要在循环、条件判断或者子函数中调用。<br>A：memoizedState 数组是按 hook定义的顺序来放置数据的，如果 hook 顺序变化，memoizedState 并不会感知到。</p>
+<p>Q：自定义的 Hook 是如何影响使用它的函数组件的？<br>A：共享同一个 memoizedState，共享同一个顺序。</p>
+<p>Q：“Capture Value” 特性是如何产生的？ 闭包属性<br>A：每一次 ReRender 的时候，都是重新去执行函数组件了，对于之前已经执行过的函数组件，并不会做任何操作。</p>
+<h3 id="hooks中过时的闭包"><a href="#hooks中过时的闭包" class="headerlink" title="hooks中过时的闭包"></a>hooks中过时的闭包</h3><blockquote>
+<p>闭包创建的时候会捕获引用的外部变量的值<br>解决办法：</p>
+<ul>
+<li><code>setCount(count =&gt; count + 1)</code>确保将最新状态值作为参数提供给更新状态函数</li>
+<li>(didUpdate, [dependsArr])，将依赖传入dependsArr</li>
+</ul>
+</blockquote>
+<p><a href="https://codesandbox.io/s/goofy-leaf-11gmt?file=/src/index.js" target="_blank" rel="noopener">https://codesandbox.io/s/goofy-leaf-11gmt?file=/src/index.js</a><br><a href="https://codesandbox.io/s/white-hooks-qgvm5?file=/src/index.js" target="_blank" rel="noopener">https://codesandbox.io/s/white-hooks-qgvm5?file=/src/index.js</a><br><a href="https://segmentfault.com/a/1190000020805789" target="_blank" rel="noopener">https://segmentfault.com/a/1190000020805789</a></p>
+<h3 id="useCallback和useMemo"><a href="#useCallback和useMemo" class="headerlink" title="useCallback和useMemo"></a>useCallback和useMemo</h3><blockquote>
+<p>性能优化不是免费的。 它们总是带来成本，但这并不总是带来好处来抵消成本。</p>
+</blockquote>
+<h4 id="什么时候使用-useMemo-和-useCallback"><a href="#什么时候使用-useMemo-和-useCallback" class="headerlink" title="什么时候使用 useMemo 和 useCallback"></a>什么时候使用 useMemo 和 useCallback</h4><ul>
+<li>引用相等<ul>
+<li>大多数时候，你不需要考虑去优化不必要的重新渲染; 有些情况下渲染可能会花费大量时间（比如重交互的图表、动画等）</li>
+</ul>
+</li>
+<li>昂贵的计算<ul>
+<li>计算素数<br><a href="https://jancat.github.io/post/2019/translation-usememo-and-usecallback/" target="_blank" rel="noopener">https://jancat.github.io/post/2019/translation-usememo-and-usecallback/</a></li>
+</ul>
+</li>
+</ul>
+<p><a href="https://overreacted.io/zh-hans/react-as-a-ui-runtime/" target="_blank" rel="noopener">将 React 作为 UI 运行时</a></p>
+<h3 id="useEffect-vs-useLayoutEffect"><a href="#useEffect-vs-useLayoutEffect" class="headerlink" title="useEffect vs useLayoutEffect"></a>useEffect vs useLayoutEffect</h3><ul>
+<li>useEffect 是异步执行的，而useLayoutEffect是同步执行的。</li>
+<li>useEffect 的执行时机是浏览器完成渲染之后，而 useLayoutEffect 的执行时机是浏览器把内容真正渲染到界面之前，和 componentDidMount 等价。<blockquote>
+<p><a href="https://zh-hans.reactjs.org/docs/react-component.html#componentdidmount" target="_blank" rel="noopener">官方文档</a>：你可以在 componentDidMount() 里直接调用 setState()。它将触发额外渲染，但此渲染会发生在浏览器更新屏幕之前。如此保证了即使在 render() 两次调用的情况下，用户也不会看到中间状态。<br><a href="https://zhuanlan.zhihu.com/p/348701319" target="_blank" rel="noopener">useLayoutEffect和useEffect的区别</a></p>
+</blockquote>
+</li>
+</ul>
+<h3 id="react优化"><a href="#react优化" class="headerlink" title="react优化"></a>react优化</h3><ul>
+<li>添加错误边界ErrorBoundary</li>
+<li>list添加key值</li>
+</ul>
+<h3 id="React性能优化V2"><a href="#React性能优化V2" class="headerlink" title="React性能优化V2"></a>React性能优化V2</h3><p>React性能优化的三个方向：</p>
+<ul>
+<li>减少计算的量。 -&gt; 对应到 React 中就是减少渲染的节点 或者 降低组件渲染的复杂度 </li>
+<li>利用缓存。-&gt; 对应到 React 中就是如何避免重新渲染，利用函数式编程的 memo 方式来避免组件重新渲染</li>
+<li>精确重新计算的范围。 对应到 React 中就是绑定组件和状态关系, 精确判断更新的’时机’和’范围’. 只重新渲染’脏’的组件，或者说降低渲染范围<h4 id="减少计算的量"><a href="#减少计算的量" class="headerlink" title="减少计算的量"></a>减少计算的量</h4></li>
+</ul>
+<ol>
+<li>不要在render方法内部进行副作用相关的计算</li>
+<li>减少嵌套，例如使用 React Fragments 避免额外标记</li>
+<li>虚拟列表</li>
+<li>惰性渲染：懒加载react-loadable | lazy Suspense<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; Suspense &#125; <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> OtherComponent = React.lazy(<span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">'./OtherComponent'</span>));</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MyComponent</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;div&gt;</span><br><span class="line">      &lt;Suspense fallback=&#123;&lt;div&gt;Loading...&lt;<span class="regexp">/div&gt;&#125;&gt;</span></span><br><span class="line"><span class="regexp">        &lt;OtherComponent /</span>&gt;</span><br><span class="line">      &lt;<span class="regexp">/Suspense&gt;</span></span><br><span class="line"><span class="regexp">    &lt;/</span>div&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="利用缓存"><a href="#利用缓存" class="headerlink" title="利用缓存"></a>利用缓存</h4><ol>
+<li>不变的事件处理函数：<ul>
+<li>不要使用内联函数定义</li>
+<li>在Function组件中使用useCallback来包装事件处理器，尽量给下级组件暴露一个静态的函数</li>
+<li>设计更方便处理的 Event Props</li>
+<li>this绑定放到constructor中，或者使用autobind方法</li>
+</ul>
+</li>
+<li>useMemo缓存复杂的计算结果</li>
+<li>简化props，降低props变化的影响范围</li>
+<li>简化state，避免不必要的数据变动导致组件重新渲染</li>
+</ol>
+<h4 id="精确重新计算的范围"><a href="#精确重新计算的范围" class="headerlink" title="精确重新计算的范围"></a>精确重新计算的范围</h4><p>所谓精细化渲染指的是只有一个数据来源导致组件重新渲染, 比如说 A 只依赖于 a 数据，那么只有在 a 数据变动时才渲染 A, 其他状态变化不应该影响组件 A。<br>Vue 和 Mobx 宣称自己性能好的一部分原因是它们的’响应式系统’, 它允许我们定义一些‘响应式数据’，当这些响应数据变动时，依赖这些响应式数据视图就会重新渲染。在Vue和Mobx中，组件的依赖是自动追踪的，<em>**</em>。</p>
+<ol>
+<li>响应式数据的精细化渲染<ul>
+<li>mobx状态管理框架</li>
+<li>shouldComponentUpdate 生命周期事件</li>
+<li>函数式组件React.memo | class组件PureComponent</li>
+</ul>
+</li>
+<li>不要滥用 Context：明确状态作用域, Context 只放置必要的，关键的，被大多数组件所共享的状态<ul>
+<li>Context API 的更新特点，它是可以穿透React.memo或者shouldComponentUpdate的比对的，也就是说，一旦 Context 的 Value 变动，所有依赖该 Context 的组件会全部 forceUpdate.<h5 id="context缓存问题"><a href="#context缓存问题" class="headerlink" title="context缓存问题"></a>context缓存问题</h5>因为 context 会使用参考标识（reference identity）来决定何时进行渲染，这里可能会有一些陷阱，当 provider 的父组件进行重渲染时，可能会在 consumers 组件中触发意外的渲染。举个例子，当每一次 Provider 重渲染时，以下的代码会重渲染所有下面的 consumers 组件，因为 value 属性总是被赋值为新的对象：<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">App</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;MyContext.Provider value=&#123;&#123;<span class="attr">something</span>: <span class="string">'something'</span>&#125;&#125;&gt;</span><br><span class="line">        &lt;Toolbar /&gt;</span><br><span class="line">      &lt;<span class="regexp">/MyContext.Provider&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+<p>为了防止这种情况，将 value 状态提升到父节点的 state 里：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">App</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="keyword">super</span>(props);</span><br><span class="line">    <span class="keyword">this</span>.state = &#123;</span><br><span class="line">      value: &#123;<span class="attr">something</span>: <span class="string">'something'</span>&#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;Provider value=&#123;<span class="keyword">this</span>.state.value&#125;&gt;</span><br><span class="line">        &lt;Toolbar /&gt;</span><br><span class="line">      &lt;<span class="regexp">/Provider&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ Function组件</span></span><br><span class="line"><span class="regexp">export function ThemeProvider(props) &#123;</span></span><br><span class="line"><span class="regexp">  const [theme, switchTheme] = useState(redTheme);</span></span><br><span class="line"><span class="regexp">  const value = useMemo(() =&gt; (&#123; theme, switchTheme &#125;), [theme]);</span></span><br><span class="line"><span class="regexp">  return &lt;Context.Provider value=&#123;value&#125;&gt;&#123;props.children&#125;&lt;/</span>Context.Provider&gt;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="React-StrictMode"><a href="#React-StrictMode" class="headerlink" title="React.StrictMode"></a>React.StrictMode</h3><ul>
+<li>识别不安全的生命周期</li>
+<li>关于使用过时字符串 ref API 的警告</li>
+<li>关于使用废弃的 findDOMNode 方法的警告</li>
+<li>检测意外的副作用: 通过调用多次来帮助发现副作用</li>
+<li>检测过时的 context API</li>
+</ul>
+<h3 id="react-router原理："><a href="#react-router原理：" class="headerlink" title="react-router原理："></a>react-router原理：</h3><ul>
+<li>组件初始化的时候注册history.listen的监听事件</li>
+<li>调用history.push、history.replace之后会触发监听，调用notifyListeners</li>
+<li>根据传递进来path,url,params等参数，最终通过setState触发组件reRender</li>
+<li>路由相关信息的传递依赖context从Router传递到内部的Route<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Router</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    componentWillMount() &#123;</span><br><span class="line">        <span class="keyword">const</span> &#123; children, history &#125; = <span class="keyword">this</span>.props</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//调用history.listen监听方法，该方法的返回函数是一个移除监听的函数</span></span><br><span class="line">        <span class="keyword">this</span>.unlisten = history.listen(() =&amp;gt; &#123;</span><br><span class="line">          <span class="keyword">this</span>.setState(&#123;</span><br><span class="line">            match: <span class="keyword">this</span>.computeMatch(history.location.pathname)</span><br><span class="line">          &#125;);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    componentWillUnmount() &#123;</span><br><span class="line">      <span class="keyword">this</span>.unlisten();</span><br><span class="line">    &#125;</span><br><span class="line">    render() &#123;</span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Route</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  ....</span><br><span class="line">  <span class="keyword">constructor</span>()&#123;</span><br><span class="line">  </span><br><span class="line">  &#125;</span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; match &#125; = <span class="keyword">this</span>.state;</span><br><span class="line">    <span class="keyword">const</span> &#123; children, component, render &#125; = <span class="keyword">this</span>.props;</span><br><span class="line">    <span class="keyword">const</span> &#123; history, route, staticContext &#125; = <span class="keyword">this</span>.context.router;</span><br><span class="line">    <span class="keyword">const</span> location = <span class="keyword">this</span>.props.location || route.location;</span><br><span class="line">    <span class="keyword">const</span> props = &#123; match, location, history, staticContext &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (component) <span class="keyword">return</span> match ? React.createElement(component, props) : <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (render) <span class="keyword">return</span> match ? render(props) : <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> children === <span class="string">"function"</span>) <span class="keyword">return</span> children(props);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (children &amp;amp;&amp;amp; !isEmptyChildren(children))</span><br><span class="line">      <span class="keyword">return</span> React.Children.only(children);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> push = <span class="function"><span class="keyword">function</span> <span class="title">push</span>(<span class="params">path, state</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> action = <span class="string">'PUSH'</span>;</span><br><span class="line">    <span class="keyword">var</span> location = createLocation(path, state, createKey(), history.location);</span><br><span class="line"></span><br><span class="line">    transitionManager.confirmTransitionTo(location, action, getUserConfirmation, <span class="function"><span class="keyword">function</span> (<span class="params">ok</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (!ok) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">var</span> href = createHref(location);</span><br><span class="line">      <span class="keyword">var</span> key = location.key,</span><br><span class="line">          state = location.state;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (canUseHistory) &#123;</span><br><span class="line">        globalHistory.pushState(&#123; <span class="attr">key</span>: key, <span class="attr">state</span>: state &#125;, <span class="literal">null</span>, href);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (forceRefresh) &#123;</span><br><span class="line">          <span class="built_in">window</span>.location.href = href;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="keyword">var</span> prevIndex = allKeys.indexOf(history.location.key);</span><br><span class="line">          <span class="keyword">var</span> nextKeys = allKeys.slice(<span class="number">0</span>, prevIndex === <span class="number">-1</span> ? <span class="number">0</span> : prevIndex + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">          nextKeys.push(location.key);</span><br><span class="line">          allKeys = nextKeys;</span><br><span class="line">          <span class="comment">// 调用setState触发listeners更新</span></span><br><span class="line">          setState(&#123; <span class="attr">action</span>: action, <span class="attr">location</span>: location &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        warning(state === <span class="literal">undefined</span>, <span class="string">'Browser history cannot push state in browsers that do not support HTML5 history'</span>);</span><br><span class="line"></span><br><span class="line">        <span class="built_in">window</span>.location.href = href;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> setState = <span class="function"><span class="keyword">function</span> <span class="title">setState</span>(<span class="params">nextState</span>) </span>&#123;</span><br><span class="line">    _extends(history, nextState);</span><br><span class="line"></span><br><span class="line">    history.length = globalHistory.length;</span><br><span class="line">    transitionManager.notifyListeners(history.location, history.action);</span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="callback-Ref的使用场景"><a href="#callback-Ref的使用场景" class="headerlink" title="callback Ref的使用场景"></a>callback Ref的使用场景</h3><p>结合<code>callback Ref</code>, 可以方便地获取dom节点的高度。代码示例可参考：</p>
+<ul>
+<li><a href="https://codesandbox.io/s/react-measuredref-callback-525p4?file=/src/index.js:89-708" target="_blank" rel="noopener">react-measuredref-callback</a></li>
+<li><a href="https://codesandbox.io/s/818zzk8m78" target="_blank" rel="noopener">even if a child component displays the measured node later</a><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">MeasureExample</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> [height, setHeight] = useState(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> measuredRef = useCallback(<span class="function">(<span class="params">node</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (node !== <span class="literal">null</span>) &#123;</span><br><span class="line">      setHeight(node.getBoundingClientRect().height);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 1. 传入[]，保证rerender的时候不会被重新触发，只在mount和unmount的时候被调用</span></span><br><span class="line">    <span class="comment">// 2. 不使用useRef，是因为object ref的value发生变化时，不会触发通知；使用ref callback的形式</span></span><br><span class="line">    <span class="comment">//    可以对延迟展示的组件同样有效</span></span><br><span class="line">    <span class="comment">// 3. 如果要支持resize，可以结合[ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver)</span></span><br><span class="line">  &#125;, []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;&gt;</span><br><span class="line">      &lt;h1 ref=&#123;measuredRef&#125;&gt;Hello, world&lt;<span class="regexp">/h1&gt;</span></span><br><span class="line"><span class="regexp">      &lt;h2&gt;The above header is &#123;Math.round(height)&#125;px tall&lt;/</span>h2&gt;</span><br><span class="line">    &lt;<span class="regexp">/&gt;</span></span><br><span class="line"><span class="regexp">  );</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2024/02/19/react相关问题V2/" data-id="clsshtuwp001fwqrtrio51xiw" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-module引入方式" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2024/02/19/module引入方式/" class="article-date">
+  <time datetime="2024-02-19T04:51:45.049Z" itemprop="datePublished">2024-02-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="UMD模式"><a href="#UMD模式" class="headerlink" title="UMD模式"></a>UMD模式</h3><p>UMD (Universal Module Definition), 希望提供一个前后端跨平台的解决方案(支持AMD与CommonJS模块方式)。</p>
+<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><ol>
+<li>先判断是否支持Node.js模块格式（exports是否存在），存在则使用Node.js模块格式。</li>
+<li>再判断是否支持AMD（define是否存在），存在则使用AMD方式加载模块。</li>
+<li>前两个都不存在，则将模块公开到全局（window或global）。<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// if the module has no dependencies, the above pattern can be simplified to</span></span><br><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">root, factory</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> exports===<span class="string">"object"</span>&amp;&amp;<span class="keyword">typeof</span> <span class="built_in">module</span>!==<span class="string">"undefined"</span>) &#123;</span><br><span class="line">        <span class="comment">// Node CommonJS. Does not work with strict CommonJS, but</span></span><br><span class="line">        <span class="comment">// only CommonJS-like environments that support module.exports,</span></span><br><span class="line">        <span class="comment">// like Node.</span></span><br><span class="line">        <span class="built_in">module</span>.exports = factory();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> define === <span class="string">'function'</span> &amp;&amp; define.amd) &#123;</span><br><span class="line">        <span class="comment">// AMD. Register as an anonymous module.</span></span><br><span class="line">        define([], factory);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// Browser globals (root is window)</span></span><br><span class="line">        root.returnExports = factory();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;(<span class="keyword">this</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Just return a value to define the module export.</span></span><br><span class="line">    <span class="comment">// This example returns an object, but the module</span></span><br><span class="line">    <span class="comment">// can return a function as the exported value.</span></span><br><span class="line">    <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">&#125;));</span><br><span class="line"><span class="string">``</span><span class="string">` </span></span><br><span class="line"><span class="string">如果没有定义root参数，也可以通过下面的方式去赋值给全局变量：</span></span><br><span class="line"><span class="string">`</span><span class="string">``</span> js</span><br><span class="line">    <span class="keyword">var</span> g;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">typeof</span> <span class="built_in">window</span>!==<span class="string">"undefined"</span>)&#123;</span><br><span class="line">        g=<span class="built_in">window</span></span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> global!==<span class="string">"undefined"</span>)&#123;</span><br><span class="line">        g=global</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> self!==<span class="string">"undefined"</span>)&#123;</span><br><span class="line">        g=self</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        g=<span class="keyword">this</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="ES-Module与CommonJS"><a href="#ES-Module与CommonJS" class="headerlink" title="ES Module与CommonJS"></a>ES Module与CommonJS</h4><ol>
+<li>语法差异：<ul>
+<li>ES Module使用import、export</li>
+<li>CommonJS使用require、module.exports（exports）</li>
+</ul>
+</li>
+<li>依赖关系的确认：<ul>
+<li>CommonJS模块是对象，是运行时加载，运行时才把模块挂载在exports之上（加载整个模块的所有），加载模块其实就是查找对象属性；</li>
+<li>ES Module是在编译时确定依赖关系（设计思想：尽量的静态化）。</li>
+</ul>
+</li>
+<li>CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用。<ul>
+<li>CommonJS模式中，exports的一个参数，即使该参数发生了变化，引入的地方拿到的值始终不变</li>
+<li>在ES Module中，export的参数如果发生了变化，在引入的地方也会同步更新；引用的参数是read-only的（因为是引用，约定是不能在外部修改）。</li>
+</ul>
+</li>
+<li>只执行一次<ul>
+<li>多次require，CommonJS返回的是module的缓存</li>
+<li>ES6 module多次import，只会在首次import中执行</li>
+</ul>
+</li>
+<li>加载方式：<ul>
+<li>commonJS模块就是对象，整体加载模块（即加载的所有方法）</li>
+<li>ES6 模块不是对象，而是通过export命令显式指定输出的代码，再通过import命令输入。</li>
+</ul>
+</li>
+<li>运行环境：AMD/CMD是CommonJS在浏览器端的解决方案。<ul>
+<li>CommonJS node端是同步加载（代码在本地，加载时间基本等于硬盘读取时间）。</li>
+<li>AMD/CMD是异步加载（浏览器必须这么做，代码在服务端）</li>
+</ul>
+</li>
+</ol>
+<h4 id="CommonJs中exports和module-exports的差别"><a href="#CommonJs中exports和module-exports的差别" class="headerlink" title="CommonJs中exports和module.exports的差别"></a>CommonJs中exports和module.exports的差别</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="built_in">module</span> = &#123; <span class="attr">exports</span>: &#123;&#125; &#125;;</span><br><span class="line"><span class="keyword">var</span> exports = <span class="built_in">module</span>.exports;</span><br><span class="line"></span><br><span class="line"><span class="comment">// your code</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="built_in">module</span>.exports;</span><br></pre></td></tr></table></figure>
+<p>这意味着exports的正确使用方法, 只有exports.A = B这种挂变量的形式。<br>modules.exports一旦被直接赋值, 如modules.exports = 1, 也会断开它和exports之间的联系, 导致exports失去意义.<br>参考<a href="https://www.jianshu.com/p/434c247759bc" target="_blank" rel="noopener">https://www.jianshu.com/p/434c247759bc</a></p>
+<h4 id="AMD-vs-CMD"><a href="#AMD-vs-CMD" class="headerlink" title="AMD vs CMD"></a>AMD vs CMD</h4><p>AMD规范采用异步方式加载模块，模块的加载不影响它后面语句的运行。所有依赖这个模块的语句，都定义在一个回调函数中，等到加载完成之后，这个回调函数才会运行。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** 网页中引入require.js及main.js **/</span></span><br><span class="line">&lt;script src=<span class="string">"js/require.js"</span> data-main=<span class="string">"js/main"</span>&gt;&lt;<span class="regexp">/script&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span>** main.js 入口文件/主模块 **<span class="regexp">/</span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ 首先用config()指定各模块路径和引用名</span></span><br><span class="line"><span class="regexp">require.config(&#123;</span></span><br><span class="line"><span class="regexp">  baseUrl: "js/</span>lib<span class="string">",</span></span><br><span class="line"><span class="string">  paths: &#123;</span></span><br><span class="line"><span class="string">    "</span>jquery<span class="string">": "</span>jquery.min<span class="string">",  //实际路径为js/lib/jquery.min.js</span></span><br><span class="line"><span class="string">    "</span>underscore<span class="string">": "</span>underscore.min<span class="string">",</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;);</span></span><br><span class="line"><span class="string">// 执行基本操作</span></span><br><span class="line"><span class="string">require(["</span>jquery<span class="string">","</span>underscore<span class="string">"],function($,_)&#123;</span></span><br><span class="line"><span class="string">  // some code here</span></span><br><span class="line"><span class="string">&#125;);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">// 定义模块</span></span><br><span class="line"><span class="string">define(function () &#123;</span></span><br><span class="line"><span class="string">  // some code here</span></span><br><span class="line"><span class="string">&#125;);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">// 定义的模块本身也依赖其他模块</span></span><br><span class="line"><span class="string">define(["</span>jquery<span class="string">"], function () &#123;</span></span><br><span class="line"><span class="string">  // some code here</span></span><br><span class="line"><span class="string">&#125;);</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** AMD写法 **/</span></span><br><span class="line">define([<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>, <span class="string">"d"</span>, <span class="string">"e"</span>, <span class="string">"f"</span>], <span class="function"><span class="keyword">function</span>(<span class="params">a, b, c, d, e, f</span>) </span>&#123; </span><br><span class="line">     <span class="comment">// 等于在最前面声明并初始化了要用到的所有模块</span></span><br><span class="line">    a.doSomething();</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">false</span>) &#123;</span><br><span class="line">        <span class="comment">// 即便没用到某个模块 b，但 b 还是提前执行了</span></span><br><span class="line">        b.doSomething()</span><br><span class="line">    &#125; </span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">/** CMD写法 **/</span></span><br><span class="line">define(<span class="function"><span class="keyword">function</span>(<span class="params">require, exports, module</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> a = <span class="built_in">require</span>(<span class="string">'./a'</span>); <span class="comment">//在需要时申明</span></span><br><span class="line">    a.doSomething();</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">false</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> b = <span class="built_in">require</span>(<span class="string">'./b'</span>);</span><br><span class="line">        b.doSomething();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">/** sea.js **/</span></span><br><span class="line"><span class="comment">// 定义模块 math.js</span></span><br><span class="line">define(<span class="function"><span class="keyword">function</span>(<span class="params">require, exports, module</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> $ = <span class="built_in">require</span>(<span class="string">'jquery.js'</span>);</span><br><span class="line">    <span class="keyword">var</span> add = <span class="function"><span class="keyword">function</span>(<span class="params">a,b</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> a+b;</span><br><span class="line">    &#125;</span><br><span class="line">    exports.add = add;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 加载模块</span></span><br><span class="line">seajs.use([<span class="string">'math.js'</span>], <span class="function"><span class="keyword">function</span>(<span class="params">math</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> sum = math.add(<span class="number">1</span>+<span class="number">2</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p><strong>AMD 推崇依赖前置、提前执行，CMD推崇依赖就近、延迟执行</strong></p>
+<h3 id="commonjs-vs-es6-modules"><a href="#commonjs-vs-es6-modules" class="headerlink" title="commonjs vs es6 modules"></a>commonjs vs es6 modules</h3><p>两个重大差异：</p>
+<ul>
+<li>CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用。</li>
+<li>CommonJS 模块是运行时加载，ES6 模块是编译时输出接口。<ul>
+<li>第二个差异是因为 CommonJS 加载的是一个对象（即module.exports属性），该对象只有在脚本运行完才会生成。而 ES6 模块不是对象，它的对外接口只是一种静态定义，在代码静态解析阶段就会生成。</li>
+</ul>
+</li>
+<li>是否缓存数据<ul>
+<li>JS 引擎对脚本静态分析的时候，遇到模块加载命令import，就会生成一个只读引用。等到脚本真正执行时，再根据这个只读引用，到被加载的那个模块里面去取值。原始值变了，import加载的值也会跟着变。因此ES6模块不会缓存运行结果，而是动态地去被加载的模块取值，并且变量总是绑定其所在的模块。</li>
+</ul>
+</li>
+<li>export通过接口，输出的是同一个值。不同的脚本加载这个接口，得到的都是同样的实例。<ul>
+<li>如果多次重复执行同一句import语句，那么只会执行一次，而不会执行多次。</li>
+<li>下面代码中，虽然foo和bar在两个语句中加载，但是它们对应的是同一个my_module实例。也就是说，import语句是 Singleton 模式<a href="https://k94n.com/es6-modules-single-instance-pattern" target="_blank" rel="noopener">es6-modules-single-instance-pattern</a>。<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; foo &#125; <span class="keyword">from</span> <span class="string">'my_module'</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; bar &#125; <span class="keyword">from</span> <span class="string">'my_module'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等同于</span></span><br><span class="line"><span class="keyword">import</span> &#123; foo, bar &#125; <span class="keyword">from</span> <span class="string">'my_module'</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2024/02/19/module引入方式/" data-id="clsshtuwl0017wqrts254aiar" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-js_roadmap" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2024/02/19/js_roadmap/" class="article-date">
+  <time datetime="2024-02-19T04:51:45.048Z" itemprop="datePublished">2024-02-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="js基本类型"><a href="#js基本类型" class="headerlink" title="js基本类型"></a>js基本类型</h3><p>js是一种弱类型或者说是动态语言，有7种基本数据类型，1种引用数据类型object。<br>类型    typeof结果<br>Undefined    “undefined”<br>Null    “object”（见下文）<br>Boolean    “boolean”<br>Number    “number”<br>String    “string”<br>Symbol （es 6新增——es2015年发布）”symbol” // Symbol是一种特殊的、不可变的数据类型，可以作为对象的标识符使用。<br>BigInt “bigint” (es10 新增——es2020发布) // 之前JavaScript可以处理的最大数字是2 ^ 53</p>
+<p>宿主对象（由JS环境提供）    Implementation-dependent<br>函数对象（[[Call]] 在ECMA-262条款中实现了）    “function”<br>任何其他对象 “object”</p>
+<h4 id="typeof-null的值不是null，而是object"><a href="#typeof-null的值不是null，而是object" class="headerlink" title="typeof null的值不是null，而是object"></a><code>typeof null</code>的值不是null，而是object</h4><p>因为在JS的最初版本中，使用的是32位系统，为了性能考虑使用低位存储了变量的类型信息，由小型标记(1-3位)和真实值组成。000开头代表是对象，然而null表示为全零，所以将它错误的判断为object。</p>
+<h4 id="基础类型的特性是值本身不能被改变"><a href="#基础类型的特性是值本身不能被改变" class="headerlink" title="基础类型的特性是值本身不能被改变"></a>基础类型的特性是值本身不能被改变</h4><p>js中的参数传递都是按值传递：</p>
+<ul>
+<li>基础类型存储在栈中，传递的是值的拷贝，不会改变传入的值</li>
+<li>引用类型真实值存储在堆中，传递的是内存地址，指向同一块内存区域</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基本类型</span></span><br><span class="line"><span class="keyword">let</span> foo = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个貌似可以改变基本类型值的函数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addTwo</span>(<span class="params">num</span>) </span>&#123;</span><br><span class="line">   num += <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 和前面的函数一样</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addTwo_v2</span>(<span class="params">foo</span>) </span>&#123;</span><br><span class="line">   foo += <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用第一个函数，并传入基本类型值作为参数</span></span><br><span class="line">addTwo(foo);</span><br><span class="line"><span class="comment">// Getting the current Primitive value</span></span><br><span class="line"><span class="built_in">console</span>.log(foo);   <span class="comment">// 5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 尝试调用第二个函数...</span></span><br><span class="line">addTwo_v2(foo);</span><br><span class="line"><span class="built_in">console</span>.log(foo);   <span class="comment">// 5</span></span><br></pre></td></tr></table></figure>
+<h2 id="debounce-vs-throttle"><a href="#debounce-vs-throttle" class="headerlink" title="debounce vs throttle"></a>debounce vs throttle</h2><ul>
+<li>debounce 防抖，会在事件停止后100ms后再触发，‘execute this function only if 100 milliseconds have passed without it being called.’<ul>
+<li>场景: resize、drag、keypress等事件</li>
+</ul>
+</li>
+<li>throttle 节流，在每100ms内最多触发一次，‘execute this function at most once every 100 milliseconds.’<ul>
+<li>场景: scroll、click等事件</li>
+</ul>
+</li>
+</ul>
+<h3 id="try-catch-finally"><a href="#try-catch-finally" class="headerlink" title="try catch finally"></a>try catch finally</h3><p>即使在try和catch中return了，finally方法还是会执行，finally块中的内容会先于try中的return语句执行。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">   <span class="keyword">try</span>&#123;</span><br><span class="line">      <span class="keyword">var</span> t = <span class="number">1</span>;</span><br><span class="line">      <span class="keyword">return</span> t &amp;&amp; <span class="built_in">console</span>.log(<span class="string">'return:'</span>, t);</span><br><span class="line">   &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="number">2</span>)</span><br><span class="line">      <span class="comment">// 相当于 return undefined</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'test() result:'</span>, test());</span><br></pre></td></tr></table></figure></p>
+<p>输出顺序为:</p>
+<ul>
+<li>“return: 2” </li>
+<li>“2”</li>
+<li>“test() result: undefined”<br>先执行了return后面的语句，得到<code>return undefined</code>，然后去执行finally里面的代码块，执行完后执行<code>return undefined</code>。<br>但如果finally语句块中也有return语句的话，将直接从finally中返回，这也是不建议在finally中return的原因。</li>
+</ul>
+<h3 id="词法作用域-vs-动态作用域"><a href="#词法作用域-vs-动态作用域" class="headerlink" title="词法作用域 vs 动态作用域"></a>词法作用域 vs 动态作用域</h3><ul>
+<li>词法作用域，也叫静态作用域，它的作用域是指在词法分析阶段就确定了，不会改变。</li>
+<li>动态作用域是在运行时根据程序的流程信息来动态确定的，而不是在写代码时进行静态确定的。<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(a); <span class="comment">// 会输出2还是3？</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">bar</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> a = <span class="number">3</span>;</span><br><span class="line">  foo();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bar();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>如果是词法作用域，它会让 foo() 函数引用到全局作用域中的 a，因此会输出 2。我们说过，词法作用域是写代码的时候就静态确定下来的。Javascript中的作用域就是词法作用域（事实上大部分语言都是基于词法作用域的），所以这段代码在浏览器中运行的结果是输出 2。<br>而动态作用域并不关心函数和作用域是如何声明以及在何处声明的，只关心它们从何处调用。换句话说，作用域链是基于调用栈的，而不是代码中的作用域嵌套。因此，如果Javascript具有动态作用域，理论上输出结果是 3。<br>需要明确的是，<strong>Javascript并不具有动态作用域，它只有词法作用域</strong>，简单明了。但是，它的 eval()、with、this机制某种程度上很像动态作用域，使用上要特别注意。<br>主要区别：词法作用域是在写代码或者定义时确定的（this也是！），而动态作用域是在运行时确定的。词法作用域关注函数在何处声明，而动态作用域关注函数从何处调用。<br>最后，让我们看一个《JavaScript权威指南》中的例子：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> scope = <span class="string">"global scope"</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkscope</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> scope = <span class="string">"local scope"</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> scope;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f();</span><br><span class="line">&#125;</span><br><span class="line">checkscope();</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> scope = <span class="string">"global scope"</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkscope</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> scope = <span class="string">"local scope"</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> scope;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f;</span><br><span class="line">&#125;</span><br><span class="line">checkscope()();</span><br></pre></td></tr></table></figure>
+<p>两段代码都会打印：local scope。这两种实现的执行上下文栈不一样，具体的可以参考<a href="https://github.com/mqyqingfeng/Blog/issues/4" target="_blank" rel="noopener">https://github.com/mqyqingfeng/Blog/issues/4</a><br>原因也很简单，因为JavaScript采用的是词法作用域，函数的作用域基于函数创建的位置。<br>而引用《JavaScript权威指南》的回答就是：<br>JavaScript 函数的执行用到了作用域链，这个作用域链是在函数定义的时候创建的。嵌套的函数 f() 定义在这个作用域链里，其中的变量 scope 一定是局部变量，不管何时何地执行函数 f()，这种绑定在执行 f() 时依然有效。</p>
+<h4 id="从词法作用域角度解释闭包"><a href="#从词法作用域角度解释闭包" class="headerlink" title="从词法作用域角度解释闭包"></a>从词法作用域角度解释闭包</h4><blockquote>
+<p>当函数可以记住并访问所在的词法作用域，就产生了闭包。即使函数是在当前词法作用域之外执行。<br>—— 摘自《你所不知道的js》</p>
+</blockquote>
+<h3 id="变量对象和活动对象"><a href="#变量对象和活动对象" class="headerlink" title="变量对象和活动对象"></a>变量对象和活动对象</h3><p>对于每个执行上下文，都有三个重要属性：</p>
+<ul>
+<li>变量对象</li>
+<li>作用域链</li>
+<li>this<br>变量对象是与执行上下文相关的数据作用域，存储了在上下文中定义的变量和函数声明。全局对象是作用域链的头部，从上下文看可以区分为全局上下文中的变量对象和函数上下文中的变量对象。<br><strong>活动对象是在进入函数上下文时刻被创建的</strong>，它通过函数的 arguments 属性初始化。arguments 属性值是 Arguments 对象。全局上下文中只有变量对象？<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">d</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 输出 ƒ d() &#123;&#125;，进入执行上下文时，变量的声明不会覆盖函数的声明; 但函数声明会覆盖输入的形参和变量声明</span></span><br><span class="line">  <span class="built_in">console</span>.log(d);</span><br><span class="line">  <span class="keyword">var</span> b = <span class="number">2</span>;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">d</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">  <span class="keyword">var</span> d = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">  b = <span class="number">3</span>;</span><br><span class="line">  <span class="comment">// 输出2，代码执行阶段，同名变量的属性值会被修改</span></span><br><span class="line">  <span class="built_in">console</span>.log(d);</span><br><span class="line">&#125;</span><br><span class="line">foo(<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>对应的变量对象和活动对象是：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> VO = &#123;</span><br><span class="line">  <span class="comment">// arguments: &#123;</span></span><br><span class="line">  <span class="comment">//   d: undefined</span></span><br><span class="line">  <span class="comment">// &#125; // 因为被覆盖了</span></span><br><span class="line">  b: <span class="literal">undefined</span>,</span><br><span class="line">  d: reference to <span class="function"><span class="keyword">function</span> <span class="title">d</span>(<span class="params"></span>)</span>&#123;&#125;,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 代码执行完后的AO</span></span><br><span class="line"><span class="keyword">var</span> AO = &#123;</span><br><span class="line">  b: <span class="number">3</span>,</span><br><span class="line">  d: <span class="number">2</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>VO 和 AO 的关系：<br><strong>未进入执行阶段之前，变量对象(VO)中的属性都不能访问！但是进入执行阶段之后，变量对象(VO)转变为了活动对象(AO)，里面的属性都能被访问了，然后开始进行执行阶段的操作。它们其实都是同一个对象，只是处于执行上下文的不同生命周期</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(a);</span><br><span class="line">    a = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo(); <span class="comment">// Uncaught ReferenceError: a is not defined。</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">bar</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    a = <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(a);</span><br><span class="line">&#125;</span><br><span class="line">bar(); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure></p>
+<p>因为a没有用var声明，不会发生变量提升，所以直接console的时候是‘Uncaught ReferenceError: a is not defined。’；而在对它进行赋值操作之后，js会认为是想要隐式声明一个全局变量，所以在赋值之后再console就是输出1。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2024/02/19/js_roadmap/" data-id="clsshtuwj0012wqrtpbsqt3th" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-webpack-loader总结" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/11/02/webpack-loader总结/" class="article-date">
+  <time datetime="2023-11-02T04:12:12.000Z" itemprop="datePublished">2023-11-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/11/02/webpack-loader总结/">webpack-loader总结</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="css处理loader"><a href="#css处理loader" class="headerlink" title="css处理loader"></a>css处理loader</h3><h4 id="module-css处理"><a href="#module-css处理" class="headerlink" title="module css处理"></a>module css处理</h4><ul>
+<li>style-loader: 处理css插入方式：inline或者extract，SSR模式下使用isomorphic-style-loader</li>
+<li>css-loader: 处理css中资源引用</li>
+<li>resolve-url-loader: 处理sass中import和url()相对路径</li>
+<li>post-loader: 添加浏览器前缀autoprefixer｜生产模式中压缩cssnano | rem转换postcss-px2rem</li>
+<li>sass-loader: 将sass/scss编译为css</li>
+</ul>
+<h4 id="jsx-css处理"><a href="#jsx-css处理" class="headerlink" title="jsx css处理"></a>jsx css处理</h4><ul>
+<li>babel-loader: 结合babel的presets和plugins配置处理js</li>
+<li><p>styled-jsx: 处理jsx格式写的style</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> () =&gt; (</span><br><span class="line">  &lt;div className=<span class="string">"root"</span>&gt;</span><br><span class="line">    &lt;style jsx&gt;&#123;<span class="string">`</span></span><br><span class="line"><span class="string">      .root &#123;</span></span><br><span class="line"><span class="string">        color: green;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    `</span>&#125;&lt;<span class="regexp">/style&gt;</span></span><br><span class="line"><span class="regexp">  &lt;/</span>div&gt;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>post-loader: 添加浏览器前缀autoprefixer｜生产模式中压缩cssnano</p>
+</li>
+<li>sass-loader: 将sass/scss编译为css</li>
+</ul>
+<h4 id="MiniCssExtractPlugin"><a href="#MiniCssExtractPlugin" class="headerlink" title="MiniCssExtractPlugin"></a>MiniCssExtractPlugin</h4><p>和<code>style-loader</code>功能相似：This plugin should be used only on production builds without style-loader in the loaders chain, especially if you want to have HMR in development.<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> MiniCssExtractPlugin = <span class="built_in">require</span>(<span class="string">'mini-css-extract-plugin'</span>);</span><br><span class="line"><span class="keyword">const</span> devMode = process.env.NODE_ENV !== <span class="string">'production'</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> MiniCssExtractPlugin(&#123;</span><br><span class="line">      <span class="comment">// Options similar to the same options in webpackOptions.output</span></span><br><span class="line">      <span class="comment">// both options are optional</span></span><br><span class="line">      filename: devMode ? <span class="string">'[name].css'</span> : <span class="string">'[name].[hash].css'</span>,</span><br><span class="line">      chunkFilename: devMode ? <span class="string">'[id].css'</span> : <span class="string">'[id].[hash].css'</span>,</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">  <span class="built_in">module</span>: &#123;</span><br><span class="line">    rules: [</span><br><span class="line">      &#123;</span><br><span class="line">        test: <span class="regexp">/\.(sa|sc|c)ss$/</span>,</span><br><span class="line">        use: [</span><br><span class="line">          &#123;</span><br><span class="line">            loader: MiniCssExtractPlugin.loader,</span><br><span class="line">            options: &#123;</span><br><span class="line">              hmr: process.env.NODE_ENV === <span class="string">'development'</span>,</span><br><span class="line">            &#125;,</span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="string">'css-loader'</span>,</span><br><span class="line">          <span class="string">'postcss-loader'</span>,</span><br><span class="line">          <span class="string">'sass-loader'</span>,</span><br><span class="line">        ],</span><br><span class="line">      &#125;,</span><br><span class="line">    ],</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h3 id="babel配置"><a href="#babel配置" class="headerlink" title="babel配置"></a>babel配置</h3><ul>
+<li>presets预设配置<br><code>@babel/env</code>和<code>@babel/preset-env</code>的写法一致，babel已经知道它是一个preset，会自动加上<code>preset-</code><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">presets: [</span><br><span class="line">    [<span class="string">'@babel/env'</span>, &#123;</span><br><span class="line">        modules: <span class="string">'commonjs'</span>,</span><br><span class="line">        <span class="comment">// todo 取消注释编译报错，参考：https://github.com/babel/babel/issues/8559</span></span><br><span class="line">        targets: &#123;</span><br><span class="line">            node: <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;],</span><br><span class="line">    <span class="string">'@babel/react'</span>,</span><br><span class="line">    <span class="string">'@babel/preset-typescript'</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2023/11/02/webpack-loader总结/" data-id="clsshtux1001zwqrtwr4pfdod" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/loader/">loader</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webpack/">webpack</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-echarts支持角度渐变踩坑指南" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/10/12/echarts支持角度渐变踩坑指南/" class="article-date">
+  <time datetime="2023-10-12T11:40:59.000Z" itemprop="datePublished">2023-10-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/10/12/echarts支持角度渐变踩坑指南/">echarts支持角度渐变踩坑指南</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>背景是在听歌数据主页的项目中，需要用一个圆环去表达听歌时段，圆环是基于echarts库实现的，最初的方案是使用线性渐变的方式去渲染颜色；后期UI侧对于线性渐变的效果不太满意，希望: <code>能够用颜色的递进来表达用户当前时段的投入程度，但目前最可行的线性渐变解决方案的效果还是不太能达到要求的，是否有更合适的方案能够满足角度渐变的效果呢？</code></p>
+<p><img src="https://p6.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/30822455382/f470/cac6/258e/c06fd86566025bcf1354aaf44fb97b0c.png" width="360px"></p>
+<p>问题的难点在于echarts目前只支持下面两种渐变方式：</p>
+<ul>
+<li>线性渐变：LinearGradient</li>
+<li>径向渐变：RadialGradient</li>
+</ul>
+<p>对于是否可以支持角度渐变，首先需要调研下可行性，大致思路是调研下是否可以基于echarts的源码去扩展，以期支持角度渐变的效果。</p>
+<h3 id="可行性调研"><a href="#可行性调研" class="headerlink" title="可行性调研"></a>可行性调研</h3><p>首先把echarts源码下载到本地，发现主要分为两个包：echarts和zrender，渲染的逻辑主要集中在zrender，官网介绍：<code>ZRender, a high performance 2d drawing library.</code>。<br>为了快速定位到渐变渲染的位置，通过canvas的<code>createLinearGradient</code>API去全局搜索(就是这么简单粗暴)，最后发现构建渐变对象的核心逻辑主要在zrender的<code>canvas/helper.ts</code>文件中，详情见<a href="https://github.com/ecomfe/zrender/blob/master/src/canvas/helper.ts" target="_blank" rel="noopener">git源码</a>。<br><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">getCanvasGradient</span>(<span class="params"><span class="keyword">this</span>: <span class="built_in">void</span>, ctx: CanvasRenderingContext2D, obj: GradientObject, rect: RectLike</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> canvasGradient = obj.type === <span class="string">'radial'</span></span><br><span class="line">        ? createRadialGradient(ctx, obj <span class="keyword">as</span> RadialGradientObject, rect)</span><br><span class="line">        : createLinearGradient(ctx, obj <span class="keyword">as</span> LinearGradientObject, rect);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> colorStops = obj.colorStops;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; colorStops.length; i++) &#123;</span><br><span class="line">        canvasGradient.addColorStop(</span><br><span class="line">            colorStops[i].offset, colorStops[i].color</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> canvasGradient;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>初步设想，在getCanvasGradient中根据obj.type去返回对应的渐变对象；为了快速验证可行性，在createLinearGradient方法中直接返回使用<code>ctx.createConicGradient(-0.5 * Math.PI, 187, 150)</code>创建的对象，colorStops也是固定值，事实验证是可行的。</p>
+<h3 id="角度渐变实现"><a href="#角度渐变实现" class="headerlink" title="角度渐变实现"></a>角度渐变实现</h3><p>为了实现业务代码可用的角度渐变，需要在echarts.graphic的基础上去扩展，支持<code>new echarts.graphic.ConicGradient(startAngle, colorStops)</code>的调用方式；主要的改造包括：</p>
+<ol>
+<li><p>在<code>zrender/graphic</code>文件夹下，新增<code>ConicGradient</code>类，继承自<code>Gradient</code>类，type标记为<code>conic</code>，后续会根据该type值去判断需要返回的渐变对象类型，关键代码:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; __extends &#125; <span class="keyword">from</span> <span class="string">"tslib"</span>;</span><br><span class="line"><span class="keyword">import</span> Gradient <span class="keyword">from</span> <span class="string">'./Gradient.js'</span>;</span><br><span class="line"><span class="keyword">var</span> ConicGradient = (<span class="function"><span class="keyword">function</span> (<span class="params">_super</span>) </span>&#123;</span><br><span class="line">    __extends(ConicGradient, _super);</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">ConicGradient</span>(<span class="params">angle, colorStops, timeUnitType</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> _this = _super.call(<span class="keyword">this</span>, colorStops) || <span class="keyword">this</span>;</span><br><span class="line">        _this.angle = angle == <span class="literal">null</span> ? <span class="number">0</span> : angle;</span><br><span class="line">        _this.type = <span class="string">'conic'</span>;</span><br><span class="line">        _this.timeUnitType = timeUnitType;</span><br><span class="line">        _this.global = <span class="literal">false</span>;</span><br><span class="line">        colorStops.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">colorStop</span>) </span>&#123;</span><br><span class="line">            colorStop.timeUnitType = timeUnitType;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">return</span> _this;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ConicGradient;</span><br><span class="line">&#125;(Gradient));</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> ConicGradient;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在echarts、zrender两个库中，全局查找和补充：</p>
+</li>
+</ol>
+<ul>
+<li>在需要export渐变类的地方，补充对<code>ConicGradient</code>类的导出；</li>
+<li>对于源码中需要判断渐变类型的地方，补充对<code>isConicGradient</code>方法的调用和相关渲染逻辑</li>
+</ul>
+<ol start="3">
+<li>最后在关键的<code>getCanvasGradient</code>方法中，创建conic渐变对象并返回，注意开始角度需要设置为-0.5 * Math.PI，因为角度渐变的起始点为水平3点钟方向，而视觉要求的起始点为垂直12点方向：</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">getCanvasGradient</span>(<span class="params">ctx, obj, rect</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> canvasGradient;</span><br><span class="line">    <span class="keyword">switch</span> (obj.type) &#123; </span><br><span class="line">        <span class="keyword">case</span> <span class="string">'radial'</span>:</span><br><span class="line">            canvasGradient = createRadialGradient(ctx, obj, rect);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">'conic'</span>:</span><br><span class="line">            canvasGradient = createConicGradient(ctx, obj, rect);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            canvasGradient = createLinearGradient(ctx, obj, rect);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> colorStops = obj.colorStops;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; colorStops.length; i++) &#123;</span><br><span class="line">        canvasGradient.addColorStop(colorStops[i].offset, colorStops[i].color);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> canvasGradient;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">createConicGradient</span>(<span class="params">ctx, obj, rect</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="comment">// 开始角度为-0.5 * Math.PI</span></span><br><span class="line">    <span class="keyword">return</span> ctx.createConicGradient(<span class="number">-0.5</span> * <span class="built_in">Math</span>.PI, x, y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后，在业务代码中通过itemStyle.color的配置，返回<code>new echarts.graphic.ConicGradient</code>创建的角度渐变对象。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">itemStyle: &#123; <span class="comment">// 每个扇形的样式</span></span><br><span class="line">    color: <span class="function">(<span class="params">params</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// 计算出每个扇形的开始角度</span></span><br><span class="line">        <span class="keyword">const</span> startAngle = xxx;</span><br><span class="line">        <span class="comment">// 获取该扇形对应的渐变值</span></span><br><span class="line">        <span class="keyword">const</span> colorStops = yyy;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> echarts.graphic.ConicGradient(startAngle, colorStops);</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></p>
+<p>至此，在电脑端chrome浏览器上效果非常完美，满足视觉同学的预期效果（此时，我有一个小疑问，echarts为什么不支持角度渐变？）。</p>
+<h3 id="起始角度问题"><a href="#起始角度问题" class="headerlink" title="起始角度问题"></a>起始角度问题</h3><p>众所周知，前端在chrome上实现的效果通常很完美，但在手机端上可能是另一回事。</p>
+<h4 id="起始角度不同"><a href="#起始角度不同" class="headerlink" title="起始角度不同"></a>起始角度不同</h4><p>chrome上的效果：<br><img src="https://p6.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/30873370228/b6c5/9963/ba4d/e7415b0bbaa82a163d000f04a40efb99.png" width="300px"></p>
+<p>iphone上的效果：<br><img src="https://p5.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/30873419595/2808/be17/8354/fb03811d82d5c83753b2eff9cc459b40.png" width="300px"></p>
+<p>对比上面两图，可以发现在iphone上，渐变绘制的是有角度渐变的，但渐变的色值和起始位置都不对。<br><img src="https://p6.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/30873448490/4ea7/a9a2/b035/a4de2e20767f73998af4c0c259f3fd4c.png" width="300px"></p>
+<p>通过绘制单条数据可以发现，在iphone上<code>-0.5 * Math.PI</code>对应的起始点并非垂直12点方向，而是水平9点方向，相比理想位置多了<code>-0.5 * Math.PI</code>角度，说明在该手机上起始角度0度对应的就是垂直12点方向。于是，在创建渐变对象时增加了是否是移动端设备的判断：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">createConicGradient</span>(<span class="params">ctx, obj, rect</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">const</span> startAngle = isMobile() ? <span class="number">0</span> : <span class="number">-0.5</span> * <span class="built_in">Math</span>.PI;</span><br><span class="line">    <span class="keyword">return</span> ctx.createConicGradient(startAngle, x, y);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在增加上述判断后，发现在另一台iphone上绘制的效果也并不符合预期，经测试，在不同的iphone设备上起始角度不同，有的是垂直12点方向，有的是水平9点方向，应该是和ios系统有关系，但难以覆盖完全。</p>
+<h4 id="判断起始角度"><a href="#判断起始角度" class="headerlink" title="判断起始角度"></a>判断起始角度</h4><p>此时，需要有一个通用的方法去判断角度渐变的起始角度，在遍查API之后，发现并没有这样的方法。最后，想到可以通过绘制1/4的渐变，再去读取对应位置的颜色，进而计算出渐变的起始角度。具体的流程如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">countDirection</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> canvas = <span class="built_in">document</span>.createElement(<span class="string">'canvas'</span>);</span><br><span class="line">    <span class="keyword">const</span> ctx = canvas.getContext(<span class="string">'2d'</span>);</span><br><span class="line">    <span class="keyword">const</span> x = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">const</span> y = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">const</span> radius = <span class="number">50</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ctx &amp;&amp; ctx.createConicGradient) &#123;</span><br><span class="line">        <span class="comment">// 从默认的起始角度0度开始绘制1/4圆的渐变</span></span><br><span class="line">        <span class="keyword">const</span> conicGradient = ctx.createConicGradient(<span class="number">0</span>, x, y);</span><br><span class="line">        conicGradient.addColorStop(<span class="number">0</span>, <span class="string">'#000'</span>);</span><br><span class="line">        conicGradient.addColorStop(<span class="number">0.25</span>, <span class="string">'#fff'</span>);</span><br><span class="line">        </span><br><span class="line">        ctx.fillStyle = conicGradient;</span><br><span class="line">        ctx.beginPath();</span><br><span class="line">        ctx.arc(x, y, radius, <span class="number">0</span>, <span class="number">2</span> * <span class="built_in">Math</span>.PI);</span><br><span class="line">        ctx.fill();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取右上角的颜色，若从水平方向开始则为[255, 255, 255, 255]，反之为垂直方向[135, 135, 135, 255]</span></span><br><span class="line">        <span class="keyword">const</span> imageData = ctx.getImageData(<span class="number">110</span>, <span class="number">90</span>, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">const</span> pixelData = imageData.data || [];</span><br><span class="line">        isHorizontal = pixelData?.[<span class="number">0</span>] &gt; <span class="number">240</span>; <span class="comment">// 存在可能为254的情况，保险起见改成大于240</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> isHorizontal = countDirection();</span><br></pre></td></tr></table></figure></p>
+<p>通过<code>ctx.getImageData</code>去读取右上角某一个点的位置，如果起始位置是水平方向，则取到的色值应该为白色: [255, 255, 255, 255]；反之如果起始位置是垂直方向，则右上角为渐变区域：#000 -&gt; #fff 的渐变，色值必然不是白色。通过这种间接的方式，可以计算出角度渐变的起始方向。</p>
+<ul>
+<li>水平方向：</li>
+</ul>
+<p><img src="https://p5.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/30875695990/bae8/5c24/01a4/fedea8507b1540349173395fed864258.png" width="180px"></p>
+<ul>
+<li>垂直方向：</li>
+</ul>
+<p><img src="https://p6.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/30875716128/4c47/b840/3ec7/55bc755db421e8bfd6d07ab94e785d22.png" width="180px"></p>
+<h3 id="安卓Polyfill适配"><a href="#安卓Polyfill适配" class="headerlink" title="安卓Polyfill适配"></a>安卓Polyfill适配</h3><p>成功处理了角度问题之后，在安卓机上打开，发现页面白屏，看console日志，发现有报错<code>ctx.createConicGradient is not defined</code>，此时，我大概明白了<code>echarts为什么不支持角度渐变</code>= =！。<br>尝试查找可用的polyfill，发现<a href="https://github.com/parksben/create-conical-gradient" target="_blank" rel="noopener">create-conical-gradient</a>这个库大概可以满足需求。在createConicGradient方法中增加对<code>ctx.createConicGradient</code>是否存在的判断：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">createConicGradient</span>(<span class="params">ctx, obj, rect</span>) </span>&#123;</span><br><span class="line">    <span class="comment">//... </span></span><br><span class="line">    <span class="keyword">if</span> (ctx.createConicGradient)&#123;</span><br><span class="line">        <span class="keyword">const</span> startAngle = isHorizontal ? <span class="number">-0.5</span> * <span class="built_in">Math</span>.PI : <span class="number">0</span>;</span><br><span class="line">        canvasGradient = ctx.createConicGradient(startAngle, x, y);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        canvasGradient = ctx.createConicalGradient(x, y, <span class="number">-0.5</span> * <span class="built_in">Math</span>.PI, <span class="number">1.5</span> * <span class="built_in">Math</span>.PI);</span><br><span class="line">        <span class="comment">// 标记使用的是polyfill方式，底层对应createPattern</span></span><br><span class="line">        canvasGradient.usePattern = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> canvasGradient;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>该库内部使用的是<code>createPattern</code>方式去渲染，最后暴露了<code>get pattern()</code>方式去获取，在zrender需要渲染渐变的地方，需要根据<code>usePattern</code>变量去判断，若为true，则设置fillStyle为<code>canvasGradient.pattern</code>。</p>
+<h3 id="Polyfill卡顿问题处理"><a href="#Polyfill卡顿问题处理" class="headerlink" title="Polyfill卡顿问题处理"></a>Polyfill卡顿问题处理</h3><p>通过增加了上述Polyfill方法在安卓机上可以渲染出角度渐变的效果，但该方案实现后动画效果有问题，卡顿非常严重。</p>
+<h4 id="卡顿原因定位"><a href="#卡顿原因定位" class="headerlink" title="卡顿原因定位"></a>卡顿原因定位</h4><ol>
+<li><p>发现zrender中帧动画掉帧严重：requestAnimationFrame回调函数执行时间过长，导致动画卡顿；使用chrome的帧工具，辅助验证了的确是掉帧：<br><img src="https://p5.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/30875303347/d99b/0cbd/180a/2311d67d5cf3cc03e1e14b61b4c3c757.png" width="300px"></p>
+</li>
+<li><p>进一步定位，发现同一个渐变被调用并创建了多次，例如起始角度为0的第一个扇形，会被重复渲染10次<br><img src="https://p5.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/30875252434/7fdc/9d93/30fa/82150b00d07fc3b68c6d05a5b2b82222.png" width="500px"></p>
+</li>
+</ol>
+<h4 id="添加缓存"><a href="#添加缓存" class="headerlink" title="添加缓存"></a>添加缓存</h4><p>尝试使用缓存解决，先给ConicGradient创建缓存对象，使用colorStops作为cacheKey，保证唯一性。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> conicGradientCache = &#123;&#125;; <span class="comment">// 缓存渐变对象，避免重复创建</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">createConicGradient</span>(<span class="params">ctx, obj, rect</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> cacheKey = <span class="built_in">JSON</span>.stringify(obj.colorStops);</span><br><span class="line">    <span class="keyword">if</span> (conicGradientCache[cacheKey]) &#123; </span><br><span class="line">        conicGradientCache[cacheKey].fromCache = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">return</span> conicGradientCache[cacheKey];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//... </span></span><br><span class="line">    <span class="comment">// 创建canvasGradient对象代码，参考上面</span></span><br><span class="line">    conicGradientCache[cacheKey] = canvasGradient;</span><br><span class="line">    <span class="keyword">return</span> canvasGradient;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://p6.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/30875342816/2f65/ead4/3507/b06f612e4e52e895700c3a0f98fcd35a.png" width="300px"></p>
+<p>有点效果，但收效甚微，经过定位，发现问题出在<a href="https://github.com/parksben/create-conical-gradient" target="_blank" rel="noopener">create-conical-gradient</a>库中；虽然canvasGradient对象是缓存了，但在使用canvasGradient.pattern时，<code>get pattern</code>方法内部每次都会重新创建一遍，所以canvasGradient.pattern也需要缓存。<br>于是把该库源码pull到本地，在返回pattern的地方也加上缓存：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">get</span> pattern() &#123;</span><br><span class="line">    patternCache[cacheKey] = patternCache[cacheKey] || createConicalGradient(ctx2d, <span class="keyword">this</span>.stops, ...args);</span><br><span class="line">    <span class="keyword">return</span> patternCache[cacheKey];</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></p>
+<p>加上缓存后的效果，虽然比不上原生API的渲染性能，但在体感上已基本流畅。</p>
+<p><img src="https://p6.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/30875407445/cba2/0f0f/e5d7/96b1baf09fe491805f7573ca853c295c.png" width="300px"></p>
+<h3 id="一条线问题"><a href="#一条线问题" class="headerlink" title="一条线问题"></a>一条线问题</h3><p>此外，还发现在ios16.0-16.2版本的系统上，在渲染渐变时，会偶现有闪烁的一条线问题，如下图所示：<br><img src="https://p5.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/30875484909/d6aa/a08d/1c30/a4212d1d2a5724c7bf0b1f92829952e0.png" width="300px"></p>
+<p>在stackoverflow上同样有人有类似的问题：<a href="https://stackoverflow.com/questions/73733470/flickering-horizontal-lines-on-the-animation-made-with-canvas-only-on-ios-16" target="_blank" rel="noopener">Flickering horizontal lines on the animation made with canvas only on iOS 16</a>。</p>
+<p>目前没有找到可行的方案去解决：使用原生API的同时可以避免这样线的问题，可选的方案就是判断系统的版本，若处于有问题的版本中，则使用Polyfill的方式去渲染。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>目前浏览器对canvas的<code>createConicGradient</code>API的支持存在诸多问题，或许在未来，浏览器的支持度会越来越高，使用起来就不会像现在这样存在诸多问题。在视觉方案的选择上，也需要再慎重些，看看是否有其他可替代的方案。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2023/10/12/echarts支持角度渐变踩坑指南/" data-id="clsshtuwh000xwqrt2o9b9nkm" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/echarts/">echarts</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/角度渐变/">角度渐变</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-SSR渲染" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/09/17/SSR渲染/" class="article-date">
+  <time datetime="2023-09-17T04:12:12.000Z" itemprop="datePublished">2023-09-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/09/17/SSR渲染/">SSR渲染</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="webpack打包"><a href="#webpack打包" class="headerlink" title="webpack打包"></a>webpack打包</h1><p>nodejs遵循 commonjs规范，文件的导入导出如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 导出</span></span><br><span class="line"><span class="built_in">module</span>.exports = someModule</span><br><span class="line"><span class="comment">// 导入</span></span><br><span class="line"><span class="keyword">const</span> <span class="built_in">module</span> = <span class="built_in">require</span>(<span class="string">'./someModule'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>而我们通常所写的 react代码是遵循 esModule规范的，文件的导入导出如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 导出</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> someModule</span><br><span class="line"><span class="comment">// 导入</span></span><br><span class="line"><span class="keyword">import</span> <span class="built_in">module</span> <span class="keyword">from</span> <span class="string">'./someModule'</span></span><br></pre></td></tr></table></figure></p>
+<p>所以想要让 react代码兼容于服务器端，就必须先解决这两种规范的兼容问题，实际上 react是可以直接以 commonjs规范来书写的，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> React = <span class="built_in">require</span>(<span class="string">'react'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>使用webpack编译的作用是：</p>
+<ul>
+<li>将 jsx编译为 node认识的原生 js代码</li>
+<li>将 esModule代码编译成 commonjs的</li>
+</ul>
+<h1 id="客户端如何处理ssr渲染的数据"><a href="#客户端如何处理ssr渲染的数据" class="headerlink" title="客户端如何处理ssr渲染的数据"></a>客户端如何处理ssr渲染的数据</h1><h3 id="server端"><a href="#server端" class="headerlink" title="server端"></a>server端</h3><p>ReactDOM.renderToString返回的HTML片段插入到ejs模板中，再通过node的response.render返回给浏览器</p>
+<h3 id="client端"><a href="#client端" class="headerlink" title="client端"></a>client端</h3><ul>
+<li>ReactDOM.render()会将挂载dom节点的所有子j节点全部清空掉，再重新生成子节点。</li>
+<li>ReactDOM.hydrate()则会复用挂载dom节点的子节点，并将其与react的virtualDom关联上。<br>初次渲染可以调用两种方法：ReactDOM.render和ReactDOM.hydrate。后者就是直接告诉ReactDOM需要hydrate，目前来说如果你调用的是render，但是 React 会调用下面的方法检测是否可以hydrate，如果可以他会提醒你应该使用hydrate。<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ELEMENT_NODE = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">const</span> DOCUMENT_NODE = <span class="number">9</span>;</span><br><span class="line"><span class="keyword">const</span> ROOT_ATTRIBUTE_NAME = <span class="string">'data-reactroot'</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getReactRootElementInContainer</span>(<span class="params">container</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!container) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (container.nodeType === DOCUMENT_NODE) &#123;</span><br><span class="line">    <span class="keyword">return</span> container.documentElement;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123; <span class="comment">// 检查container内是否已经返回了第一个child</span></span><br><span class="line">    <span class="keyword">return</span> container.firstChild;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// container是ReactDOM.render(&lt;App/&gt;, container)传入的第二个参数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">shouldHydrateDueToLegacyHeuristic</span>(<span class="params">container</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> rootElement = getReactRootElementInContainer(container);</span><br><span class="line">  <span class="keyword">return</span> !!(rootElement &amp;&amp; rootElement.nodeType === ELEMENT_NODE &amp;&amp; rootElement.hasAttribute(ROOT_ATTRIBUTE_NAME));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>从根节点开始DFS遍历，dom节点从ReactDOM.render的container元素开始，检查fiber节点是否可以复用nextInstance，nextInstance对应于DOM节点，可以复用的话，会将fiber.stateNode赋值为nextInstance。另外注水阶段，会绑定事件。</p>
+<h1 id="流式渲染"><a href="#流式渲染" class="headerlink" title="流式渲染"></a>流式渲染</h1><h2 id="客户端识别"><a href="#客户端识别" class="headerlink" title="客户端识别"></a>客户端识别</h2><h3 id="Transfer-Encoding"><a href="#Transfer-Encoding" class="headerlink" title="Transfer-Encoding"></a>Transfer-Encoding</h3><p>Transfer-Encoding 消息首部指明了将 entity 安全传递给用户所采用的编码形式。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Transfer-Encoding: chunked</span><br></pre></td></tr></table></figure></p>
+<p>数据以一系列分块的形式进行发送。 Content-Length 首部在这种情况下不被发送。。在每一个分块的开头需要添加当前分块的长度，以十六进制的形式表示，后面紧跟着 ‘\r\n’ ，之后是分块本身，后面也是’\r\n’ 。终止块是一个常规的分块，不同之处在于其长度为0。终止块后面是一个挂载（trailer），由一系列（或者为空）的实体消息首部构成。</p>
+<h3 id="ngnix配置"><a href="#ngnix配置" class="headerlink" title="ngnix配置"></a>ngnix配置</h3><p>开启流式渲染，首先在response的头部需要加一个X-Accel-Buffering字段，告诉浏览器我要采用流式传输；然后就可以分块输出了。<br>首先nginx.conf需要加如下代码，让X-Accel-Buffering透传<br>location / { proxy_pass_header X-Accel-Buffering; proxy_pass <a href="http://node;}" target="_blank" rel="noopener">http://node;}</a><br>然后在返回的时候，在response的头部设置：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">res.set(&#123;</span><br><span class="line">   <span class="string">'X-Accel-Buffering'</span>: <span class="string">'no'</span>,</span><br><span class="line">   <span class="string">'Content-Type'</span>: <span class="string">'text/html; charset=UTF-8'</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p><code>x-accel-buffering: no</code>设置此连接的代理缓存，将此设置为no将允许适用于Comet和HTTP流式应用程序的无缓冲响应。将此设置为yes将允许响应被缓存。默认yes。设置为no可以关闭缓存，让浏览器以chunk的形式解析。</p>
+<h2 id="服务端返回"><a href="#服务端返回" class="headerlink" title="服务端返回"></a>服务端返回</h2><h3 id="response-write"><a href="#response-write" class="headerlink" title="response.write"></a><a href="http://nodejs.cn/api/http.html#http_request_flushheaders" target="_blank" rel="noopener">response.write</a></h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">response.write(chunk[, encoding][, callback])#</span><br></pre></td></tr></table></figure>
+<ul>
+<li>chunk <string> | <buffer></buffer></string></li>
+<li>encoding <string> 默认值: ‘utf8’。</string></li>
+<li>callback <function></function></li>
+<li>返回: <boolean><br>如果调用此方法并且尚未调用 response.writeHead()，则将切换到隐式响应头模式并刷新隐式响应头。<br>这会发送一块响应主体。<strong>可以多次调用该方法以提供连续的响应主体片段。</strong><br>第一次调用 response.write() 时，它会将缓冲的响应头信息和主体的第一个数据块发送给客户端。 第二次调用response.write() 时，Node.js 假定数据将被流式传输，并分别发送新数据。 也就是说，响应被缓冲到主体的第一个数据块。</boolean></li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">response.flushHeaders()</span><br></pre></td></tr></table></figure>
+<p>出于效率原因，Node.js 通常会缓冲请求头，直到调用 request.end() 或写入第一个请求数据块。 然后，它尝试将请求头和数据打包到单个 TCP 数据包中。这通常是期望的（它节省了 TCP 往返），但是可能很晚才发送第一个数据。request.flushHeaders() 绕过优化并启动请求。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">response.end()</span><br></pre></td></tr></table></figure>
+<p>此方法向服务器发出信号，表明已发送所有响应头和主体，该服务器应该视为此消息已完成。 必须在每个响应上调用此 response.end() 方法。</p>
+<h3 id="response-render"><a href="#response-render" class="headerlink" title="response.render"></a>response.render</h3><p>app.render负责生成视图，但是没有能力返回给客户端，需要借助res.send|res.write。<br>res.send和res.write的区别：res.send can only be called once, since it is equivalent to res.write + res.end()<br>伪代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">res.render = <span class="function"><span class="keyword">function</span>(<span class="params">view, locals, cb</span>)</span>&#123;</span><br><span class="line">    app.render(view, locals, <span class="function"><span class="keyword">function</span>(<span class="params">err, html</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">typeof</span> cb !== <span class="string">'undefined'</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> cb(err, html);</span><br><span class="line">        &#125;</span><br><span class="line">        res.send(html);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2023/09/17/SSR渲染/" data-id="clsshtuw1000awqrtidojleut" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSR/">SSR</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-webpack常用插件" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/07/02/webpack常用插件/" class="article-date">
+  <time datetime="2023-07-02T04:12:12.000Z" itemprop="datePublished">2023-07-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/07/02/webpack常用插件/">webpack常用插件</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="webpack运行机制"><a href="#webpack运行机制" class="headerlink" title="webpack运行机制"></a>webpack运行机制</h2><ul>
+<li>初始化配置参数 -&gt; 绑定事件钩子回调 -&gt; 确定Entry逐一遍历 -&gt; 使用loader编译文件 -&gt; 输出文件</li>
+</ul>
+<h2 id="html-webpack-plugin-和-script-ext-html-webpack-plugin"><a href="#html-webpack-plugin-和-script-ext-html-webpack-plugin" class="headerlink" title="html-webpack-plugin 和 script-ext-html-webpack-plugin"></a>html-webpack-plugin 和 script-ext-html-webpack-plugin</h2><ul>
+<li>html-webpack-plugin生成的html文件，其中<script>都是默认同步类型的</li>
+<li>需要使用script-ext-html-webpack-plugin，可以定义<script>的引入类型或者inline script</li>
+</ul>
+<h2 id="自定义插件"><a href="#自定义插件" class="headerlink" title="自定义插件"></a>自定义插件</h2><ul>
+<li><p>Compiler暴露了和webpack整个生命周期相关的钩子：负责文件监听和启动编译。Compiler 实例中包含了完整的 webpack 配置，全局只有一个 Compiler 实例。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//基本写法</span></span><br><span class="line">compiler.hooks.someHook.tap(...)</span><br><span class="line"><span class="comment">//如果希望在entry配置完毕后执行某个功能</span></span><br><span class="line">compiler.hooks.entryOption.tap(...)</span><br><span class="line"><span class="comment">//如果希望在生成的资源输出到output指定目录之前执行某个功能</span></span><br><span class="line">compiler.hooks.emit.tap(...)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Compilation暴露了与模块和依赖有关的粒度更小的事件钩子<br>模块会经历加载(loaded),封存(sealed),优化(optimized),分块(chunked),哈希(hashed)和重新创建(restored);compilation是Compiler生命周期中的一个步骤，使用compilation相关钩子的通用写法为:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">compiler.hooks.compilation.tap(<span class="string">'SomePlugin'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">compilation, callback</span>)</span>&#123;</span><br><span class="line">    compilation.hooks.someOtherHook.tap(<span class="string">'SomeOtherPlugin'</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        ....</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="HtmlWebpackPlugin提供的事件钩子"><a href="#HtmlWebpackPlugin提供的事件钩子" class="headerlink" title="HtmlWebpackPlugin提供的事件钩子"></a>HtmlWebpackPlugin提供的事件钩子</h3><ul>
+<li><p>开始生成HTML之前勾子(HtmlWebpackPlugin BeforeHtmlGeneration)<br>这一阶做一些资源归类工作，主要产出物为asset资源原始对象，该对象为插入HTML头尾部的JS,CSS资源列表及其路径。</p>
+</li>
+<li><p>在HTML开始处理之前勾子(HtmlWebpackPlugin BeforeHtmlProcessing)<br>生成不包括JS和CSS的纯HTML结果，产出物为html字符串。</p>
+</li>
+<li><p>添加资源处理HTML勾子(HtmlWebpackPluginAlterAssetTags)<br>组装要插入HTML页面中的JS，CSS等资源结构，<br>如果要在生成HTML页面中加入自定义或者WEBPACK不支持的<script>标签等，可操作该对象。</p>
+</li>
+<li><p>HTML处理完毕勾子(HtmlWebpackPluginAfterHtmlProcessing)<br>HTML页处理完成阶段，JS,CSS完成插入，已生成可直接打包用的文本结构，一般要输出自定义内容在此处实现。</p>
+</li>
+<li><p>勾子任务处理完毕发送事件时(HtmlWebpackPluginAfterEmit)<br>处理任务最后阶段，可通过返回的html属性访问source和size属性。</p>
+</li>
+</ul>
+<h2 id="webpack-dev-server-vs-webpack-dev-middleware"><a href="#webpack-dev-server-vs-webpack-dev-middleware" class="headerlink" title="webpack-dev-server vs webpack-dev-middleware"></a>webpack-dev-server vs webpack-dev-middleware</h2><p><code>webpack-dev-server</code>结合了<code>express</code>、<code>webpack-dev-middleware</code>和<code>webpack-hot-middleware</code>的功能，其中</p>
+<ul>
+<li>express负责启动node服务</li>
+<li>webpack-dev-middleware通过webpack提供的<code>watch</code>API监听代码变化，重新编译打包，写到内存中</li>
+<li>webpack-hot-middleware客户端使用<a href="https://developer.mozilla.org/zh-CN/docs/Server-sent_events/Using_server-sent_events">EventSource</a>长轮询(<code>webpack-dev-server</code>在服务端和客户端建立websocket长连接)<ul>
+<li>服务端监听<code>compiler</code>钩子的<code>done</code>事件，在文件打包完成后，调用监听函数</li>
+<li>监听函数中调用<code>eventStream.publish</code>，将事件类型、文件hash等打包信息，通过事件流的形式通知客户端。（有趣的事，如果一直没有更新，服务端会间隔(默认)10s发生消息给客户端，是一个心形字符，代表心跳）</li>
+<li>客户端监听<code>onmessage</code>事件，根据接收到的消息，去进行不同的处理</li>
+<li>客户端调用check方法坚持是否有更新，如果配置了模块热更新，HMR runtime根据新模块代码决定是热更新还是重刷页面；如果没配置模块热更新，则直接重刷页面(<strong>HMR 是可选功能，只会影响包含 HMR 代码的模块。</strong>例如<code>style-loader</code>实现了HMR的module.hot接口，当它通过 HMR 接收到更新，它会使用新的样式替换旧的样式。)<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">compiler.hooks.done.tap(<span class="string">'webpack-hot-middleware'</span>, onDone);</span><br><span class="line"></span><br><span class="line"><span class="comment">// init方法</span></span><br><span class="line">source = <span class="keyword">new</span> <span class="built_in">window</span>.EventSource(options.path);</span><br><span class="line">source.onopen = handleOnline;</span><br><span class="line">source.onerror = handleDisconnect;</span><br><span class="line">source.onmessage = handleMessage;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="WebSockets-or-Server-Sent-Events"><a href="#WebSockets-or-Server-Sent-Events" class="headerlink" title="WebSockets or Server-Sent Events"></a>WebSockets or Server-Sent Events</h3><ul>
+<li>明显的区别是：WebSockets是双向通信，Server-Sent Events是单向通信</li>
+<li>Server-Sent Events API是服务器向客户端发送事件，客户端负责事件监听</li>
+</ul>
+</script></li></ul>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2023/07/02/webpack常用插件/" data-id="clsshtuwz001xwqrt6ilhiqv0" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/webpack/">webpack</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/插件/">插件</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Themis-CMS体验度量方案" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2023/05/20/Themis-CMS体验度量方案/" class="article-date">
+  <time datetime="2023-05-20T04:12:12.000Z" itemprop="datePublished">2023-05-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/05/20/Themis-CMS体验度量方案/">Themis-CMS体验度量方案</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>Themis为CMS体验优化项目，目标是提高CMS相关的体验和性能，主要的服务用户是：策划、开发、运营，主要工作包括：</p>
+<ul>
+<li>脚手架移动化改造和场景组件封装</li>
+<li>性能监控</li>
+<li>效能工具的开发<br>本文主要介绍‘性能监控’的设计方案和实现，为了可以有效地衡量cms的性能数据，我们会从多个角度去度量应用相关的数据，进而分析出页面存在的体验问题并治理。</li>
+</ul>
+<h2 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h2><p>Themis性能监控处理了从数据生成、收集、计算到可视化的整个链路，流程架构图如下所示，主要包括三方面：</p>
+<ul>
+<li>场景指标定义</li>
+<li>数据收集&amp;上报：ThemisLogger SDK</li>
+<li>监控数据可视化：ThemisAnalysis 平台<br><img src="https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/15009464919/17fe/2097/e368/4220300df2199192169a19dae63496da.png" width="560"></li>
+</ul>
+<h2 id="场景指标定义"><a href="#场景指标定义" class="headerlink" title="场景指标定义"></a>场景指标定义</h2><p>首先明确CMS侧主要的场景可以归纳为表格和表单两种，在「场景组件封装」中，我们对这类交互进行了标准化定义，详情可以参考<a href="https://music-cms.hz.netease.com/themis/standards/situations/table" target="_blank" rel="noopener">场景规范</a>。<br>那么问题的关键就转化为：如何对这两种场景进行度量？<br>以表格场景为例，在用户操作的时候，我们会重点关注操作的易用性、页面渲染速度和高频行为等，从中我们抽象出表格场景的核心指标有：</p>
+<ul>
+<li>查询效率</li>
+<li>页码切换性能</li>
+<li>场景初始化性能</li>
+<li>筛选区操作效率</li>
+<li>用户高频行为</li>
+</ul>
+<p>为了度量出具体的核心指标，我们需要去定义具体的行为类型、指标计算规则，记录行为队列。</p>
+<h3 id="行为类型定义"><a href="#行为类型定义" class="headerlink" title="行为类型定义"></a>行为类型定义</h3><p>首先针对关注的表格核心指标，定义行为类型，例如在表格场景中搜索的点击<code>search</code>，表格渲染结束<code>RenderEnd</code><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ActionType = &#123;</span><br><span class="line">    PageChange: <span class="string">'pageChange'</span>, <span class="comment">// 页码变化</span></span><br><span class="line">    Search: <span class="string">'search'</span>, <span class="comment">// 搜索点击</span></span><br><span class="line">    SceneInit: <span class="string">'sceneInit'</span>, <span class="comment">// 场景初始化</span></span><br><span class="line">    RenderEnd: <span class="string">'renderEnd'</span>, <span class="comment">// 所有的表格内容渲染完成</span></span><br><span class="line">    FilterValueChange: <span class="string">'filterValueChange'</span>, <span class="comment">// 搜索条件变更</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="行为计算规则定义"><a href="#行为计算规则定义" class="headerlink" title="行为计算规则定义"></a>行为计算规则定义</h3><p>我们关注的表格核心指标有：</p>
+<ul>
+<li>查询耗时 = 渲染完成时间 - 搜索触发时间（RenderEnd - Search）</li>
+<li>页码切换耗时 = 渲染完成时间 - 页码切换时间（RenderEnd - PageChange)</li>
+<li>场景初始化耗时 = 渲染完成时间 - 场景初始化时间（RenderEnd - SceneInit)</li>
+<li>筛选表单操作时长 = 搜索开始时间 - 表单开始操作时间 (Search - filterValueChange)</li>
+<li>用户高频行为 = sort([页面]-[表格]-[行为])</li>
+</ul>
+<h4 id="计算前置关系"><a href="#计算前置关系" class="headerlink" title="计算前置关系"></a>计算前置关系</h4><p>针对已经定义的行为类型，如果要计算【行为1】到【行为2】之间的耗时，则可以将【行为1】放到【行为2】对应的前置行为数组。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 定义需要计算的[行为1]_[行为2]的耗时</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="built_in">window</span>.Themis.PreActionMap = &#123;</span><br><span class="line">    <span class="string">'行为2'</span>: [</span><br><span class="line">        <span class="string">'行为1'</span>,</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对于【行为2】，可能有多个行为会触发，例如针对页面渲染的场景，【RenderEnd行为】可以是Search、PageChange、SceneInit多个行为触发，这些行为都可以放到【RenderEnd行为】对应的前置行为数组。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.Themis.PreActionMap = &#123;</span><br><span class="line">    [ActionType.RenderEnd]: [</span><br><span class="line">        ActionType.PageChange,</span><br><span class="line">        ActionType.Search,</span><br><span class="line">        ActionType.SceneInit,</span><br><span class="line">        ActionType.FilterValueChange,</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="计算顺序"><a href="#计算顺序" class="headerlink" title="计算顺序"></a>计算顺序</h4><p>在计算耗时的时候，需要区分两种顺序：</p>
+<ul>
+<li>NEAR: 最近的触发行为去计算，如RenderEnd行为耗时的计算(RenderEnd - 最近一次触发渲染的时间)</li>
+<li>FAR: 最远的触发行为去计算，如<code>筛选表单操作时长</code>指标的计算（搜索开始时间 - 表单开始操作时间）<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.Themis.CountRule = &#123;</span><br><span class="line">    NEAR: [ActionType.RenderEnd],</span><br><span class="line">    FAR: [ActionType.Search]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="行为队列"><a href="#行为队列" class="headerlink" title="行为队列"></a>行为队列</h3><p>定义好行为类型和计算规则后，在触发需要打点的行为时，场景组件会将action对象push到<code>window.Themis.ActionQueue</code>数组中，action对象结构如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@def <span class="type">&#123;object&#125;</span> </span>action 行为对象</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@def <span class="type">&#123;string&#125;</span> </span>action.name 行为名 必须</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@def <span class="type">&#123;number&#125;</span> </span>action.time 行为发生时间戳 必须</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@def <span class="type">&#123;string&#125;</span> </span>action.scene 所属场景 必须</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@def <span class="type">&#123;string&#125;</span> </span>action.url 所属页面 必须 location.href</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@def <span class="type">&#123;object&#125;</span> </span>[action.attributes] 其他行为属性，必须是可枚举 可选</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">const</span> action = &#123;</span><br><span class="line">   name: ActionType.FilterValueChange,</span><br><span class="line">   time: <span class="number">1605531890117</span>,</span><br><span class="line">   scene: <span class="string">'Table'</span> ,</span><br><span class="line">   url: <span class="string">'http://cms.qa.igame.163.com/pagexxx'</span>,</span><br><span class="line">   attributes: &#123;</span><br><span class="line">       attr: <span class="number">1</span></span><br><span class="line">   &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>若用户多次触发行为，则会持续向行为队列中push action对象，该行为队列存储在本地，在满足预设的条件时会被ThemisLogger SDK收集、格式化处理并上报到服务端。</p>
+<h2 id="数据收集-amp-上报"><a href="#数据收集-amp-上报" class="headerlink" title="数据收集&amp;上报"></a>数据收集&amp;上报</h2><p>ThemisLogger SDK负责收集页面相关的性能数据并上报，主要工作包括：</p>
+<ul>
+<li>场景行为数据收集</li>
+<li>指标数据计算&amp;上报</li>
+<li>异常ErrorCode捕获</li>
+<li>请求耗时上报</li>
+<li>页面停留时间上报<br>该SDK可以通过<a href="https://music-fet.hz.netease.com/puzzle/web/projects/1/apps" target="_blank" rel="noopener">Puzzle</a>平台去接入，通过动态js下发的方式去引入SDK，无需入侵项目代码。<h3 id="场景指标上报"><a href="#场景指标上报" class="headerlink" title="场景指标上报"></a>场景指标上报</h3><h4 id="场景指标上报时机"><a href="#场景指标上报时机" class="headerlink" title="场景指标上报时机"></a>场景指标上报时机</h4>可以触发场景指标上报的条件有多个，用于处理不同的场景，包括：</li>
+<li>定时10s上报一次：最通用的上报触发条件</li>
+<li>页面离开时触发上报：处理页面被关闭的情况</li>
+<li>行为队列长度超过100触发上报: 用于处理数据量过大的情况<br>定时上报、页面离开时触发上报都很好处理，难点在于如何监听行为队列长度的变化，对行为队列的修改内置在场景组件中，与SDK无直接通信，并且不希望在场景组件中耦合上报相关逻辑，保持代码职责的专一性。鉴于行为队列是一个数组，首先封装了<code>observeArray</code>方法对<code>window.Themis.ActionQueue</code>会用到的数组方法原型进行重写，这样，在对该数组进行<code>push</code>、<code>pop</code>等操作时，就可以在回调方法中去判断数据长度<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 监听数组</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param <span class="type">&#123;array&#125;</span> </span>arr </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param <span class="type">&#123;function&#125;</span> </span>callback </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">observeArray</span>(<span class="params">arr, callback</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> arrayMethods = <span class="built_in">Object</span>.create(<span class="built_in">Array</span>.prototype);</span><br><span class="line">  <span class="keyword">const</span> newArrProto = [];</span><br><span class="line">  [</span><br><span class="line">    <span class="string">'push'</span>,</span><br><span class="line">    <span class="string">'pop'</span>,</span><br><span class="line">    <span class="string">'shift'</span>,</span><br><span class="line">    <span class="string">'unshift'</span>,</span><br><span class="line">    <span class="string">'splice'</span>,</span><br><span class="line">    <span class="string">'sort'</span>,</span><br><span class="line">    <span class="string">'reverse'</span></span><br><span class="line">  ].forEach(<span class="function"><span class="params">method</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> original = arrayMethods[method];</span><br><span class="line">    newArrProto[method] = <span class="function"><span class="keyword">function</span> (<span class="params">...args</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">const</span> result = original.apply(<span class="keyword">this</span>, args);</span><br><span class="line">      callback &amp;&amp; callback()</span><br><span class="line">      <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="built_in">Object</span>.setPrototypeOf(arr, newArrProto);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>此外，在SDK初始化的时候，<code>window.Themis.ActionQueue</code>可能尚未被初始化，针对此情况，定义了<code>observeObj</code>方法去监听<code>window.Themis.ActionQueue</code>的赋值，内部逻辑基于<code>Object.defineProperty</code>的<code>setter</code>和<code>getter</code>去实现。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 监听对象</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param <span class="type">&#123;object&#125;</span> </span>obj </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param <span class="type">&#123;string&#125;</span> </span>key </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param <span class="type">&#123;function&#125;</span> </span>callback </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">observoObj</span>(<span class="params">obj, key, callback</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!obj || !key) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">let</span> newValue;</span><br><span class="line">  <span class="built_in">Object</span>.defineProperty(obj, key, &#123;</span><br><span class="line">    <span class="keyword">set</span>: function(value) &#123;</span><br><span class="line">      newValue = value;</span><br><span class="line">      <span class="keyword">if</span>(<span class="built_in">Array</span>.isArray(value)) &#123;</span><br><span class="line">          observeArray(obj[key], callback);</span><br><span class="line">      &#125;</span><br><span class="line">      callback &amp;&amp; callback(newValue);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="keyword">get</span>: function() &#123;</span><br><span class="line">      <span class="keyword">return</span> newValue;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 监听window.Themis.ActionQueue的变化</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">observeActionQueue</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">window</span>.Themis.ActionQueue) &#123;</span><br><span class="line">        observeArray(<span class="built_in">window</span>.Themis.ActionQueue, onActionQueueChange);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        observeObj(<span class="built_in">window</span>.Themis, <span class="string">'ActionQueue'</span>, onActionQueueChange);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="场景指标计算"><a href="#场景指标计算" class="headerlink" title="场景指标计算"></a>场景指标计算</h4><p>在满足指标上报条件后，会对行为队列的数据进行计算，根据前一章定义的计算规则将其转换为<code>Event</code>数据结构：<br><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> IEvent &#123;</span><br><span class="line">    name: <span class="built_in">string</span>; <span class="comment">// eg: 'cmsAction'｜'errorCode'|'requestTimeConsume'等</span></span><br><span class="line">    value: <span class="built_in">number</span>; <span class="comment">// 耗时时间戳</span></span><br><span class="line">    attributes: &#123;</span><br><span class="line">        actionName: <span class="built_in">string</span>; <span class="comment">// eg: `$&#123;ActionType.Search&#125;_$&#123;ActionType.RenderEnd&#125;`</span></span><br><span class="line">        ... <span class="comment">// 其他属性</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在计算的过程中，需要对行为队列中的数据进行过滤，对于满足计算规则的行为队列上报为<code>cmsAction</code>类型，对于异常的行为队列也需要上报，类型为<code>errorActionQueue</code>，因为异常的行为队列，很可能反应了页面存在的一些问题。</p>
+<h3 id="请求数据处理"><a href="#请求数据处理" class="headerlink" title="请求数据处理"></a>请求数据处理</h3><p>因为CMS底层调用的<code>fetch</code>方法，要捕获请求耗时、异常ErrorCode、返回数据等请求相关数据，可以通过拦截<code>fetch</code>方法，置入功能插件去做处理，核心代码如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> interceptFetch = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> fetch = <span class="built_in">window</span>.fetch;</span><br><span class="line">    <span class="built_in">window</span>.fetch = <span class="function">(<span class="params">...args</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 顺序从下向上执行</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">const</span> config = args[<span class="number">1</span>] || &#123;&#125;;</span><br><span class="line">        <span class="keyword">const</span> plugins = [</span><br><span class="line">            errorPlugin(config),</span><br><span class="line">            dataFormatter(config),</span><br><span class="line">            timeConsumePlugin(config),</span><br><span class="line">        ];</span><br><span class="line">        <span class="keyword">return</span> composePlugin(...plugins)(fetch.apply(<span class="built_in">window</span>, args));</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>设计实现了三个功能插件：</p>
+<ul>
+<li><code>timeConsumePlugin</code>时间耗时插件</li>
+<li><code>dataFormatter</code>数据格式化插件</li>
+<li><code>errorPlugin</code>错误捕获插件</li>
+</ul>
+<p>当请求发出的时候，会按顺序逐个执行功能插件，执行的顺序为：<code>timeConsumePlugin -&gt; dataFormatter -&gt; errorPlugin</code>，需要注意的关键点有：</p>
+<ul>
+<li>在<code>timeConsumePlugin</code>插件中，需要通过闭包的方式去记录下当前请求的开始时间，在请求返回的时候，拿到返回时间，进而计算出请求耗时时间；</li>
+<li><code>dataFormatter</code>插件对response数据处理时，不能直接调用<code>response.json()</code>，因为response只能做一次json处理，为了避免对CMS项目代码逻辑的影响，我们需要首先对response进行clone，再做json格式化处理，即<code>response.clone().json()</code>；此外，还需要注意，response返回的格式可能是blob的，不支持json转化，针对blob格式的response，做直接返回处理；</li>
+<li><code>errorPlugin</code>插件负责捕获异常返回的http code，在上报收集的结果中，发现有一些已知的正常code，例如无权限异常code、未登录code，为了屏蔽这些code值对度量的影响，SDK提供了支持配置code白名单的功能；</li>
+<li>在对请求数据的收集中，需要关注的业务相关的API，所以对于一些公共的API：日志上报、登录相关等接口，需要在上报的时候忽略这部分接口，与error code相似，SDK支持配置API白名单的功能。</li>
+</ul>
+<h2 id="监控数据可视化"><a href="#监控数据可视化" class="headerlink" title="监控数据可视化"></a>监控数据可视化</h2><p>在收集到SDK上报的数据后，为了更好地衡量CMS平台的性能，<a href="https://music-cms.hz.netease.com/themis-analysis/chart/home" target="_blank" rel="noopener">ThemisAnalysis</a>监控数据可视化平台对数据从不同维度做了数据聚合处理，包括指标维度、场景维度、请求维度、错误维度、页面维度等，以及抽象出CMS平台的健康模型；此外支持错误日志查询，在遇到问题的时候可以方便地查询出对应的请求数据。</p>
+<h3 id="健康模型"><a href="#健康模型" class="headerlink" title="健康模型"></a>健康模型</h3><p>健康模型综合了场景指标、请求成功率和请求耗时数据，计算出健康指数的具体得分，给开发一个比较直观的关于平台健康度的反馈。<br><img src="https://p5.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/15045900125/9dab/d7ea/7b93/b408a64ba63857093e01bce54c22c67f.png" alt><br>健康指数总分由场景指标性能得分、场景指标规范性、请求成功率得分、请求平均响应时间得分按照一定的占比计算得出，具体计算公式为：</p>
+<blockquote>
+<p>健康指数总分 = 场景指标性能得分 <em> x% + 场景指标规范性 </em> y% + 请求成功率得分 <em> z% + 请求平均响应时间得分 </em> m%</p>
+</blockquote>
+<p>各项指标具体的得分，主要是与各项指标推荐的基准值，根据我们预设的公式去计算，如果有明显不合理的地方，再去做动态调整，保证分数的合理性。<br>以场景指标性能得分为例，简单介绍下计算方法：</p>
+<blockquote>
+<p>场景指标性能得分 = (指标 1 得分 + 指标 2 得分 + …) / 指标数量</p>
+</blockquote>
+<p>场景指标性能得分为所有场景指标的平均分，综合考虑了该应用相关的所有指标。其中要计算单个指标得分，首先计算出<code>指标耗时/指标基准值</code>的比值，再根据这个比值按照梯度线性计算而得。例如当该<code>比值&lt;=1</code>时，很明显得分应该为<code>100</code>；比值越大，说明耗时越长，页面渲染耗时越长，反映在得分上越低。</p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>ThemisAnalysis平台会根据错误频率统计请求的高频错误，点击查看可以进一步查看错误详情，包括异常API地址、请求参数以及被影响的用户：<br><img src="https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/15048205515/b8f9/ef54/d53a/b9b13d5ee84433c75cf0f83d8d101956.png" width="560px"></p>
+<p>确认了存在的异常后，通常情况下期望可以看到用户操作的上下文，所以会将SDK上报的请求相关数据汇总，支持查询操作；通过uid可以查询到具体的某个用户的操作链路，最大程度地帮助开发复现并解决问题。<br>除此之外，Themis项目-效能工具的开发中包括<code>问题上报插件</code>，目前音乐的CMS都可以使用该插件，推荐使用，入口如下：<br><img src="https://p6.music.126.net/obj/wo3DlcOGw6DClTvDisK1/15048248406/b7b1/d59f/6e2c/bef24fb46cccc6b56159e02ad82a8d6f.png" alt><br>结合该插件，可以帮助我们还原问题现场，相关原理可以参考我发表的另一篇文章<a href="https://juejin.cn/post/7049909933168394277/" target="_blank" rel="noopener">rrweb 带你还原问题现场</a>。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要介绍了CMS性能监控的方案，简要介绍了数据格式的定义、监控SDK对数据的收集以及可视化平台的实现，希望这篇文章可以在相似场景中带给你一些小小的灵感。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2023/05/20/Themis-CMS体验度量方案/" data-id="clsshtuw5000fwqrtif596kfl" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Themis，CMS体验度量方案/">Themis，CMS体验度量方案</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-core-js3升级" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/10/19/core-js3升级/" class="article-date">
+  <time datetime="2021-10-19T03:28:58.000Z" itemprop="datePublished">2021-10-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/10/19/core-js3升级/">core-js3升级处理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="cms升级-babel-polyfill"><a href="#cms升级-babel-polyfill" class="headerlink" title="cms升级@babel/polyfill"></a>cms升级@babel/polyfill</h3><ol>
+<li>删掉@babel/polyfill</li>
+<li>升级core-js@2 到core-js@3</li>
+<li>配置babel：在<code>@babel/preset-env</code>的配置中，新增corejs配置，指定版本<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> presets: [</span><br><span class="line">    [<span class="string">'@babel/preset-env'</span>, &#123;</span><br><span class="line">        modules: <span class="literal">false</span>,</span><br><span class="line">        useBuiltIns: <span class="string">'usage'</span>,</span><br><span class="line">        targets: &#123; <span class="comment">// 根据实际情况配置</span></span><br><span class="line">            browsers: [<span class="string">'chrome &gt;= 62'</span>]</span><br><span class="line">        &#125;,</span><br><span class="line">        corejs: &#123;</span><br><span class="line">            version: <span class="number">3</span>, <span class="comment">// 使用core-js@3</span></span><br><span class="line">            proposals: <span class="literal">true</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;],</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>若还不行，检查下版本：babel-loader 版本升级到 8.0.0 以上，@babel/core 版本升级到 7.4.0 及以上。</p>
+<p>参考：<br><a href="https://segmentfault.com/a/1190000020237817" target="_blank" rel="noopener">Babel7 转码（五）- corejs3 的更新</a><br><a href="https://github.com/zloirock/core-js/blob/master/docs/2019-03-19-core-js-3-babel-and-a-look-into-the-future.md" target="_blank" rel="noopener">作者的官方阐述</a><br><a href="https://babeljs.io/blog/2019/03/19/7.4.0" target="_blank" rel="noopener">Babel 7.4.0 版本的更新内容，及官方的升级建议</a><br><a href="https://github.com/babel/babel/pull/7646" target="_blank" rel="noopener">core-js@2 向core-js@3 升级，官方的 Pull request</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2021/10/19/core-js3升级/" data-id="clsshtuwe000swqrt1ab34jdv" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/eventloop/">eventloop</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/渲染/">渲染</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">__('next') &raquo;</a>
+  </nav>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSR/">SSR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Themis，CMS体验度量方案/">Themis，CMS体验度量方案</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/autobind/">autobind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-decorators/">core-decorators</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decorator/">decorator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decorators源码简析——debounce/">decorators源码简析——debounce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/diff/">diff</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/echarts/">echarts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es7/">es7</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/eventloop/">eventloop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/font-face/">font-face</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hook/">hook</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js/">js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lazyInitialize/">lazyInitialize</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/load/">load</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/loader/">loader</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lottie/">lottie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm包/">npm包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/readonly/">readonly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/require/">require</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sass/">sass</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/setState/">setState</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sitespeed-io/">sitespeed.io</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webp/">webp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webpack/">webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下载/">下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/兼容/">兼容</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端性能优化/">前端性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端打包/">前端打包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/原型链/">原型链</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/总结/">总结</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/插件/">插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/渲染/">渲染</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/组件开发/">组件开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/组合式继承/">组合式继承</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/继承/">继承</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/角度渐变/">角度渐变</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/高阶组件/">高阶组件</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SSR/" style="font-size: 10px;">SSR</a> <a href="/tags/Themis，CMS体验度量方案/" style="font-size: 10px;">Themis，CMS体验度量方案</a> <a href="/tags/autobind/" style="font-size: 10px;">autobind</a> <a href="/tags/core-decorators/" style="font-size: 15.71px;">core-decorators</a> <a href="/tags/css/" style="font-size: 12.86px;">css</a> <a href="/tags/decorator/" style="font-size: 17.14px;">decorator</a> <a href="/tags/decorators源码简析——debounce/" style="font-size: 11.43px;">decorators源码简析——debounce</a> <a href="/tags/diff/" style="font-size: 14.29px;">diff</a> <a href="/tags/echarts/" style="font-size: 10px;">echarts</a> <a href="/tags/es6/" style="font-size: 10px;">es6</a> <a href="/tags/es7/" style="font-size: 10px;">es7</a> <a href="/tags/eventloop/" style="font-size: 11.43px;">eventloop</a> <a href="/tags/font-face/" style="font-size: 10px;">font-face</a> <a href="/tags/hook/" style="font-size: 10px;">hook</a> <a href="/tags/js/" style="font-size: 18.57px;">js</a> <a href="/tags/lazyInitialize/" style="font-size: 10px;">lazyInitialize</a> <a href="/tags/load/" style="font-size: 10px;">load</a> <a href="/tags/loader/" style="font-size: 10px;">loader</a> <a href="/tags/lottie/" style="font-size: 10px;">lottie</a> <a href="/tags/npm包/" style="font-size: 10px;">npm包</a> <a href="/tags/react/" style="font-size: 20px;">react</a> <a href="/tags/readonly/" style="font-size: 10px;">readonly</a> <a href="/tags/require/" style="font-size: 10px;">require</a> <a href="/tags/sass/" style="font-size: 10px;">sass</a> <a href="/tags/setState/" style="font-size: 10px;">setState</a> <a href="/tags/sitespeed-io/" style="font-size: 10px;">sitespeed.io</a> <a href="/tags/webp/" style="font-size: 10px;">webp</a> <a href="/tags/webpack/" style="font-size: 14.29px;">webpack</a> <a href="/tags/下载/" style="font-size: 10px;">下载</a> <a href="/tags/兼容/" style="font-size: 11.43px;">兼容</a> <a href="/tags/函数式编程/" style="font-size: 10px;">函数式编程</a> <a href="/tags/前端性能优化/" style="font-size: 12.86px;">前端性能优化</a> <a href="/tags/前端打包/" style="font-size: 10px;">前端打包</a> <a href="/tags/原型链/" style="font-size: 10px;">原型链</a> <a href="/tags/总结/" style="font-size: 12.86px;">总结</a> <a href="/tags/插件/" style="font-size: 10px;">插件</a> <a href="/tags/渲染/" style="font-size: 12.86px;">渲染</a> <a href="/tags/组件开发/" style="font-size: 10px;">组件开发</a> <a href="/tags/组合式继承/" style="font-size: 10px;">组合式继承</a> <a href="/tags/继承/" style="font-size: 11.43px;">继承</a> <a href="/tags/角度渐变/" style="font-size: 10px;">角度渐变</a> <a href="/tags/高阶组件/" style="font-size: 10px;">高阶组件</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/02/19/rrweb原理&录屏上报实践/">rrweb带你还原问题现场</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/react相关问题V2/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/module引入方式/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/js_roadmap/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/11/02/webpack-loader总结/">webpack-loader总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 Sherry<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

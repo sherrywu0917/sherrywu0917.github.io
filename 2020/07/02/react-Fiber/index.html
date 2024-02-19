@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>react fiber纤程 | lying fox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="react v16的diff算法 React Fiber 是对React核心算法的重新实现，是React团队花费了2年的研究成果。核心特性增量式渲染：the ability to split rendering work into chunks and spread it out over multiple frames.  0. react element结构React 元素（elements）">
+<meta name="keywords" content="react,diff">
+<meta property="og:type" content="article">
+<meta property="og:title" content="react fiber纤程">
+<meta property="og:url" content="https://sherrywu0917.github.io/2020/07/02/react-Fiber/index.html">
+<meta property="og:site_name" content="lying fox">
+<meta property="og:description" content="react v16的diff算法 React Fiber 是对React核心算法的重新实现，是React团队花费了2年的研究成果。核心特性增量式渲染：the ability to split rendering work into chunks and spread it out over multiple frames.  0. react element结构React 元素（elements）">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2024-02-19T04:51:45.049Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="react fiber纤程">
+<meta name="twitter:description" content="react v16的diff算法 React Fiber 是对React核心算法的重新实现，是React团队花费了2年的研究成果。核心特性增量式渲染：the ability to split rendering work into chunks and spread it out over multiple frames.  0. react element结构React 元素（elements）">
+  
+    <link rel="alternate" href="/atom.xml" title="lying fox" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">lying fox</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://sherrywu0917.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-react-Fiber" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/02/react-Fiber/" class="article-date">
+  <time datetime="2020-07-02T04:12:12.000Z" itemprop="datePublished">2020-07-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      react fiber纤程
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="react-v16的diff算法"><a href="#react-v16的diff算法" class="headerlink" title="react v16的diff算法"></a>react v16的diff算法</h2><blockquote>
+<p>React Fiber 是对React核心算法的重新实现，是React团队花费了2年的研究成果。<br>核心特性<strong>增量式渲染</strong>：the ability to split rendering work into chunks and spread it out over multiple frames.</p>
+</blockquote>
+<h3 id="0-react-element结构"><a href="#0-react-element结构" class="headerlink" title="0. react element结构"></a>0. react element结构</h3><p>React 元素（elements）是设计好的 plain object：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  $$<span class="keyword">typeof</span>:  <span class="built_in">Symbol</span>(react.element), <span class="comment">// React会检测该属性，避免xss攻击 </span></span><br><span class="line">  key: <span class="literal">null</span>,</span><br><span class="line">  props: &#123;&#125;,</span><br><span class="line">  ref: <span class="literal">null</span>,</span><br><span class="line">  type: <span class="built_in">String</span> | <span class="built_in">Object</span> | <span class="built_in">Function</span>, <span class="comment">// 元素类型，string，function</span></span><br><span class="line">  _owner: FiberNode, <span class="comment">// 所属React Component</span></span><br><span class="line">  _store: &#123; <span class="attr">validated</span>: <span class="literal">false</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>为了避免用户模拟JSON注入xss攻击，React 0.14 修复手段是用 Symbol 标记每个 React 元素（element）：因为服务器返回的序列化JSON不支持 Symbol 类型（<strong>JSON.stringify后，symbol属性和方法会被抛弃</strong>）。所以即使服务器存在用JSON作为文本返回安全漏洞，JSON 里也不包含 Symbol.for(‘react.element’)。React 会检测 element.$$typeof，如果元素丢失或者无效，会拒绝处理该元素。<br>特意用 Symbol.for() 的好处是 Symbols 通用于 iframes 和 workers 等环境中。<br>一个很有趣的点：如果浏览器不支持 Symbols 怎么办？React仍然会加上 $$typeof 字段以保证一致性，但只是设置一个数字而已 —— 0xeac7。为什么？因为 0xeac7 看起来有点像 「React」</p>
+<h3 id="1-react-fiber纤程"><a href="#1-react-fiber纤程" class="headerlink" title="1. react fiber纤程"></a>1. react fiber纤程</h3><p>React Fiber 是一种基于浏览器的<strong>单线程调度算法</strong>。</p>
+<ul>
+<li>一种将 recocilation （递归 diff），拆分成无数个小任务的算法；</li>
+<li>它随时能够停止，恢复。停止恢复的时机取决于当前的一帧（16ms）内，还有没有足够的时间允许计算。</li>
+<li>划分任务的优先级<br>fiber是纤程颗粒化的概念，一个线程可以包含多个Fiber，主要是对react更新机制的优化。React16之前的版本，更新组件会一直占用主线程，如果组件树过大，则可能会导致浏览器失去响应。在React16中加入的fiber可以将同步任务拆解，每次执行完一小片后，都会把控制权交还给react负责任务调度的模块，如果有优先级更高的任务，就先执行高优先级的任务。</li>
+</ul>
+<h4 id="1-1-解决问题"><a href="#1-1-解决问题" class="headerlink" title="1.1 解决问题"></a>1.1 解决问题</h4><p>JavaScript 是单线程运行的，，同时只能做一件事情，这个和 DOS 的单任务操作系统一样的，事情只能一件一件的干。要是前面有一个傻叉任务长期霸占CPU，后面什么事情都干不了，浏览器会呈现卡死的状态，这样的用户体验就会非常差。</p>
+<h5 id="对于’前端框架‘来说，解决这种问题有三个方向"><a href="#对于’前端框架‘来说，解决这种问题有三个方向" class="headerlink" title="对于’前端框架‘来说，解决这种问题有三个方向:"></a>对于’前端框架‘来说，解决这种问题有三个方向:</h5><p>1️⃣ 优化每个任务，让它有多快就多快。挤压CPU运算量 （Vue）<br>2️⃣ 快速响应用户，让用户觉得够快，不能阻塞用户的交互 (React FiberNode)<br>3️⃣ 尝试 Worker 多线程<br>React 会递归比对VirtualDOM树，找出需要变动的节点，然后同步更新它们, 一气呵成。这个过程 React 称为 Reconcilation(协调)。在 Reconcilation 期间，React 会霸占着浏览器资源，一则会导致用户触发的事件得不到响应, 二则会导致掉帧，用户可以感知到这些卡顿。<br>协调是CPU密集型的操作，浏览器的渲染树构建、布局、绘制、资源加载(例如HTML解析)、事件响应、脚本执行都可以看作是进程，我们需要通过某些调度策略合理地分配CPU资源，从而提高浏览器的用户响应速率, 同时兼顾任务执行效率。<br><strong>所以 React 通过Fiber 架构，让自己的Reconcilation 过程变成可被中断。 ‘适时’地让出CPU执行权，除了可以让浏览器及时地响应用户的交互，还有其他好处:</strong></p>
+<ul>
+<li>与其一次性操作大量 DOM 节点相比, 分批延时对DOM进行操作，可以得到更好的用户体验。</li>
+<li>给浏览器一点喘息的机会，他会对代码进行编译优化（JIT）及进行热代码优化，或者对reflow进行修正</li>
+</ul>
+<h4 id="1-2-requestIdleCallback"><a href="#1-2-requestIdleCallback" class="headerlink" title="1.2 requestIdleCallback"></a>1.2 requestIdleCallback</h4><p>requestIdleCallback：让浏览器在’有空’的时候就执行我们的回调，这个回调会传入一个期限，表示浏览器有多少时间供我们执行, 为了不耽误事，我们最好在这个时间范围内执行完毕。<br>浏览器在一帧内可能会做执行下列任务，而且它们的执行顺序基本是固定的:</p>
+<ul>
+<li>处理用户输入事件</li>
+<li>Javascript执行</li>
+<li>requestAnimationFrame 调用 (会在下一次渲染之前调用)</li>
+<li>render Tree构建</li>
+<li>布局 Layout</li>
+<li>绘制 Paint<br>理想的一帧时间是 16ms (1000ms / 60)，如果浏览器处理完上述的任务(布局和绘制之后)，还有盈余时间，浏览器就会调用 requestIdleCallback 的回调。<br>但是在浏览器繁忙的时候，可能不会有盈余时间，这时候requestIdleCallback回调可能就不会被执行。 为了避免饿死，可以通过requestIdleCallback的第二个参数指定一个超时时间。<br><strong>所以setState触发的diff会在浏览器空闲的时候执行，即setState是批量触发的机制</strong></li>
+</ul>
+<h5 id="任务优先级"><a href="#任务优先级" class="headerlink" title="任务优先级"></a>任务优先级</h5><ul>
+<li>Immediate(-1) - 这个优先级的任务会同步执行, 或者说要马上执行且不能中断</li>
+<li>UserBlocking(250ms) 这些任务一般是用户交互的结果, 需要即时得到反馈</li>
+<li>Normal (5s) 应对哪些不需要立即感受到的任务，例如网络请求</li>
+<li>Low (10s) 这些任务可以放后，但是最终应该得到执行. 例如分析通知</li>
+<li>Idle (没有超时时间) 一些没有必要做的任务 (e.g. 比如隐藏的内容), 可能会被饿死</li>
+</ul>
+<h4 id="1-3-一个执行单元"><a href="#1-3-一个执行单元" class="headerlink" title="1.3 一个执行单元"></a>1.3 一个执行单元</h4><p><strong>将它视作一个执行单元，每次执行完一个’执行单元’, React 就会检查现在还剩多少时间，如果没有时间就将控制权让出去.</strong><br>执行过程是：</p>
+<ol>
+<li><p>假设用户调用 setState 更新组件, 这个待更新的任务会先放入队列中, 然后通过 requestIdleCallback 请求浏览器调度：   </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// setState的时候可以将要更新的component instance放到一个队列里，即Fiber节点，Fiber执行单元里面也有state变更相关信息</span></span><br><span class="line">updateQueue.push(updateTask);</span><br><span class="line">requestIdleCallback(performWork, &#123;timeout&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>现在浏览器有空闲或者超时了就会调用performWork来执行任务：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1️⃣ performWork 会拿到一个Deadline，表示剩余时间</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">performWork</span>(<span class="params">deadline</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 2️⃣ 循环取出updateQueue中的任务(这边应该是以Fiber为单位)</span></span><br><span class="line">  <span class="keyword">while</span> (updateQueue.length &gt; <span class="number">0</span> &amp;&amp; deadline.timeRemaining() &gt; ENOUGH_TIME) &#123;</span><br><span class="line">    workLoop(deadline);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 3️⃣ 如果在本次执行中，未能将所有任务执行完毕，那就再请求浏览器调度</span></span><br><span class="line">  <span class="keyword">if</span> (updateQueue.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    requestIdleCallback(performWork);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>workLoop 的工作大概猜到了，它会从更新队列(updateQueue)中弹出更新任务来执行，每执行完一个‘执行单元‘，就检查一下剩余时间是否充足，如果充足就进行执行下一个执行单元，反之则停止执行，保存现场，等下一次有执行权时恢复。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 保存当前的处理现场</span></span><br><span class="line"><span class="keyword">let</span> nextUnitOfWork: Fiber | <span class="literal">undefined</span> <span class="comment">// 保存下一个需要处理的工作单元</span></span><br><span class="line"><span class="keyword">let</span> topWork: Fiber | <span class="literal">undefined</span>        <span class="comment">// 保存第一个工作单元</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">workLoop</span>(<span class="params">deadline: IdleDeadline</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// updateQueue中获取下一个或者恢复上一次中断的执行单元</span></span><br><span class="line">  <span class="keyword">if</span> (nextUnitOfWork == <span class="literal">null</span>) &#123;</span><br><span class="line">    nextUnitOfWork = topWork = getNextUnitOfWork();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 🔴 每执行完一个Fiber执行单元，检查一次剩余时间</span></span><br><span class="line">  <span class="comment">// 如果被中断，下一次执行还是从 nextUnitOfWork 开始处理</span></span><br><span class="line">  <span class="keyword">while</span> (nextUnitOfWork &amp;&amp; deadline.timeRemaining() &gt; ENOUGH_TIME) &#123;</span><br><span class="line">    <span class="comment">// 下文我们再看performUnitOfWork，DFS遍历：子节点-&gt;兄弟节点-&gt;父节点 </span></span><br><span class="line">    nextUnitOfWork = performUnitOfWork(nextUnitOfWork, topWork);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 提交工作，下文会介绍</span></span><br><span class="line">  <span class="keyword">if</span> (pendingCommit) &#123;</span><br><span class="line">    commitAllWork(pendingCommit);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="1-4-Fiber节点"><a href="#1-4-Fiber节点" class="headerlink" title="1.4 Fiber节点"></a>1.4 Fiber节点</h4><p>每个 VirtualDOM 节点内部现在使用 Fiber表示，Fiber的部分结构如下所示，<strong>将简单的树结构，变成了基于单链表的树结构</strong>。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    alternate: FiberNode|null, // 替身：指向旧树中的节点</span><br><span class="line">    effectTag: SideEffectTag, // 标识当前节点的副作用类型，例如节点更新、删除、移动</span><br><span class="line">    nextEffect: FiberNode | null, // 和节点关系一样，React 同样使用链表来将所有有副作用的Fiber连接起来</span><br><span class="line">    pendingWorkPriority: PriorityLevel, // 一个数字，标记子树上待更新任务的优先级</span><br><span class="line"></span><br><span class="line">    type: any, // Fiber 类型信息</span><br><span class="line">    stateNode: any, // 管理 instance 自身的特性，function组件值为null</span><br><span class="line">    return: FiberNode|null, // 指向 Fiber Tree 中的父节点</span><br><span class="line">    child: FiberNode|null, // 指向第一个子节点</span><br><span class="line">    sibling: FiberNode|null, // 指向兄弟节点</span><br><span class="line"></span><br><span class="line">    pendingProps: &#123;&#125;, // pendingProps在执行开始时设置，并在结束时设置memoizedProps。</span><br><span class="line">    memoizedProps: &#123;&#125;, // 当输入的pendingProps等于memoizedProps时，它表示fiber的先前输出可以重复使用，从而防止不必要的工作。</span><br><span class="line">    memoizedState: &#123;&#125;, // 组件实例的 state</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="1-5-执行顺序"><a href="#1-5-执行顺序" class="headerlink" title="1.5 执行顺序"></a>1.5 执行顺序</h4><p>来看看 performUnitOfWork 的实现, 它其实就是一个深度优先的遍历：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@params </span>fiber 当前需要处理的节点</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@params </span>topWork 本次更新的根节点</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">performUnitOfWork</span>(<span class="params">fiber: Fiber, topWork: Fiber</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 对该节点进行处理</span></span><br><span class="line">  beginWork(fiber);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 如果存在子节点，那么下一个待处理的就是子节点</span></span><br><span class="line">  <span class="keyword">if</span> (fiber.child) &#123;</span><br><span class="line">    <span class="keyword">return</span> fiber.child;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 没有子节点了，上溯查找兄弟节点</span></span><br><span class="line">  <span class="keyword">let</span> temp = fiber;</span><br><span class="line">  <span class="keyword">while</span> (temp) &#123;</span><br><span class="line">    completeWork(temp);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 到顶层节点了, 退出</span></span><br><span class="line">    <span class="keyword">if</span> (temp === topWork) &#123;</span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找到，下一个要处理的就是兄弟节点</span></span><br><span class="line">    <span class="keyword">if</span> (temp.sibling) &#123;</span><br><span class="line">      <span class="keyword">return</span> temp.sibling;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 没有, 继续上溯</span></span><br><span class="line">    temp = temp.return;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>因为是单链表(A → B → C)的结构，所以在每次执行到某个节点(A → B)被中断后，下次可以从该节点(B → C)接着执行。<br>requestIdleCallback会让一个低优先级的任务在空闲期被调用，而requestAnimationFrame会让一个高优先级的任务在下一个栈帧被调用，从而保证了主线程按照优先级执行 fiber 单元。</p>
+<blockquote>
+<p>优先级顺序为：文本框输入 &gt; 本次调度结束需完成的任务 &gt; 动画过渡 &gt; 交互反馈 &gt; 数据更新 &gt; 不会显示但以防将来会显示的任务。</p>
+</blockquote>
+<p>因为react fiber机制，一个任务很可能执行到一半就被其他优先级更高的任务所替代，或者因为时间原因而被终止。当再次执行这个任务时，是从头开始执行一遍，就会导致组件的某些 will 生命周期可能被多次调用而影响性能。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">beginWork</span>(<span class="params">fiber: Fiber</span>): <span class="title">Fiber</span> | <span class="title">undefined</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (fiber.tag === WorkTag.HostComponent) &#123;</span><br><span class="line">    <span class="comment">// 宿主节点diff</span></span><br><span class="line">    diffHostComponent(fiber)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (fiber.tag === WorkTag.ClassComponent) &#123;</span><br><span class="line">    <span class="comment">// 类组件节点diff</span></span><br><span class="line">    diffClassComponent(fiber)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (fiber.tag === WorkTag.FunctionComponent) &#123;</span><br><span class="line">    <span class="comment">// 函数组件节点diff</span></span><br><span class="line">    diffFunctionalComponent(fiber)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// ... 其他类型节点，省略</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="1-6-副作用的收集和提交"><a href="#1-6-副作用的收集和提交" class="headerlink" title="1.6 副作用的收集和提交"></a>1.6 副作用的收集和提交</h4><p>将所有打了 Effect 标记的节点串联起来，收集完成后再提交。<br>在<code>completeUnitOfWork ——&gt; completeWork</code>方法中遍历fiber节点，将标记了EffectTag的节点通过nextEffect串联起来</p>
+<h4 id="1-7-两个阶段的拆分"><a href="#1-7-两个阶段的拆分" class="headerlink" title="1.7 两个阶段的拆分"></a>1.7 两个阶段的拆分</h4><p>首先，看React的渲染，包括两个阶段：协调阶段(reconciliation)和提交(渲染)阶段(commit)。</p>
+<ol>
+<li>调度阶段react根据数据更新virtual DOM，再运用diff算法找到需要VDOM change。这一部分的工作是可以拆分的。</li>
+</ol>
+<ul>
+<li>constructor</li>
+<li>componentWillMount 废弃</li>
+<li>componentWillReceiveProps 废弃</li>
+<li>static getDerivedStateFromProps</li>
+<li>shouldComponentUpdate</li>
+<li>componentWillUpdate 废弃</li>
+<li>render</li>
+</ul>
+<ol start="2">
+<li>提交阶段根据计算出的所有diff去一次性更新真实的DOM。</li>
+</ol>
+<ul>
+<li>getSnapshotBeforeUpdate() 严格来说，这个是在进入 commit 阶段前调用</li>
+<li>componentDidMount</li>
+<li>componentDidUpdate</li>
+<li>componentWillUnmount<br>也就是说，在协调阶段如果时间片用完，React就会选择让出控制权。因为协调阶段执行的工作不会导致任何用户可见的变更，所以在这个阶段让出控制权不会有什么问题。<br>需要注意的是：因为协调阶段可能被中断、恢复，甚至重做，⚠️React 协调阶段的生命周期钩子可能会被调用多次!, 例如 componentWillMount 可能会被调用两次。<br>因此建议 协调阶段的生命周期钩子不要包含副作用. 索性 React 就废弃了这部分可能包含副作用的生命周期方法，例如componentWillMount、componentWillUpdate. v17后我们就不能再用它们了, 所以现有的应用应该尽快迁移.</li>
+</ul>
+<p>Reconciliation完成后，会有一个旧树和一个WIP树，对于需要变更的节点，都打上了’标签’。在提交阶段，React 就会将这些打上标签的节点应用变更。</p>
+<h4 id="1-8-双缓冲技术"><a href="#1-8-双缓冲技术" class="headerlink" title="1.8 双缓冲技术"></a>1.8 双缓冲技术</h4><p>WIP树就是一个缓冲，它在Reconciliation 完毕后一次性提交给浏览器进行渲染。它可以减少内存分配和垃圾回收，WIP 的节点不完全是新的，比如某颗子树不需要变动，React会克隆复用旧树中的子树。另外一个重要的场景就是异常的处理。<br><strong>你可以将 WIP 树想象成从旧树中 Fork 出来的功能分支，你在这新分支中添加或移除特性，即使是操作失误也不会影响旧的分支。当你这个分支经过了测试和完善，就可以合并到旧分支，将其替换掉. 这或许就是’提交(commit)阶段‘的提交一词的来源吧？</strong></p>
+<h3 id="中断和恢复"><a href="#中断和恢复" class="headerlink" title="中断和恢复"></a>中断和恢复</h3><p><strong>到目前为止：⚠️更新任务还是串行执行的，我们只是将整个过程碎片化了. 对于那些需要优先处理的更新任务还是会被阻塞</strong><br><strong>但React Fiber已经实现了分片执行</strong><br><strong>实际情况是，在 React 得到控制权后，应该优先处理高优先级的任务。</strong>也就是说中断时正在处理的任务，在恢复时会让位给高优先级任务，原本中断的任务可能会被放弃或者重做。 =》 下一步是<strong>启用 Concurrent 模式（实验版本）</strong>: 开启Concurrent 模式后，之前 deprecated 的生命周期方法就彻底不能用了。<br><strong>Concurrent 模式通过使渲染可中断来修复此基本限制。</strong><br>(React Fiber 实际上非常复杂，不管执行的过程怎样拆分、以什么顺序执行，最重要的是保证状态的一致性和视图的一致性，这给了 React 团队很大的考验，以致于现在都没有正式release出来。?)</p>
+<h4 id="Concurrent-Mode"><a href="#Concurrent-Mode" class="headerlink" title="Concurrent Mode"></a>Concurrent Mode</h4><ul>
+<li>快速响应用户操作和输入，提升用户交互体验</li>
+<li>让动画更加流畅，通过调度，可以让应用保持高帧率</li>
+<li>利用好I/O 操作空闲期或者CPU空闲期，进行一些预渲染。比如离屏(offscreen)不可见的内容，优先级最低，可以让 React 等到CPU空闲时才去渲染这部分内容。这和浏览器的preload等预加载技术差不多。?</li>
+<li>用Suspense 降低加载状态(load state)的优先级，减少闪屏。 比如数据很快返回时，可以不必显示加载状态，而是直接显示出来，避免闪屏；如果超时没有返回才显式加载状态。?</li>
+</ul>
+<p>REFs:</p>
+<ul>
+<li><a href="https://juejin.im/post/5dadc6045188255a270a0f85#heading-5" target="_blank" rel="noopener">这可能是最通俗的 React Fiber(时间分片) 打开方式</a></li>
+<li><a href="https://juejin.im/post/5bca74cfe51d450e9163351b" target="_blank" rel="noopener">[译]以面试官的角度来看React工作面试</a></li>
+<li><a href="https://juejin.im/post/5be969656fb9a049ad76931f" target="_blank" rel="noopener">浅析 React Fiber</a></li>
+<li><a href="https://tech.youzan.com/react-fiber/" target="_blank" rel="noopener">浅谈React 16中的Fiber机制</a></li>
+<li><a href="https://github.com/acdlite/react-fiber-architecture" target="_blank" rel="noopener">React Fiber Architecture</a></li>
+<li><a href="https://my.oschina.net/u/4088983/blog/4545968" target="_blank" rel="noopener">从 0 实现 React 系列(一)：React 的架构设计</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sherrywu0917.github.io/2020/07/02/react-Fiber/" data-id="clsshtuwn001cwqrtocmcsdyd" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/diff/">diff</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/react/">react</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/12/02/react-mobx使用/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          react-mobx使用
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/12/27/animejs动画/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">animejs动画入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSR/">SSR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Themis，CMS体验度量方案/">Themis，CMS体验度量方案</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/autobind/">autobind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/core-decorators/">core-decorators</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/css/">css</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decorator/">decorator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/decorators源码简析——debounce/">decorators源码简析——debounce</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/diff/">diff</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/echarts/">echarts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es6/">es6</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/es7/">es7</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/eventloop/">eventloop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/font-face/">font-face</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hook/">hook</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js/">js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lazyInitialize/">lazyInitialize</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/load/">load</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/loader/">loader</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lottie/">lottie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/npm包/">npm包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/">react</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/readonly/">readonly</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/require/">require</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sass/">sass</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/setState/">setState</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sitespeed-io/">sitespeed.io</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webp/">webp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/webpack/">webpack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/下载/">下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/兼容/">兼容</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/函数式编程/">函数式编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端性能优化/">前端性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/前端打包/">前端打包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/原型链/">原型链</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/总结/">总结</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/插件/">插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/渲染/">渲染</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/组件开发/">组件开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/组合式继承/">组合式继承</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/继承/">继承</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/角度渐变/">角度渐变</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/高阶组件/">高阶组件</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/SSR/" style="font-size: 10px;">SSR</a> <a href="/tags/Themis，CMS体验度量方案/" style="font-size: 10px;">Themis，CMS体验度量方案</a> <a href="/tags/autobind/" style="font-size: 10px;">autobind</a> <a href="/tags/core-decorators/" style="font-size: 15.71px;">core-decorators</a> <a href="/tags/css/" style="font-size: 12.86px;">css</a> <a href="/tags/decorator/" style="font-size: 17.14px;">decorator</a> <a href="/tags/decorators源码简析——debounce/" style="font-size: 11.43px;">decorators源码简析——debounce</a> <a href="/tags/diff/" style="font-size: 14.29px;">diff</a> <a href="/tags/echarts/" style="font-size: 10px;">echarts</a> <a href="/tags/es6/" style="font-size: 10px;">es6</a> <a href="/tags/es7/" style="font-size: 10px;">es7</a> <a href="/tags/eventloop/" style="font-size: 11.43px;">eventloop</a> <a href="/tags/font-face/" style="font-size: 10px;">font-face</a> <a href="/tags/hook/" style="font-size: 10px;">hook</a> <a href="/tags/js/" style="font-size: 18.57px;">js</a> <a href="/tags/lazyInitialize/" style="font-size: 10px;">lazyInitialize</a> <a href="/tags/load/" style="font-size: 10px;">load</a> <a href="/tags/loader/" style="font-size: 10px;">loader</a> <a href="/tags/lottie/" style="font-size: 10px;">lottie</a> <a href="/tags/npm包/" style="font-size: 10px;">npm包</a> <a href="/tags/react/" style="font-size: 20px;">react</a> <a href="/tags/readonly/" style="font-size: 10px;">readonly</a> <a href="/tags/require/" style="font-size: 10px;">require</a> <a href="/tags/sass/" style="font-size: 10px;">sass</a> <a href="/tags/setState/" style="font-size: 10px;">setState</a> <a href="/tags/sitespeed-io/" style="font-size: 10px;">sitespeed.io</a> <a href="/tags/webp/" style="font-size: 10px;">webp</a> <a href="/tags/webpack/" style="font-size: 14.29px;">webpack</a> <a href="/tags/下载/" style="font-size: 10px;">下载</a> <a href="/tags/兼容/" style="font-size: 11.43px;">兼容</a> <a href="/tags/函数式编程/" style="font-size: 10px;">函数式编程</a> <a href="/tags/前端性能优化/" style="font-size: 12.86px;">前端性能优化</a> <a href="/tags/前端打包/" style="font-size: 10px;">前端打包</a> <a href="/tags/原型链/" style="font-size: 10px;">原型链</a> <a href="/tags/总结/" style="font-size: 12.86px;">总结</a> <a href="/tags/插件/" style="font-size: 10px;">插件</a> <a href="/tags/渲染/" style="font-size: 12.86px;">渲染</a> <a href="/tags/组件开发/" style="font-size: 10px;">组件开发</a> <a href="/tags/组合式继承/" style="font-size: 10px;">组合式继承</a> <a href="/tags/继承/" style="font-size: 11.43px;">继承</a> <a href="/tags/角度渐变/" style="font-size: 10px;">角度渐变</a> <a href="/tags/高阶组件/" style="font-size: 10px;">高阶组件</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">November 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/02/19/rrweb原理&录屏上报实践/">rrweb带你还原问题现场</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/react相关问题V2/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/module引入方式/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/02/19/js_roadmap/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2023/11/02/webpack-loader总结/">webpack-loader总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2024 Sherry<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
